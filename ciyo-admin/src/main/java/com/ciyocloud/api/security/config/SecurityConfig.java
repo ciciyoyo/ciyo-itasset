@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -22,13 +21,13 @@ import org.springframework.web.filter.CorsFilter;
 /**
  * spring security配置
  *
- * @author codeck
+ * @author smalljop
  */
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
-public class SecurityConfig extends com.ciyocloud.security.config.BaseSecurityConfig {
+@EnableMethodSecurity(jsr250Enabled = true, prePostEnabled = true, securedEnabled = true)
+public class SecurityConfig extends BaseSecurityConfig {
 
     /**
      * 认证失败处理类
@@ -60,21 +59,16 @@ public class SecurityConfig extends com.ciyocloud.security.config.BaseSecurityCo
     protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // 登出
         httpSecurity
-                // 开启跨域
-                .cors(cors -> {
-                })
-                // CSRF 禁用，因为不使用 Session
-                .csrf(csrf -> csrf.disable())
-                // 基于 token 机制，所以不需要 Session
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 一堆自定义的 Spring Security 处理器
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(unauthorizedHandler)
-                        .accessDeniedHandler(accessDeniedHandler)
-                );
+                .exceptionHandling(ex -> {
+                    ex.authenticationEntryPoint(unauthorizedHandler)
+                            .accessDeniedHandler(accessDeniedHandler);
+                });
         // 设置过滤url
         buildBasicPath(httpSecurity);
-        httpSecurity.logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler));
+        httpSecurity.logout(logout -> {
+            logout.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
+        });
         // 添加JWT filter
         httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         // 添加CORS filter
