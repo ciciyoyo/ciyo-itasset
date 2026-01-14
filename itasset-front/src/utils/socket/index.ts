@@ -48,20 +48,6 @@ export default class WebSocketClient {
         this.connectionTimeout = options.connectionTimeout || 10 * 1000 // 连接超时10秒
     }
 
-    // 获取当前连接状态
-    get isWebSocketConnected(): boolean {
-        return this.isConnected
-    }
-
-    // 获取当前连接状态文本
-    get connectionStatusText(): string {
-        if (this.isConnecting) return '正在连接'
-        if (this.isConnected) return '已连接'
-        if (this.reconnectAttempts > 0 && !this.stopReconnect)
-            return `重连中（${this.reconnectAttempts}/${this.maxReconnectAttempts}）`
-        return '已断开'
-    }
-
     // 单例模式获取实例
     static getInstance(options: WebSocketOptions): WebSocketClient {
         if (!WebSocketClient.instance) {
@@ -77,14 +63,6 @@ export default class WebSocketClient {
             }
         }
         return WebSocketClient.instance
-    }
-
-    // 销毁实例
-    static destroyInstance(): void {
-        if (WebSocketClient.instance) {
-            WebSocketClient.instance.close()
-            WebSocketClient.instance = null
-        }
     }
 
     // 初始化连接
@@ -120,6 +98,16 @@ export default class WebSocketClient {
             this.ws.onerror = (event) => this.handleError(event)
         } catch (error) {
             console.error('WebSocket初始化失败:', error)
+            this.isConnecting = false
+            this.reconnect()
+        }
+    }
+
+    // 处理连接超时
+    private handleConnectionTimeout(): void {
+        if (this.ws?.readyState !== WebSocket.OPEN) {
+            console.error('WebSocket连接超时，强制关闭连接')
+            this.ws?.close(1000, 'Connection timeout')
             this.isConnecting = false
             this.reconnect()
         }
@@ -165,16 +153,6 @@ export default class WebSocketClient {
             console.error('WebSocket发送消息失败:', error)
             // 发送失败时将消息加入队列，等待重连后重试
             this.messageQueue.push(data)
-            this.reconnect()
-        }
-    }
-
-    // 处理连接超时
-    private handleConnectionTimeout(): void {
-        if (this.ws?.readyState !== WebSocket.OPEN) {
-            console.error('WebSocket连接超时，强制关闭连接')
-            this.ws?.close(1000, 'Connection timeout')
-            this.isConnecting = false
             this.reconnect()
         }
     }
@@ -367,5 +345,27 @@ export default class WebSocketClient {
         this.clearTimer('reconnectTimer')
         this.clearTimer('pingTimer')
         this.clearTimer('connectionTimer')
+    }
+
+    // 获取当前连接状态
+    get isWebSocketConnected(): boolean {
+        return this.isConnected
+    }
+
+    // 获取当前连接状态文本
+    get connectionStatusText(): string {
+        if (this.isConnecting) return '正在连接'
+        if (this.isConnected) return '已连接'
+        if (this.reconnectAttempts > 0 && !this.stopReconnect)
+            return `重连中（${this.reconnectAttempts}/${this.maxReconnectAttempts}）`
+        return '已断开'
+    }
+
+    // 销毁实例
+    static destroyInstance(): void {
+        if (WebSocketClient.instance) {
+            WebSocketClient.instance.close()
+            WebSocketClient.instance = null
+        }
     }
 }

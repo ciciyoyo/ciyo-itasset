@@ -2,48 +2,48 @@
 <html>
 <head>
     <title>CIYO 资产管理系统</title>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta
-            content="Ciyo 西柚资产 - 专业的企业资产管理系统(AMS/CRM)。提供固定资产管理、库存盘点、客户关系管理等一站式解决方案，助力企业降本增效。"
-            name="description"/>
+            name="description"
+            content="Ciyo 西柚资产 - 专业的企业资产管理系统(AMS/CRM)。提供固定资产管理、库存盘点、客户关系管理等一站式解决方案，助力企业降本增效。"/>
     <meta
-            content="Ciyo, 西柚资产, Xiyou Assets, 资产管理系统, Asset Management System, AMS, CRM, 客户关系管理, 固定资产管理, 企业资产, 库存盘点, IT资产管理, 数字化转型"
-            name="keywords"/>
-    <link href="src/assets/images/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+            name="keywords"
+            content="Ciyo, 西柚资产, Xiyou Assets, 资产管理系统, Asset Management System, AMS, CRM, 客户关系管理, 固定资产管理, 企业资产, 库存盘点, IT资产管理, 数字化转型"/>
+  <link rel="shortcut icon" type="image/x-icon" href="src/assets/images/favicon.ico"/>
 
     <style>
-        /* 防止页面刷新时白屏的初始样式 */
-        html {
-            background-color: #fafbfc;
-        }
+      /* 防止页面刷新时白屏的初始样式 */
+      html {
+        background-color: #fafbfc;
+      }
 
-        html.dark {
-            background-color: #070707;
-        }
+      html.dark {
+        background-color: #070707;
+      }
     </style>
 
     <script>
-        // 初始化 html class 主题属性
-        ;(function () {
-            try {
-                if (typeof Storage === 'undefined' || !window.localStorage) {
-                    return
-                }
+      // 初始化 html class 主题属性
+      ;(function () {
+        try {
+          if (typeof Storage === 'undefined' || !window.localStorage) {
+            return
+          }
 
-                const themeType = localStorage.getItem('sys-theme')
-                if (themeType === 'dark') {
-                    document.documentElement.classList.add('dark')
-                }
-            } catch (e) {
-                console.warn('Failed to apply initial theme:', e)
-            }
-        })()
+          const themeType = localStorage.getItem('sys-theme')
+          if (themeType === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (e) {
+          console.warn('Failed to apply initial theme:', e)
+        }
+      })()
     </script>
 </head>
 
 <body>
 <div id="app"></div>
-<script src="/src/main.ts" type="module"></script>
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>

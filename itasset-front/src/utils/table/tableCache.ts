@@ -85,6 +85,66 @@ export class TableCache<T> {
         this.enableLog = enableLog
     }
 
+    // 内部日志工具
+    private log(message: string, ...args: any[]) {
+        if (this.enableLog) {
+            console.log(`[TableCache] ${message}`, ...args)
+        }
+    }
+
+    // 生成稳定的缓存键
+    private generateKey(params: unknown): string {
+        return hash(params)
+    }
+
+    // 🔧 优化：增强类型安全性
+    private generateTags(params: Record<string, unknown>): Set<string> {
+        const tags = new Set<string>()
+
+        // 添加搜索条件标签
+        const searchKeys = Object.keys(params).filter(
+            (key) =>
+                !['current', 'size', 'total'].includes(key) && params[key] !== undefined && params[key] !== '' && params[key] !== null
+        )
+
+        if (searchKeys.length > 0) {
+            const searchTag = searchKeys.map((key) => `${key}:${String(params[key])}`).join('|')
+            tags.add(`search:${searchTag}`)
+        } else {
+            tags.add('search:default')
+        }
+
+        // 添加分页标签
+        tags.add(`pagination:${params.size || 10}`)
+        // 添加通用分页标签，用于清理所有分页缓存
+        tags.add('pagination')
+
+        return tags
+    }
+
+    // 🔧 优化：LRU 缓存清理
+    private evictLRU(): void {
+        if (this.cache.size <= this.maxSize) return
+
+        // 找到最少使用的缓存项
+        let lruKey = ''
+        let minAccessCount = Infinity
+        let oldestTime = Infinity
+
+        for (const [key, item] of this.cache.entries()) {
+            if (item.accessCount < minAccessCount || (item.accessCount === minAccessCount && item.lastAccessTime < oldestTime)) {
+                lruKey = key
+                minAccessCount = item.accessCount
+                oldestTime = item.lastAccessTime
+            }
+        }
+
+        if (lruKey) {
+            this.cache.delete(lruKey)
+            this.log(`LRU 清理缓存: ${lruKey}`)
+        }
+    }
+
     // 设置缓存
     set(params: unknown, data: T[], response: ApiResponse<T>): void {
         const key = this.generateKey(params)
@@ -195,65 +255,5 @@ export class TableCache<T> {
         }
 
         return cleanedCount
-    }
-
-    // 内部日志工具
-    private log(message: string, ...args: any[]) {
-        if (this.enableLog) {
-            console.log(`[TableCache] ${message}`, ...args)
-        }
-    }
-
-    // 生成稳定的缓存键
-    private generateKey(params: unknown): string {
-        return hash(params)
-    }
-
-    // 🔧 优化：增强类型安全性
-    private generateTags(params: Record<string, unknown>): Set<string> {
-        const tags = new Set<string>()
-
-        // 添加搜索条件标签
-        const searchKeys = Object.keys(params).filter(
-            (key) =>
-                !['current', 'size', 'total'].includes(key) && params[key] !== undefined && params[key] !== '' && params[key] !== null
-        )
-
-        if (searchKeys.length > 0) {
-            const searchTag = searchKeys.map((key) => `${key}:${String(params[key])}`).join('|')
-            tags.add(`search:${searchTag}`)
-        } else {
-            tags.add('search:default')
-        }
-
-        // 添加分页标签
-        tags.add(`pagination:${params.size || 10}`)
-        // 添加通用分页标签，用于清理所有分页缓存
-        tags.add('pagination')
-
-        return tags
-    }
-
-    // 🔧 优化：LRU 缓存清理
-    private evictLRU(): void {
-        if (this.cache.size <= this.maxSize) return
-
-        // 找到最少使用的缓存项
-        let lruKey = ''
-        let minAccessCount = Infinity
-        let oldestTime = Infinity
-
-        for (const [key, item] of this.cache.entries()) {
-            if (item.accessCount < minAccessCount || (item.accessCount === minAccessCount && item.lastAccessTime < oldestTime)) {
-                lruKey = key
-                minAccessCount = item.accessCount
-                oldestTime = item.lastAccessTime
-            }
-        }
-
-        if (lruKey) {
-            this.cache.delete(lruKey)
-            this.log(`LRU 清理缓存: ${lruKey}`)
-        }
     }
 }

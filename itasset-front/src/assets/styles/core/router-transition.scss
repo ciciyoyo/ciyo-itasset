@@ -91,15 +91,12 @@ $fade-easing: transition-config('fade-easing');
 .slide-left {
   @include slide-transition('left');
 }
-
 .slide-right {
   @include slide-transition('right');
 }
-
 .slide-top {
   @include slide-transition('top');
 }
-
 .slide-bottom {
   @include slide-transition('bottom');
 }

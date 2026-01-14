@@ -1,5 +1,6 @@
 import request from '@/utils/http'
 import {AppRouteRecord} from '@/types'
+import {formatMenuTitle} from '@/utils'
 
 /**
  * 后端返回的菜单元数据接口

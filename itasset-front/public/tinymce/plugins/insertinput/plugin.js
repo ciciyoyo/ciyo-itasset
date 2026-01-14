@@ -23,7 +23,7 @@ tinymce.PluginManager.add("insertinput", function (editor, url) {
             return {
                 //插件名和链接会显示在"帮助"→"插件"→"已安装的插件"中
                 name: "插入填空", //插件名称
-                url: "xx.xxxx.com" //作者网址
+                url: "doc.tduckcloud.com" //作者网址
             };
         }
     };

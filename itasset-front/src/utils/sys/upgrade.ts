@@ -39,51 +39,11 @@ import {useUserStore} from '@/store/modules/user'
 import {StorageConfig} from '@/utils/storage/storage-config'
 
 const upgradeLogList = ref([])
-
 /**
  * 版本管理器
  * 负责处理版本比较、升级检测和数据清理
  */
 class VersionManager {
-    /**
-     * 系统升级处理主流程
-     */
-    async processUpgrade(): Promise<void> {
-        // 跳过特定版本
-        if (this.shouldSkipUpgrade()) {
-            console.debug('[Upgrade] 跳过版本升级检查')
-            return
-        }
-
-        const storedVersion = this.getStoredVersion()
-
-        // 首次访问处理
-        if (this.isFirstVisit(storedVersion)) {
-            this.setStoredVersion(StorageConfig.CURRENT_VERSION)
-            // console.info('[Upgrade] 首次访问，已设置当前版本')
-            return
-        }
-
-        // 版本相同，无需升级
-        if (this.isSameVersion(storedVersion!)) {
-            // console.debug('[Upgrade] 版本相同，无需升级')
-            return
-        }
-
-        // 检查是否有需要升级的旧数据
-        const legacyStorage = this.findLegacyStorage()
-        if (!legacyStorage.oldSysKey && legacyStorage.oldVersionKeys.length === 0) {
-            this.setStoredVersion(StorageConfig.CURRENT_VERSION)
-            console.info('[Upgrade] 无旧数据，已更新版本号')
-            return
-        }
-
-        // 延迟执行升级流程，确保应用已完全加载
-        setTimeout(() => {
-            this.executeUpgrade(storedVersion!, legacyStorage)
-        }, StorageConfig.UPGRADE_DELAY)
-    }
-
     /**
      * 规范化版本号字符串，移除前缀 'v'
      */
@@ -251,6 +211,45 @@ class VersionManager {
         } catch (error) {
             console.error('[Upgrade] 系统升级处理失败:', error)
         }
+    }
+
+    /**
+     * 系统升级处理主流程
+     */
+    async processUpgrade(): Promise<void> {
+        // 跳过特定版本
+        if (this.shouldSkipUpgrade()) {
+            console.debug('[Upgrade] 跳过版本升级检查')
+            return
+        }
+
+        const storedVersion = this.getStoredVersion()
+
+        // 首次访问处理
+        if (this.isFirstVisit(storedVersion)) {
+            this.setStoredVersion(StorageConfig.CURRENT_VERSION)
+            // console.info('[Upgrade] 首次访问，已设置当前版本')
+            return
+        }
+
+        // 版本相同，无需升级
+        if (this.isSameVersion(storedVersion!)) {
+            // console.debug('[Upgrade] 版本相同，无需升级')
+            return
+        }
+
+        // 检查是否有需要升级的旧数据
+        const legacyStorage = this.findLegacyStorage()
+        if (!legacyStorage.oldSysKey && legacyStorage.oldVersionKeys.length === 0) {
+            this.setStoredVersion(StorageConfig.CURRENT_VERSION)
+            console.info('[Upgrade] 无旧数据，已更新版本号')
+            return
+        }
+
+        // 延迟执行升级流程，确保应用已完全加载
+        setTimeout(() => {
+            this.executeUpgrade(storedVersion!, legacyStorage)
+        }, StorageConfig.UPGRADE_DELAY)
     }
 }
 

@@ -27,13 +27,6 @@ export class MenuProcessor {
     }
 
     /**
-     * 验证菜单列表是否有效
-     */
-    validateMenuList(menuList: AppRouteRecord[]): boolean {
-        return Array.isArray(menuList) && menuList.length > 0
-    }
-
-    /**
      * 处理后端控制模式的菜单
      */
     private async processBackendMenu(): Promise<AppRouteRecord[]> {
@@ -76,6 +69,13 @@ export class MenuProcessor {
                 // 其他情况过滤掉
                 return false
             })
+    }
+
+    /**
+     * 验证菜单列表是否有效
+     */
+    validateMenuList(menuList: AppRouteRecord[]): boolean {
+        return Array.isArray(menuList) && menuList.length > 0
     }
 
     /**

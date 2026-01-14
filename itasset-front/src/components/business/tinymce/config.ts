@@ -21,8 +21,10 @@ const uploadUrl = `${baseUrl}/user/file/upload`
 export const tinymceEditorConfig = {
     language: 'zh_CN',
     menubar: 'false',
-    icons: 'ciyo',
-    skin: 'ciyo',
+    icons: 'tduck',
+    skin: 'tduck',
+    // skin_url: "/tinymce/skins/ui/tduck",
+    // content_css: "/tinymce/skins/content/tduck",
     cache_suffix: '?v=0.1.2',
     plugins,
     // entity_encoding: "row", // 所有字符都将以非实体形式保存，避免出现部分符号变成 html 编码
