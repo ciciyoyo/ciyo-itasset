@@ -1,5 +1,6 @@
 package com.ciyocloud.api.web.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class HealthController {
      * @return 健康状态
      */
     @GetMapping("/health")
-    @PermitAll
+    @SaIgnore
     public Map<String, Object> healthCheck() {
         Map<String, Object> status = new HashMap<>();
         status.put("status", "UP");

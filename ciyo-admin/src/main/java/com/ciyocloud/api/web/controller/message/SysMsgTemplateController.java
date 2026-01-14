@@ -12,7 +12,7 @@ import com.ciyocloud.message.util.PushMsgUtils;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class SysMsgTemplateController {
     /**
      * 查询消息列表
      */
-    @PreAuthorize("@ss.hasPermi('sys:msgtemplate:query')")
+    @SaCheckPermission("sys:msgtemplate:query")
     @GetMapping("/page")
     public Result queryPage(Page page, SysMsgTemplateEntity sysMsgTemplate) {
         return Result.success(sysMsgTemplateService.page(page, QueryWrapperUtils.toSimpleQuery(sysMsgTemplate)));
@@ -56,7 +56,7 @@ public class SysMsgTemplateController {
     /**
      * 获取消息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msgtemplate:query')")
+    @SaCheckPermission("sys:msgtemplate:query")
     @GetMapping(value = "/{id}")
     public Result getInfo(@PathVariable("id") Long id) {
         return Result.success(sysMsgTemplateService.getById(id));
@@ -65,7 +65,7 @@ public class SysMsgTemplateController {
     /**
      * 新增消息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msgtemplate:save')")
+    @SaCheckPermission("sys:msgtemplate:save")
     @Log(title = "消息通知模板", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@RequestBody SysMsgTemplateEntity sysMsgTemplate) {
@@ -75,7 +75,7 @@ public class SysMsgTemplateController {
     /**
      * 修改消息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msgtemplate:update')")
+    @SaCheckPermission("sys:msgtemplate:update")
     @Log(title = "消息通知模板", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@RequestBody SysMsgTemplateEntity sysMsgTemplate) {
@@ -85,7 +85,7 @@ public class SysMsgTemplateController {
     /**
      * 删除消息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msgtemplate:delete')")
+    @SaCheckPermission("sys:msgtemplate:delete")
     @Log(title = "消息通知模板", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result delete(@PathVariable List<String> ids) {

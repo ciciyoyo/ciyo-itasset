@@ -13,7 +13,7 @@ import com.ciyocloud.itam.vo.FailuresVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class FailuresController {
     /**
      * 查询故障列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:failures:page')")
+    @SaCheckPermission("itam:failures:page")
     @GetMapping("/page")
     public Result<PageResultVO<FailuresVO>> queryPage(PageRequest page, FailuresPageReq req) {
         return Result.success(new PageResultVO<>(failuresService.queryPageVo(page.toMpPage(), req)));

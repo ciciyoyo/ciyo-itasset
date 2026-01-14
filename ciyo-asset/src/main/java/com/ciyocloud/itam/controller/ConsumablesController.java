@@ -20,7 +20,7 @@ import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +45,7 @@ public class ConsumablesController {
     /**
      * 查询耗材列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:page')")
+    @SaCheckPermission("itam:consumables:page")
     @GetMapping("/page")
     public Result<PageResultVO<ConsumablesVO>> queryPage(PageRequest page, ConsumablesEntity consumables) {
         return Result.success(new PageResultVO<>(consumablesService.queryPageVo(page.toMpPage(), consumables)));
@@ -54,7 +54,7 @@ public class ConsumablesController {
     /**
      * 查询耗材列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:page')")
+    @SaCheckPermission("itam:consumables:page")
     @GetMapping("/list")
     public Result<List<ConsumablesEntity>> list(ConsumablesEntity consumables) {
         return Result.success(consumablesService.list(QueryWrapperUtils.toSimpleQuery(consumables)));
@@ -63,7 +63,7 @@ public class ConsumablesController {
     /**
      * 导出耗材列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:export')")
+    @SaCheckPermission("itam:consumables:export")
     @Log(title = "耗材", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(ConsumablesEntity consumables) {
@@ -76,7 +76,7 @@ public class ConsumablesController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:query')")
+    @SaCheckPermission("itam:consumables:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<ConsumablesEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(consumablesService.getById(id));
@@ -85,7 +85,7 @@ public class ConsumablesController {
     /**
      * 新增耗材
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:add')")
+    @SaCheckPermission("itam:consumables:add")
     @Log(title = "耗材", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody ConsumablesEntity consumables) {
@@ -96,7 +96,7 @@ public class ConsumablesController {
     /**
      * 修改耗材
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:update')")
+    @SaCheckPermission("itam:consumables:update")
     @Log(title = "耗材", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody ConsumablesEntity consumables) {
@@ -109,7 +109,7 @@ public class ConsumablesController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:delete')")
+    @SaCheckPermission("itam:consumables:delete")
     @Log(title = "耗材", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -119,7 +119,7 @@ public class ConsumablesController {
     /**
      * 耗材入库
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:update')")
+    @SaCheckPermission("itam:consumables:update")
     @Log(title = "耗材", businessType = BusinessType.UPDATE)
     @PostMapping("/stockIn")
     public Result<Boolean> stockIn(@Validated @RequestBody ConsumableStockReq req) {
@@ -132,7 +132,7 @@ public class ConsumablesController {
     /**
      * 耗材领取
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:update')")
+    @SaCheckPermission("itam:consumables:update")
     @Log(title = "耗材", businessType = BusinessType.UPDATE)
     @PostMapping("/collect")
     public Result<Boolean> collect(@Validated @RequestBody ConsumableStockReq req) {
@@ -146,7 +146,7 @@ public class ConsumablesController {
     /**
      * 查询耗材出入库明细列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:consumables:query')")
+    @SaCheckPermission("itam:consumables:query")
     @GetMapping("/transactions/page")
     public Result<PageResultVO<ConsumableTransactionsVO>> queryTransactionsPage(PageRequest page, ConsumableTransactionsEntity transaction) {
         return Result.success(new PageResultVO<>(consumableTransactionsService.queryPageVo(page.toMpPage(), transaction)));
@@ -156,7 +156,7 @@ public class ConsumablesController {
      * 获取耗材分类统计
      */
     @GetMapping("/stats/category")
-    @PreAuthorize("@ss.hasPermi('itam:consumables:page')")
+    @SaCheckPermission("itam:consumables:page")
     public Result<List<Map<String, Object>>> getCategoryStats() {
         return Result.success(consumablesService.getCategoryStats());
     }
@@ -165,7 +165,7 @@ public class ConsumablesController {
      * 获取耗材总览统计
      */
     @GetMapping("/stats/overview")
-    @PreAuthorize("@ss.hasPermi('itam:consumables:page')")
+    @SaCheckPermission("itam:consumables:page")
     public Result<Map<String, Object>> getOverviewStats() {
         return Result.success(consumablesService.getOverviewStats());
     }
@@ -174,7 +174,7 @@ public class ConsumablesController {
      * 获取耗材月度出入库统计
      */
     @GetMapping("/stats/monthly")
-    @PreAuthorize("@ss.hasPermi('itam:consumables:page')")
+    @SaCheckPermission("itam:consumables:page")
     public Result<List<Map<String, Object>>> getMonthlyStats() {
         return Result.success(consumableTransactionsService.getMonthlyStats());
     }

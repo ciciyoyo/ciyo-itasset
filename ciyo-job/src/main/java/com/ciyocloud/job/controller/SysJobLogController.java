@@ -6,7 +6,7 @@ import com.ciyocloud.common.util.Result;
 import com.ciyocloud.job.entity.SysJobLogEntity;
 import com.ciyocloud.job.service.SysJobLogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class SysJobLogController {
     /**
      * 查询定时任务调度日志列表
      */
-    @PreAuthorize("@ss.hasPermi('system:job:list')")
+    @SaCheckPermission("system:job:list")
     @GetMapping("/page")
     public Result<Page<SysJobLogEntity>> page(Page<SysJobLogEntity> page, SysJobLogEntity sysJobLog) {
         return Result.success(jobLogService.page(page, QueryWrapperUtils.toSimpleQuery(sysJobLog)));
@@ -35,7 +35,7 @@ public class SysJobLogController {
     /**
      * 根据调度编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:job:query')")
+    @SaCheckPermission("system:job:query")
     @GetMapping(value = "/{jobLogId}")
     public Result<SysJobLogEntity> getInfo(@PathVariable Long jobLogId) {
         return Result.success(jobLogService.getById(jobLogId));
@@ -45,7 +45,7 @@ public class SysJobLogController {
     /**
      * 删除定时任务调度日志
      */
-    @PreAuthorize("@ss.hasPermi('system:job:remove')")
+    @SaCheckPermission("system:job:remove")
     @PostMapping("/delete/{jobLogIds}")
     public Result<Boolean> remove(@PathVariable List<Long> jobLogIds) {
         return Result.success(jobLogService.removeBatchByIds(jobLogIds));
@@ -54,7 +54,7 @@ public class SysJobLogController {
     /**
      * 清空定时任务调度日志
      */
-    @PreAuthorize("@ss.hasPermi('system:job:remove')")
+    @SaCheckPermission("system:job:remove")
     @PostMapping("/clean")
     public Result<Void> clean() {
         jobLogService.cleanAll();

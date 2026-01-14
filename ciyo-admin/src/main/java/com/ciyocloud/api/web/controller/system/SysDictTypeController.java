@@ -1,6 +1,7 @@
 package com.ciyocloud.api.web.controller.system;
 
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
@@ -13,7 +14,7 @@ import com.ciyocloud.system.entity.SysDictTypeEntity;
 import com.ciyocloud.system.service.SysDictTypeService;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class SysDictTypeController {
     /**
      * 分页字典类型列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:list')")
+    @SaCheckPermission("system:dict:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysDictTypeEntity dictType) {
         return Result.success(dictTypeService.page(page, QueryWrapperUtils.toSimpleQuery(dictType)));
@@ -47,7 +48,7 @@ public class SysDictTypeController {
      * @param dictType 字典类型
      */
     @Log(title = "字典类型", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:dict:export')")
+    @SaCheckPermission("system:dict:export")
     @GetMapping("/export")
     public void export(SysDictTypeEntity dictType) {
         List<SysDictTypeEntity> list = dictTypeService.list(QueryWrapperUtils.toSimpleQuery(dictType));
@@ -67,9 +68,9 @@ public class SysDictTypeController {
     /**
      * 查询字典类型详细
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:query')")
+    @SaCheckPermission("system:dict:query")
     @GetMapping(value = "/{dictId:\\d+}")
-    @PermitAll
+    @SaIgnore
     public Result getInfo(@PathVariable Long dictId) {
         return Result.success(dictTypeService.getById(dictId));
     }
@@ -77,7 +78,7 @@ public class SysDictTypeController {
     /**
      * 新增字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:add')")
+    @SaCheckPermission("system:dict:add")
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysDictTypeEntity dict) {
@@ -91,7 +92,7 @@ public class SysDictTypeController {
     /**
      * 修改字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:edit')")
+    @SaCheckPermission("system:dict:edit")
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysDictTypeEntity dict) {
@@ -105,7 +106,7 @@ public class SysDictTypeController {
     /**
      * 删除字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:remove')")
+    @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictIds}")
     public Result delete(@PathVariable List<Long> dictIds) {
@@ -116,7 +117,7 @@ public class SysDictTypeController {
     /**
      * 刷新字典缓存
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:remove')")
+    @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
     public Result refreshCache() {

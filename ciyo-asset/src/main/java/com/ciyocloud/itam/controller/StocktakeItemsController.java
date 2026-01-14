@@ -13,7 +13,7 @@ import com.ciyocloud.itam.vo.StocktakeItemsVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class StocktakeItemsController {
     /**
      * 查询盘点明细列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakeItems:page')")
+    @SaCheckPermission("itam:stocktakeItems:page")
     @GetMapping("/page")
     public Result<PageResultVO<StocktakeItemsVO>> queryPage(PageRequest page, StocktakeItemsPageReq req) {
         return Result.success(new PageResultVO<>(stocktakeItemsService.queryPageVo(page.toMpPage(), req)));
@@ -44,7 +44,7 @@ public class StocktakeItemsController {
     /**
      * 导出盘点明细列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakeItems:export')")
+    @SaCheckPermission("itam:stocktakeItems:export")
     @Log(title = "盘点明细", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(StocktakeItemsPageReq req) {
@@ -58,7 +58,7 @@ public class StocktakeItemsController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakeItems:delete')")
+    @SaCheckPermission("itam:stocktakeItems:delete")
     @Log(title = "盘点明细", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -70,7 +70,7 @@ public class StocktakeItemsController {
      *
      * @param stocktakeItems 盘点明细
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakeItems:edit')")
+    @SaCheckPermission("itam:stocktakeItems:edit")
     @Log(title = "盘点明细", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     public Result<Boolean> edit(@RequestBody StocktakeItemsEntity stocktakeItems) {

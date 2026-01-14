@@ -24,7 +24,7 @@ import com.ciyocloud.itam.vo.AssetsReportVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +50,7 @@ public class AccessoriesController {
     /**
      * 查询配件列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     @GetMapping("/page")
     public Result<PageResultVO<AccessoriesVO>> queryPage(PageRequest page, AccessoriesPageReq req) {
         return Result.success(new PageResultVO<>(accessoriesService.queryPageVo(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(req, AccessoriesEntity.class))));
@@ -59,7 +59,7 @@ public class AccessoriesController {
     /**
      * 查询配件列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:list')")
+    @SaCheckPermission("itam:accessories:list")
     @GetMapping("/list")
     public Result<List<AccessoriesVO>> list(AccessoriesPageReq req) {
         return Result.success(accessoriesService.queryListVo(QueryWrapperUtils.toSimpleQuery(req, AccessoriesEntity.class)));
@@ -68,7 +68,7 @@ public class AccessoriesController {
     /**
      * 导出配件列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:export')")
+    @SaCheckPermission("itam:accessories:export")
     @Log(title = "配件", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(AccessoriesPageReq req) {
@@ -81,7 +81,7 @@ public class AccessoriesController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:query')")
+    @SaCheckPermission("itam:accessories:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<AccessoriesEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(accessoriesService.getById(id));
@@ -90,7 +90,7 @@ public class AccessoriesController {
     /**
      * 新增配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:add')")
+    @SaCheckPermission("itam:accessories:add")
     @Log(title = "配件", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody AccessoriesEntity accessories) {
@@ -101,7 +101,7 @@ public class AccessoriesController {
     /**
      * 修改配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "配件", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody AccessoriesEntity accessories) {
@@ -114,7 +114,7 @@ public class AccessoriesController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:delete')")
+    @SaCheckPermission("itam:accessories:delete")
     @Log(title = "配件", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -124,7 +124,7 @@ public class AccessoriesController {
     /**
      * 分配配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "配件", businessType = BusinessType.UPDATE)
     @PostMapping("/allocate")
     public Result<Boolean> allocate(@RequestBody AllocationsEntity allocations) {
@@ -135,7 +135,7 @@ public class AccessoriesController {
     /**
      * 取消分配配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "配件", businessType = BusinessType.UPDATE)
     @PostMapping("/deallocate/{id}")
     public Result<Boolean> deallocate(@PathVariable("id") Long id) {
@@ -145,7 +145,7 @@ public class AccessoriesController {
     /**
      * 查询配件分配列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     @GetMapping("/allocation/page")
     public Result<PageResultVO<AllocationsVO>> queryAllocationPage(PageRequest page, AllocationsPageReq req) {
         if (req == null) {
@@ -159,7 +159,7 @@ public class AccessoriesController {
      * 获取当年内每月配件价值的趋势
      */
     @GetMapping("/stats/monthly-value")
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     public Result<List<AssetsReportVO>> getMonthlyValueStats() {
         return Result.success(assetsReportService.getMonthlyTrend(AssetType.ACCESSORY));
     }
@@ -168,7 +168,7 @@ public class AccessoriesController {
      * 获取配件汇总统计数据
      */
     @GetMapping("/stats/summary")
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     public Result<Map<String, Object>> getSummaryStats() {
         return Result.success(accessoriesService.getSummaryStats());
     }
@@ -176,7 +176,7 @@ public class AccessoriesController {
     /**
      * 报告故障
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "故障报告", businessType = BusinessType.UPDATE)
     @PostMapping("/report")
     public Result<Boolean> report(@RequestBody FailuresReportReq req) {

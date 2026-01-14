@@ -23,7 +23,7 @@ import com.ciyocloud.system.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -52,7 +52,7 @@ public class SysAnnouncementController {
      * 通知分页列表查询
      */
     @GetMapping(value = "/page")
-    @PreAuthorize("@ss.hasPermi('sys:announcement:query')")
+    @SaCheckPermission("sys:announcement:query")
     public Result<IPage<SysAnnounceEntity>> queryPage(SysAnnounceEntity sysAnnouncement, Page page) {
         QueryWrapper<SysAnnounceEntity> queryWrapper = QueryWrapperUtils.toSimpleQuery(sysAnnouncement);
         queryWrapper.eq("msg_category", "1");
@@ -64,7 +64,7 @@ public class SysAnnouncementController {
      * 添加
      */
     @PostMapping
-    @PreAuthorize("@ss.hasPermi('sys:announcement:save')")
+    @SaCheckPermission("sys:announcement:save")
     @Log(title = "通知公告", businessType = BusinessType.INSERT)
     public Result<SysAnnounceEntity> save(@RequestBody SysAnnounceEntity sysAnnouncement) {
         // 标题处理xss攻击的问题
@@ -83,7 +83,7 @@ public class SysAnnouncementController {
      * 编辑
      */
     @PutMapping
-    @PreAuthorize("@ss.hasPermi('sys:announcement:update')")
+    @SaCheckPermission("sys:announcement:update")
     @Log(title = "通知公告", businessType = BusinessType.UPDATE)
     public Result<SysAnnounceEntity> update(@RequestBody SysAnnounceEntity sysAnnouncement) {
         //标题处理xss攻击的问题
@@ -98,7 +98,7 @@ public class SysAnnouncementController {
      * 通过id删除
      */
     @DeleteMapping("/{ids}")
-    @PreAuthorize("@ss.hasPermi('sys:announcement:delete')")
+    @SaCheckPermission("sys:announcement:delete")
     @Log(title = "通知公告", businessType = BusinessType.DELETE)
     public Result<SysAnnounceEntity> delete(@PathVariable List<Long> ids) {
         List<SysAnnounceEntity> announcementList = ids.stream().map(id -> {
@@ -115,7 +115,7 @@ public class SysAnnouncementController {
      * 通过id查询
      */
     @GetMapping("/{id}")
-    @PreAuthorize("@ss.hasPermi('sys:announcement:query')")
+    @SaCheckPermission("sys:announcement:query")
     public Result<SysAnnounceEntity> getInfo(@PathVariable(name = "id") Long id) {
         SysAnnounceEntity entity = sysAnnouncementService.getById(id);
         if (entity == null) {
@@ -146,7 +146,7 @@ public class SysAnnouncementController {
      */
     @PostMapping("/release/{id}")
     @Log(title = "通知公告", businessType = BusinessType.OTHER)
-    @PreAuthorize("@ss.hasPermi('sys:announcement:release')")
+    @SaCheckPermission("sys:announcement:release")
     public Result<SysAnnounceEntity> releaseAnnouncement(@PathVariable(name = "id", required = true) Long id) {
         SysAnnounceEntity sysAnnouncement = sysAnnouncementService.getById(id);
         if (sysAnnouncement != null) {
@@ -172,7 +172,7 @@ public class SysAnnouncementController {
      */
     @Log(title = "通知公告", businessType = BusinessType.OTHER)
     @PostMapping("/revoke/{id}")
-    @PreAuthorize("@ss.hasPermi('sys:announcement:revoke')")
+    @SaCheckPermission("sys:announcement:revoke")
     public Result<SysAnnounceEntity> revokeAnnouncement(@PathVariable(name = "id", required = true) Long id) {
         SysAnnounceEntity sysAnnouncement = sysAnnouncementService.getById(id);
         if (sysAnnouncement != null) {

@@ -14,7 +14,6 @@ import com.ciyocloud.system.constant.UserConstants;
 import com.ciyocloud.system.entity.SysUserEntity;
 import com.ciyocloud.system.request.UpdatePwdRequest;
 import com.ciyocloud.system.service.SysUserService;
-import com.ciyocloud.system.service.security.TokenService;
 import com.ciyocloud.system.util.LoginUtils;
 import com.ciyocloud.system.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +35,6 @@ import java.util.Map;
 @RequestMapping("/system/user/profile")
 public class SysProfileController {
     private final SysUserService userService;
-
-    private final TokenService tokenService;
 
     private final LoginUtils loginUtils;
 
@@ -69,13 +66,13 @@ public class SysProfileController {
         user.setUserName(null);
         userService.checkUserDataScope(user.getId());
         if (userService.updateUserProfile(user) > 0) {
-            LoginUserEntity loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            LoginUserEntity loginUser = SecurityUtils.getLoginUser();
             // 更新缓存用户信息
             loginUser.getUser().setNickName(user.getNickName());
             loginUser.getUser().setPhonenumber(user.getPhonenumber());
             loginUser.getUser().setEmail(user.getEmail());
             loginUser.getUser().setSex(user.getSex());
-            tokenService.setLoginUser(loginUser);
+            SecurityUtils.setLoginUser(loginUser);
             return Result.success();
         }
         return Result.failed("修改个人信息异常，请联系管理员");
@@ -90,7 +87,7 @@ public class SysProfileController {
         // 解密用户密码
         String oldPassword = PasswordUtils.decryptPassword(updatePwdRequest.getOldPassword());
         String newPassword = PasswordUtils.decryptPassword(updatePwdRequest.getNewPassword());
-        LoginUserEntity loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        LoginUserEntity loginUser = SecurityUtils.getLoginUser();
         String userName = loginUser.getUsername();
         String password = loginUser.getPassword();
         PasswordUtils.checkPassword(newPassword);
@@ -103,7 +100,7 @@ public class SysProfileController {
         if (userService.resetUserPwd(userName, SecurityUtils.encryptPassword(newPassword)) > 0) {
             // 更新缓存用户密码
             loginUser.getUser().setPassword(SecurityUtils.encryptPassword(newPassword));
-            tokenService.setLoginUser(loginUser);
+            SecurityUtils.setLoginUser(loginUser);
             // 记录状态 表示已经修改过密码
             loginUtils.updateChangedPasswordStatus(loginUser.getUser());
             return Result.success();
@@ -120,13 +117,13 @@ public class SysProfileController {
         if (!file.isEmpty()) {
             String path = "avatar" + IdUtil.simpleUUID() + CharUtil.DOT + "png";
             String avatar = OssStorageFactory.getStorageService().upload(file.getInputStream(), path);
-            LoginUserEntity loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            LoginUserEntity loginUser = SecurityUtils.getLoginUser();
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar)) {
                 Map<String, Object> ajax = new HashMap<>();
                 ajax.put("imgUrl", avatar);
                 // 更新缓存用户头像
                 loginUser.getUser().setAvatar(avatar);
-                tokenService.setLoginUser(loginUser);
+                SecurityUtils.setLoginUser(loginUser);
                 return Result.success(ajax);
             }
         }

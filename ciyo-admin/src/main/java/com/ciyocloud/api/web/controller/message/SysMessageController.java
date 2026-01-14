@@ -8,7 +8,7 @@ import com.ciyocloud.message.service.SysMessageService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class SysMessageController {
     /**
      * 查询消息列表
      */
-    @PreAuthorize("@ss.hasPermi('sys:msg:page')")
+    @SaCheckPermission("sys:msg:page")
     @GetMapping("/page")
     public Result queryPage(Page page, SysMessageEntity sysMessage) {
         return Result.success(sysMessageService.page(page, QueryWrapperUtils.toSimpleQuery(sysMessage)));
@@ -38,7 +38,7 @@ public class SysMessageController {
     /**
      * 获取消息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msg:query')")
+    @SaCheckPermission("sys:msg:query")
     @GetMapping(value = "/{id}")
     public Result getInfo(@PathVariable("id") Long id) {
         return Result.success(sysMessageService.getById(id));
@@ -48,7 +48,7 @@ public class SysMessageController {
     /**
      * 删除消息
      */
-    @PreAuthorize("@ss.hasPermi('sys:msg:delete')")
+    @SaCheckPermission("sys:msg:delete")
     @Log(title = "消息日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result delete(@PathVariable List<Long> ids) {

@@ -16,9 +16,8 @@ import com.ciyocloud.system.request.SysRolePageReq;
 import com.ciyocloud.system.service.SysRoleService;
 import com.ciyocloud.system.service.SysUserService;
 import com.ciyocloud.system.service.security.SysPermissionService;
-import com.ciyocloud.system.service.security.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +35,6 @@ import java.util.List;
 public class SysRoleController {
     private final SysRoleService roleService;
 
-    private final TokenService tokenService;
-
     private final SysPermissionService permissionService;
 
     private final SysUserService userService;
@@ -46,7 +43,7 @@ public class SysRoleController {
     /**
      * 分页角色列表
      */
-    @PreAuthorize("@ss.hasPermi('system:role:list')")
+    @SaCheckPermission("system:role:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysRolePageReq role) {
         return Result.success(roleService.page(page, role));
@@ -57,7 +54,7 @@ public class SysRoleController {
      * 获取角色列表
      */
     @GetMapping("/list")
-    @PreAuthorize("@ss.hasPermi('system:role:list')")
+    @SaCheckPermission("system:role:list")
     public Result<List<SysRoleEntity>> list() {
         return Result.success(roleService.listRoles(new SysRolePageReq()));
     }
@@ -67,7 +64,7 @@ public class SysRoleController {
      * 导出角色列表
      */
     @Log(title = "角色管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:role:export')")
+    @SaCheckPermission("system:role:export")
     @GetMapping("/export")
     public void export(SysRolePageReq role) {
         List<SysRoleEntity> list = roleService.list(QueryWrapperUtils.toSimpleQuery(role, SysRoleEntity.class));
@@ -77,7 +74,7 @@ public class SysRoleController {
     /**
      * 根据角色编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
+    @SaCheckPermission("system:role:query")
     @GetMapping(value = "/{roleId}")
     public Result getInfo(@PathVariable Long roleId) {
         return Result.success(roleService.getById(roleId));
@@ -86,7 +83,7 @@ public class SysRoleController {
     /**
      * 新增角色
      */
-    @PreAuthorize("@ss.hasPermi('system:role:add')")
+    @SaCheckPermission("system:role:add")
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysRoleEntity role) {
@@ -110,7 +107,7 @@ public class SysRoleController {
     /**
      * 修改保存角色
      */
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+    @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysRoleEntity role) {
@@ -124,13 +121,13 @@ public class SysRoleController {
 
         if (roleService.updateRole(role) > 0) {
             // 更新缓存用户权限
-            LoginUserEntity loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            LoginUserEntity loginUser = SecurityUtils.getLoginUser();
             if (ObjectUtil.isNotNull(loginUser.getUser()) && !loginUser.getUser().isAdmin()) {
                 loginUser.setPermissions(permissionService.getMenuPermission(loginUser.getUser()));
                 SysUserEntity user = userService.getUserByUserName(loginUser.getUser().getUserName());
                 SysUserVO sysUserVO = JsonUtils.objToObj(user, SysUserVO.class);
                 loginUser.setUser(sysUserVO);
-                tokenService.setLoginUser(loginUser);
+                SecurityUtils.setLoginUser(loginUser);
             }
             return Result.success();
         }
@@ -140,7 +137,7 @@ public class SysRoleController {
     /**
      * 修改保存数据权限
      */
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+    @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/dataScope")
     public Result dataScope(@RequestBody SysRoleEntity role) {
@@ -151,7 +148,7 @@ public class SysRoleController {
     /**
      * 状态修改
      */
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+    @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public Result changeStatus(@RequestBody SysRoleEntity role) {
@@ -163,7 +160,7 @@ public class SysRoleController {
     /**
      * 删除角色
      */
-    @PreAuthorize("@ss.hasPermi('system:role:remove')")
+    @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{roleIds}")
     public Result delete(@PathVariable List<Long> roleIds) {
@@ -173,7 +170,7 @@ public class SysRoleController {
     /**
      * 获取角色选择框列表
      */
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
+    @SaCheckPermission("system:role:query")
     @GetMapping("/optionselect")
     public Result optionselect() {
         return Result.success(roleService.list(Wrappers.<SysRoleEntity>lambdaQuery().eq(SysRoleEntity::getStatus, "0")));

@@ -21,7 +21,7 @@ import com.ciyocloud.system.service.SysRoleService;
 import com.ciyocloud.system.service.SysUserService;
 import com.ciyocloud.system.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +50,7 @@ public class SysUserController {
      * 获取用户列表
      */
     @GetMapping("/page")
-    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @SaCheckPermission("system:user:list")
     public Result<Page<SysUserEntity>> queryPage(Page<SysUserEntity> page, SysUserPageReq user) {
         Page<SysUserEntity> pageData = userService.page(page, user);
         return Result.success(pageData);
@@ -61,7 +61,7 @@ public class SysUserController {
      * 导出用户列表
      */
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:user:export')")
+    @SaCheckPermission("system:user:export")
     @GetMapping("/export")
     public void export(SysUserPageReq user) {
         List<SysUserEntity> list = userService.listUsers(user);
@@ -72,7 +72,7 @@ public class SysUserController {
      * 导入用户列表
      */
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
-    @PreAuthorize("@ss.hasPermi('system:user:import')")
+    @SaCheckPermission("system:user:import")
     @PostMapping("/importData")
     public Result importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelResult<SysUserEntity> result = ExcelUtils.importExcel(file.getInputStream(), SysUserEntity.class, new SysUserImportListener(updateSupport));
@@ -90,7 +90,7 @@ public class SysUserController {
     /**
      * 根据用户编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:user:query')")
+    @SaCheckPermission("system:user:query")
     @GetMapping(value = {"/", "/{userId}"})
     public Result getInfo(@PathVariable(value = "userId", required = false) Long userId) {
         Map<String, Object> result = new HashMap<>();
@@ -110,7 +110,7 @@ public class SysUserController {
     /**
      * 新增用户
      */
-    @PreAuthorize("@ss.hasPermi('system:user:add')")
+    @SaCheckPermission("system:user:add")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysUserEntity user) {
@@ -131,7 +131,7 @@ public class SysUserController {
     /**
      * 修改用户
      */
-    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysUserEntity user) {
@@ -151,7 +151,7 @@ public class SysUserController {
     /**
      * 删除用户
      */
-    @PreAuthorize("@ss.hasPermi('system:user:remove')")
+    @SaCheckPermission("system:user:remove")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public Result delete(@PathVariable List<Long> userIds) {
@@ -161,7 +161,7 @@ public class SysUserController {
     /**
      * 重置密码
      */
-    @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
+    @SaCheckPermission("system:user:resetPwd")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public Result resetPwd(@RequestBody SysUserEntity user) {
@@ -176,7 +176,7 @@ public class SysUserController {
     /**
      * 状态修改
      */
-    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public Result changeStatus(@RequestBody SysUserEntity user) {
@@ -189,7 +189,7 @@ public class SysUserController {
     /**
      * 根据用户编号获取授权角色
      */
-    @PreAuthorize("@ss.hasPermi('system:user:query')")
+    @SaCheckPermission("system:user:query")
     @GetMapping("/authRole/{userId}")
     public Result authRole(@PathVariable("userId") Long userId) {
         Map<String, Object> ajax = new HashMap<>();
@@ -203,7 +203,7 @@ public class SysUserController {
     /**
      * 用户授权角色
      */
-    @PreAuthorize("@ss.hasPermi('system:user:edit')")
+    @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
     public Result insertAuthRole(Long userId, @RequestParam("roleIds") List<Long> roleIds) {

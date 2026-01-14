@@ -38,7 +38,7 @@ public class RepeatSubmitAspect {
      * 防重提交 redis key
      */
     String REPEAT_SUBMIT_KEY = "global:repeat_submit:";
-    @Value("${token.header}")
+    @Value("${sa-token.token-name}")
     private String header;
 
     @Before("@annotation(repeatSubmit)")

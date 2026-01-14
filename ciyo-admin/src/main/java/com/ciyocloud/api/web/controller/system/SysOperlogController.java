@@ -9,7 +9,7 @@ import com.ciyocloud.oplog.enums.BusinessType;
 import com.ciyocloud.system.entity.SysOperLogEntity;
 import com.ciyocloud.system.service.SysOperLogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class SysOperlogController {
      * @param operLog 操作日志
      * @return 操作日志列表
      */
-    @PreAuthorize("@ss.hasPermi('monitor:operlog:list')")
+    @SaCheckPermission("monitor:operlog:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysOperLogEntity operLog) {
         return Result.success(operLogService.page(page, QueryWrapperUtils.toSimpleQuery(operLog)));
@@ -45,7 +45,7 @@ public class SysOperlogController {
      * @param operLog 操作日志
      */
     @Log(title = "操作日志", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('monitor:operlog:export')")
+    @SaCheckPermission("monitor:operlog:export")
     @GetMapping("/export")
     public void export(SysOperLogEntity operLog) {
         List<SysOperLogEntity> list = operLogService.list(QueryWrapperUtils.toSimpleQuery(operLog));
@@ -59,7 +59,7 @@ public class SysOperlogController {
      * @return 结果
      */
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
-    @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
+    @SaCheckPermission("monitor:operlog:remove")
     @DeleteMapping("/{operIds}")
     public Result remove(@PathVariable List<Long> operIds) {
         return Result.success(operLogService.removeByIds(operIds));
@@ -69,7 +69,7 @@ public class SysOperlogController {
      * 清空操作日志
      */
     @Log(title = "操作日志", businessType = BusinessType.CLEAN)
-    @PreAuthorize("@ss.hasPermi('monitor:operlog:remove')")
+    @SaCheckPermission("monitor:operlog:remove")
     @DeleteMapping("/clean")
     public Result clean() {
         operLogService.cleanOperLog();

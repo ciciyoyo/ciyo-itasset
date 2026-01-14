@@ -13,7 +13,7 @@ import com.ciyocloud.itam.service.LocationsService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class LocationsController {
     /**
      * 查询物理位置列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:page')")
+    @SaCheckPermission("itam:locations:page")
     @GetMapping("/page")
     public Result<PageResultVO<LocationsEntity>> queryPage(PageRequest page, LocationsEntity locations) {
         return Result.success(new PageResultVO<>(locationsService.page(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(locations))));
@@ -46,7 +46,7 @@ public class LocationsController {
     /**
      * 获取物理位置树
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:query')")
+    @SaCheckPermission("itam:locations:query")
     @GetMapping("/tree")
     public Result<List<LocationsEntity>> getTree(LocationsEntity locations) {
         return Result.success(locationsService.getTree(locations));
@@ -55,7 +55,7 @@ public class LocationsController {
     /**
      * 导出物理位置列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:export')")
+    @SaCheckPermission("itam:locations:export")
     @Log(title = "物理位置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(LocationsEntity locations) {
@@ -68,7 +68,7 @@ public class LocationsController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:query')")
+    @SaCheckPermission("itam:locations:query")
     @GetMapping(value = "/{id}")
     public Result<LocationsEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(locationsService.getById(id));
@@ -77,7 +77,7 @@ public class LocationsController {
     /**
      * 新增物理位置
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:add')")
+    @SaCheckPermission("itam:locations:add")
     @Log(title = "物理位置", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody LocationsEntity locations) {
@@ -88,7 +88,7 @@ public class LocationsController {
     /**
      * 修改物理位置
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:update')")
+    @SaCheckPermission("itam:locations:update")
     @Log(title = "物理位置", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody LocationsEntity locations) {
@@ -101,7 +101,7 @@ public class LocationsController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:locations:delete')")
+    @SaCheckPermission("itam:locations:delete")
     @Log(title = "物理位置", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {

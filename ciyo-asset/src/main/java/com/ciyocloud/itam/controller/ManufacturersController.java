@@ -13,7 +13,7 @@ import com.ciyocloud.itam.service.ManufacturersService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class ManufacturersController {
     /**
      * 查询制造商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:page')")
+    @SaCheckPermission("itam:manufacturers:page")
     @GetMapping("/page")
     public Result<PageResultVO<ManufacturersEntity>> queryPage(PageRequest page, ManufacturersEntity manufacturers) {
         return Result.success(new PageResultVO<>(manufacturersService.page(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(manufacturers))));
@@ -45,7 +45,7 @@ public class ManufacturersController {
     /**
      * 查询制造商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:list')")
+    @SaCheckPermission("itam:manufacturers:list")
     @GetMapping("/list")
     public Result<List<ManufacturersEntity>> list(ManufacturersEntity manufacturers) {
         return Result.success(manufacturersService.list(QueryWrapperUtils.toSimpleQuery(manufacturers)));
@@ -54,7 +54,7 @@ public class ManufacturersController {
     /**
      * 导出制造商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:export')")
+    @SaCheckPermission("itam:manufacturers:export")
     @Log(title = "制造商", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(ManufacturersEntity manufacturers) {
@@ -67,7 +67,7 @@ public class ManufacturersController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:query')")
+    @SaCheckPermission("itam:manufacturers:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<ManufacturersEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(manufacturersService.getById(id));
@@ -76,7 +76,7 @@ public class ManufacturersController {
     /**
      * 新增制造商
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:add')")
+    @SaCheckPermission("itam:manufacturers:add")
     @Log(title = "制造商", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody ManufacturersEntity manufacturers) {
@@ -87,7 +87,7 @@ public class ManufacturersController {
     /**
      * 修改制造商
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:update')")
+    @SaCheckPermission("itam:manufacturers:update")
     @Log(title = "制造商", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody ManufacturersEntity manufacturers) {
@@ -100,7 +100,7 @@ public class ManufacturersController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:manufacturers:delete')")
+    @SaCheckPermission("itam:manufacturers:delete")
     @Log(title = "制造商", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {

@@ -1,5 +1,6 @@
 package com.ciyocloud.api.web.controller.system;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -14,7 +15,7 @@ import com.ciyocloud.system.service.SysDictDataService;
 import com.ciyocloud.system.service.SysDictTypeService;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class SysDictDataController {
     /**
      * 分页字典数据列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:list')")
+    @SaCheckPermission("system:dict:list")
     @GetMapping("/page")
     public Result<Page<SysDictDataEntity>> queryPage(Page<SysDictDataEntity> page, SysDictDataEntity dictData) {
         return Result.success(dictDataService.page(page, Wrappers.lambdaQuery(SysDictDataEntity.class)
@@ -53,7 +54,7 @@ public class SysDictDataController {
      * @param dictData 字典数据
      */
     @Log(title = "字典数据", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:dict:export')")
+    @SaCheckPermission("system:dict:export")
     @GetMapping("/export")
     public void export(SysDictDataEntity dictData) {
         List<SysDictDataEntity> list = dictDataService.list(Wrappers.lambdaQuery(SysDictDataEntity.class)
@@ -66,7 +67,7 @@ public class SysDictDataController {
     /**
      * 查询字典数据详细
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:query')")
+    @SaCheckPermission("system:dict:query")
     @GetMapping(value = "/{dictCode}")
     public Result getInfo(@PathVariable Long dictCode) {
         return Result.success(dictDataService.getById(dictCode));
@@ -76,7 +77,7 @@ public class SysDictDataController {
      * 根据字典类型查询字典数据信息
      */
     @GetMapping(value = "/type/{dictType}")
-    @PermitAll
+    @SaIgnore
     public Result dictType(@PathVariable String dictType) {
         List<SysDictDataEntity> data = dictTypeService.getDictDataByType(dictType);
         if (ObjectUtil.isNull(data)) {
@@ -88,7 +89,7 @@ public class SysDictDataController {
     /**
      * 新增字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:add')")
+    @SaCheckPermission("system:dict:add")
     @Log(title = "字典数据", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysDictDataEntity dict) {
@@ -99,7 +100,7 @@ public class SysDictDataController {
     /**
      * 修改保存字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:edit')")
+    @SaCheckPermission("system:dict:edit")
     @Log(title = "字典数据", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysDictDataEntity dict) {
@@ -110,7 +111,7 @@ public class SysDictDataController {
     /**
      * 删除字典类型
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:remove')")
+    @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictCodes}")
     public Result delete(@PathVariable List<Long> dictCodes) {

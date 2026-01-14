@@ -1,5 +1,6 @@
 package com.ciyocloud.api.web.controller.system;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
@@ -12,7 +13,7 @@ import com.ciyocloud.system.entity.SysConfigEntity;
 import com.ciyocloud.system.service.SysConfigService;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,14 +36,14 @@ public class SysConfigController {
      * 获取参数配置列表
      */
 
-    @PreAuthorize("@ss.hasPermi('system:config:list')")
+    @SaCheckPermission("system:config:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysConfigEntity config) {
         return Result.success(configService.page(page, QueryWrapperUtils.toSimpleQuery(config)));
     }
 
 
-    @PreAuthorize("@ss.hasPermi('system:config:export')")
+    @SaCheckPermission("system:config:export")
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(SysConfigEntity config) {
@@ -53,7 +54,7 @@ public class SysConfigController {
     /**
      * 根据参数编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:config:query')")
+    @SaCheckPermission("system:config:query")
     @GetMapping(value = "/{configId}")
     public Result getInfo(@PathVariable Long configId) {
         return Result.success(configService.getById(configId));
@@ -71,7 +72,7 @@ public class SysConfigController {
      * 根据参数键名查询参数值
      */
     @GetMapping(value = "/{configKey}/configValue")
-    @PermitAll
+    @SaIgnore
     public Result getConfigValue(@PathVariable String configKey) {
         return Result.success(configService.getConfigValueByKey(configKey));
     }
@@ -79,7 +80,7 @@ public class SysConfigController {
     /**
      * 新增参数配置
      */
-    @PreAuthorize("@ss.hasPermi('system:config:add')")
+    @SaCheckPermission("system:config:add")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysConfigEntity config) {
@@ -96,7 +97,7 @@ public class SysConfigController {
     /**
      * 修改参数配置
      */
-    @PreAuthorize("@ss.hasPermi('system:config:edit')")
+    @SaCheckPermission("system:config:edit")
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysConfigEntity config) {
@@ -110,7 +111,7 @@ public class SysConfigController {
     /**
      * 删除参数配置
      */
-    @PreAuthorize("@ss.hasPermi('system:config:remove')")
+    @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{configIds}")
     public Result delete(@PathVariable List<Long> configIds) {
@@ -121,7 +122,7 @@ public class SysConfigController {
     /**
      * 刷新参数缓存
      */
-    @PreAuthorize("@ss.hasPermi('system:config:remove')")
+    @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
     public Result refreshCache() {

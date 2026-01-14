@@ -60,4 +60,9 @@ public enum BusinessType {
      * 登录
      */
     LOGIN,
+
+    /**
+     * 退出登录
+     */
+    LOGOUT,
 }
