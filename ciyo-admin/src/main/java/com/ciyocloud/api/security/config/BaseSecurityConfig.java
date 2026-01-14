@@ -1,4 +1,4 @@
-package com.ciyocloud.security.config;
+package com.ciyocloud.api.security.config;
 
 import com.ciyocloud.common.util.SpringContextUtils;
 import com.google.common.collect.HashMultimap;
@@ -6,6 +6,9 @@ import com.google.common.collect.Multimap;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -14,57 +17,46 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.Map;
 import java.util.Set;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Component
 public class BaseSecurityConfig {
-
 
     public void buildBasicPath(HttpSecurity httpSecurity) throws Exception {
         // 获得 @PermitAll 带来的 URL 列表，免登录
         Multimap<HttpMethod, String> permitAllUrls = getPermitAllUrlsFromAnnotations();
         // 设置 URL 安全权限
         httpSecurity
-                // 过滤请求
-                .authorizeHttpRequests(registry -> registry
-                        // 对于登录login 允许匿名访问
-                        .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/*.html",
-                                "/**/*.html",
-                                "/**/*.css",
-                                "/**/*.woff",
-                                "/**/*.js"
-                        ).permitAll()
-                        // 1.2 设置 @PermitAll 无需认证
-                        .requestMatchers(HttpMethod.GET, permitAllUrls.get(HttpMethod.GET).toArray(new String[0])).permitAll()
-                        .requestMatchers(HttpMethod.POST, permitAllUrls.get(HttpMethod.POST).toArray(new String[0])).permitAll()
-                        .requestMatchers(HttpMethod.PUT, permitAllUrls.get(HttpMethod.PUT).toArray(new String[0])).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, permitAllUrls.get(HttpMethod.DELETE).toArray(new String[0])).permitAll()
-                        // 允许对于网站静态资源的无授权访问 本地存储
-                        .requestMatchers("/**/u/**").permitAll()
-                        // //表单填写需要的接口
-                        .requestMatchers("/**/form/ext/**").permitAll()
-                        .requestMatchers("/**/wx/**").permitAll()
-                        .requestMatchers("/**/captcha/**").permitAll()
-                        .requestMatchers("/profile/**").anonymous()
-                        // 员工部门选择组件所需要数据
-                        // 公开查看表单数据
-                        .requestMatchers("/swagger-ui.html").anonymous()
-                        .requestMatchers("/swagger-resources/**").anonymous()
-                        .requestMatchers("/webjars/**").anonymous()
-                        .requestMatchers("/**/v3/api-docs/**").permitAll()
-                        // 放行websocket接口
-                        .requestMatchers("/websocket").anonymous()
-                        // 端点 用来看信息
-                        .requestMatchers("/actuator/health").anonymous()
-                        .requestMatchers("/actuator/info").anonymous()
-                        .requestMatchers("/actuator/**").hasRole("ADMIN")
-                        // 移动端
-                        // 除上面外的所有请求全部需要鉴权认证
-                        .anyRequest().authenticated()
-                )
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+                .cors(withDefaults())
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/login", "/register").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers("/", "/*.html", "/**.html", "/**.css", "/**.woff", "/**.js").permitAll()
+                            // 1.2 设置 @PermitAll 无需认证
+                            .requestMatchers(HttpMethod.GET, permitAllUrls.get(HttpMethod.GET).toArray(new String[0])).permitAll()
+                            .requestMatchers(HttpMethod.POST, permitAllUrls.get(HttpMethod.POST).toArray(new String[0])).permitAll()
+                            .requestMatchers(HttpMethod.PUT, permitAllUrls.get(HttpMethod.PUT).toArray(new String[0])).permitAll()
+                            .requestMatchers(HttpMethod.DELETE, permitAllUrls.get(HttpMethod.DELETE).toArray(new String[0])).permitAll()
+                            // 允许对于网站静态资源的无授权访问 本地存储
+                            .requestMatchers("/u/**").permitAll()
+                            .requestMatchers("/captcha/**").permitAll()
+                            .requestMatchers("/profile/**").anonymous()
+                            .requestMatchers("/swagger-ui.html")
+                            .anonymous().requestMatchers("/swagger-resources/**")
+                            .anonymous().requestMatchers("/webjars/**").anonymous()
+                            .requestMatchers("/v3/api-docs/**").permitAll()
+                            // 放行websocket接口
+                            .requestMatchers("/websocket").anonymous()
+                            // 端点 用来看信息
+                            .requestMatchers("/actuator/health").anonymous()
+                            .requestMatchers("/actuator/info").anonymous()
+                            .requestMatchers("/actuator/**").hasRole("ADMIN").anyRequest().authenticated();
+                });
     }
+
 
     /**
      * 获取所有接口上的注解，并判断是否有 @PermitAll 注解
