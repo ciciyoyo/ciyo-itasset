@@ -42,7 +42,7 @@ import {setPageTitle} from '@/utils/router'
 import {resetRouterState} from '@/router/guards/beforeEach'
 import {useMenuStore} from './menu'
 import {StorageConfig} from '@/utils/storage/storage-config'
-import UserInfo = Api.Auth.UserInfo;
+import UserInfo = Api.Auth.UserInfo
 
 /**
  * 用户状态管理

@@ -21,7 +21,7 @@
  */
 
 import AppConfig from '@/config'
-import {ContainerWidthEnum, MenuThemeEnum, MenuTypeEnum, SystemThemeEnum} from '@/enums/appEnum'
+import {SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum} from '@/enums/appEnum'
 
 /**
  * 系统设置默认值配置

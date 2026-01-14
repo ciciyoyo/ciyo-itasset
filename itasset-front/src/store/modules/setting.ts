@@ -31,10 +31,10 @@
  * @author Art Design Pro Team
  */
 import {defineStore} from 'pinia'
-import {computed, ref} from 'vue'
+import {ref, computed} from 'vue'
 import {MenuThemeType} from '@/types/store'
 import AppConfig from '@/config'
-import {ContainerWidthEnum, MenuThemeEnum, MenuTypeEnum, SystemThemeEnum} from '@/enums/appEnum'
+import {SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum} from '@/enums/appEnum'
 import {setElementThemeColor} from '@/utils/ui'
 import {useCeremony} from '@/hooks/core/useCeremony'
 import {StorageConfig} from '@/utils'

@@ -96,7 +96,6 @@ export function exportFailures(query: FailuresSearchParams) {
         params: query
     })
 }
-
 /**
  * 解决故障
  * @param data

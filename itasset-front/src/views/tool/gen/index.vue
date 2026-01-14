@@ -310,7 +310,7 @@
         MessageUtil.success(t('system.tool.gen.generateSuccess') + row.genPath)
       })
     } else {
-      downLoadZip(joinUrl(baseUrl, `/tool/gen/batchGenCode?tables=${tbNames}`), 'ciyo')
+      downLoadZip(joinUrl(baseUrl, `/tool/gen/batchGenCode?tables=${tbNames}`), 'tduck')
     }
   }
 

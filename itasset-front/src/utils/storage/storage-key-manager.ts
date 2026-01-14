@@ -37,26 +37,6 @@ import {StorageConfig} from '@/utils/storage'
  */
 export class StorageKeyManager {
     /**
-     * 获取持久化存储的键名（支持自动数据迁移）
-     */
-    getStorageKey(storeId: string): string {
-        const currentKey = this.getCurrentVersionKey(storeId)
-
-        // 优先使用当前版本的数据
-        if (this.hasCurrentVersionData(currentKey)) {
-            return currentKey
-        }
-
-        // 查找并迁移其他版本的数据
-        const existingKey = this.findExistingKey(storeId)
-        if (existingKey) {
-            this.migrateData(existingKey, currentKey)
-        }
-
-        return currentKey
-    }
-
-    /**
      * 获取当前版本的存储键名
      */
     private getCurrentVersionKey(storeId: string): string {
@@ -93,5 +73,25 @@ export class StorageKeyManager {
         } catch (error) {
             console.warn(`[Storage] 数据迁移失败: ${fromKey}`, error)
         }
+    }
+
+    /**
+     * 获取持久化存储的键名（支持自动数据迁移）
+     */
+    getStorageKey(storeId: string): string {
+        const currentKey = this.getCurrentVersionKey(storeId)
+
+        // 优先使用当前版本的数据
+        if (this.hasCurrentVersionData(currentKey)) {
+            return currentKey
+        }
+
+        // 查找并迁移其他版本的数据
+        const existingKey = this.findExistingKey(storeId)
+        if (existingKey) {
+            this.migrateData(existingKey, currentKey)
+        }
+
+        return currentKey
     }
 }

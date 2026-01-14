@@ -16,6 +16,130 @@ export interface DeviceEntity extends Api.Common.BaseEntity {
     deviceNo: string
 }
 
+/**
+ * 配件信息
+ */
+export interface AccessoryVO extends Api.Common.BaseEntity {
+    id?: number
+    name?: string
+    assetNumber?: string
+    categoryId?: number
+    supplierId?: number
+    manufacturerId?: number
+    specifications?: string
+    locationId?: number
+    depreciationId?: number
+    quantity?: number
+    minQuantity?: number
+    purchaseDate?: string
+    warrantyExpirationDate?: string
+    purchaseCost?: number
+    orderNumber?: string
+    serialNumber?: string
+    description?: string
+    categoryName?: string
+    supplierName?: string
+    manufacturerName?: string
+    locationName?: string
+    depreciationName?: string
+}
+
+/**
+ * 许可证信息
+ */
+export interface LicenseVO extends Api.Common.BaseEntity {
+    id?: number
+    name?: string
+    licenseKey?: string
+    totalSeats?: number
+    manufacturerId?: number
+    categoryId?: number
+    minQty?: number
+    licensedToName?: string
+    licensedToEmail?: string
+    supplierId?: number
+    orderNumber?: string
+    purchaseCost?: number
+    purchaseDate?: string
+    expirationDate?: string
+    terminationDate?: string
+    purchaseOrderNumber?: string
+    notes?: string
+    categoryName?: string
+    manufacturerName?: string
+    supplierName?: string
+}
+
+/**
+ * 服务信息
+ */
+export interface ServiceVO extends Api.Common.BaseEntity {
+    id?: number
+    name?: string
+    supplierId?: number
+    serviceNumber?: string
+    startDate?: string
+    endDate?: string
+    cost?: number
+    notes?: string
+    targetType?: string
+    targetTypeDesc?: string
+    targetId?: number
+    offeringStatus?: string
+    offeringStatusDesc?: string
+    supplierName?: string
+    targetName?: string
+    assignDate?: string
+}
+
+/**
+ * 耗材信息
+ */
+export interface ConsumableVO extends Api.Common.BaseEntity {
+    id?: number
+    name?: string
+    quantity?: number
+    categoryName?: string
+    supplierName?: string
+}
+
+/**
+ * 型号信息
+ */
+export interface ModelVO extends Api.Common.BaseEntity {
+    id?: number
+    name?: string
+    imageUrl?: string
+    manufacturerId?: number
+    categoryId?: number
+    depreciationId?: number
+    modelNumber?: string
+    eol?: number
+    categoryName?: string
+    manufacturerName?: string
+    depreciationName?: string
+}
+
+/**
+ * 设备详情VO（包含关联信息）
+ */
+export interface DeviceDetailVO extends DeviceEntity {
+    assetsStatus?: number
+    assetsStatusDesc?: string
+    assignedTo?: number
+    assignedToName?: string
+    modelName?: string
+    locationName?: string
+    supplierName?: string
+    depreciationName?: string
+    deleted?: number
+    accessories?: AccessoryVO[]
+    licenses?: LicenseVO[]
+    services?: ServiceVO[]
+    consumables?: ConsumableVO[]
+    model?: ModelVO
+}
+
 type DeviceList = Api.Common.PaginatedResponse<DeviceEntity>
 
 type DeviceSearchFields = {
@@ -53,6 +177,16 @@ export function listDevice(params: DeviceSearchFields) {
 export function getDevice(id: number): any {
     return request.get<DeviceEntity>({
         url: `/itam/device/${id}`
+    })
+}
+
+/**
+ * 获取设备详情（包含关联信息）
+ * @param id
+ */
+export function getDeviceDetail(id: number) {
+    return request.get<DeviceDetailVO>({
+        url: `/itam/device/detail/${id}`
     })
 }
 

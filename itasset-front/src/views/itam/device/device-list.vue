@@ -34,6 +34,11 @@
         <ArtTable class="flex-1" :loading="loading" :data="data" :columns="columns" :pagination="pagination"
           @selection-change="handleSelectionChange" @pagination:size-change="handleSizeChange"
           @pagination:current-change="handleCurrentChange">
+          <template #name="{ row }">
+            <el-link type="primary" :underline="false" @click="handleViewDetail(row)">
+              {{ row.name }}
+            </el-link>
+          </template>
           <template #imageUrl="{ row }">
             <el-image v-if="row.imageUrl" :src="row.imageUrl" :preview-src-list="[row.imageUrl]"
               style="width: 50px; height: 50px; border-radius: 4px;" fit="cover" preview-teleported />
@@ -177,6 +182,8 @@
     <AllocateModal ref="allocateModalRef" @success="refreshData" />
     <!-- 报告异常对话框 -->
     <DeviceExceptionModal ref="deviceExceptionModalRef" @success="refreshData" />
+    <!-- 设备详情弹窗 -->
+    <DeviceDetailDrawer ref="deviceDetailRef" />
   </div>
 </template>
 
@@ -204,6 +211,7 @@ import { useI18n } from 'vue-i18n'
 import ImageUpload from '@/components/business/image-upload/index.vue'
 import AllocateModal from './components/AllocateModal.vue'
 import DeviceExceptionModal from './components/DeviceExceptionModal.vue'
+import DeviceDetailDrawer from './components/DeviceDetailDrawer.vue'
 import { useUserStore } from '@/store/modules/user'
 
 defineOptions({
@@ -245,6 +253,13 @@ const deviceExceptionModalRef = useTemplateRef('deviceExceptionModalRef')
 
 const handleReportException = (row: DeviceEntity) => {
   deviceExceptionModalRef.value?.open(row)
+}
+
+// 设备详情相关
+const deviceDetailRef = useTemplateRef('deviceDetailRef')
+
+const handleViewDetail = (row: DeviceEntity) => {
+  deviceDetailRef.value?.open(row)
 }
 
 
@@ -345,7 +360,7 @@ const {
     columnsFactory: () => [
       { type: 'selection' },
       { prop: 'deviceNo', label: '设备编号', minWidth: 150 },
-      { prop: 'name', label: '设备名称', minWidth: 150 },
+      { prop: 'name', label: '设备名称', minWidth: 150, useSlot: true },
       { prop: 'serial', label: '序列号', minWidth: 140 },
       { prop: 'assignedToName', label: '使用人', minWidth: 140, useSlot: true },
       { prop: 'assetsStatus', label: '状态', minWidth: 140, useSlot: true },

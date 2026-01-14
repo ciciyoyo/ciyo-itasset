@@ -16,7 +16,7 @@
  * @author Art Design Pro Team
  */
 
-import {computed, onMounted, ref, watch} from 'vue'
+import {ref, computed, watch, onMounted} from 'vue'
 import {useElementSize} from '@vueuse/core'
 
 /**

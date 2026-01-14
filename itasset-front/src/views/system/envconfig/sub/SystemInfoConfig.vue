@@ -49,7 +49,7 @@
         v-model:value="form.copyright"
         :height="192"
         toolbar="undo redo | blocks fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | forecolor | backcolor "
-        placeholder="Copyright © 2018-2024 ciyocloud.com All Rights Reserved."
+        placeholder="Copyright © 2018-2024 tduckcloud.com All Rights Reserved."
       />
     </el-form-item>
     <el-form-item>

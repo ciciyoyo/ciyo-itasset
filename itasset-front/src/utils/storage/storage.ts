@@ -59,6 +59,75 @@ class StorageCompatibilityManager {
     }
 
     /**
+     * 检查当前版本是否有存储数据
+     */
+    private hasCurrentVersionStorage(): boolean {
+        const storageKeys = Object.keys(localStorage)
+        const currentVersionPattern = StorageConfig.createCurrentVersionPattern()
+
+        return storageKeys.some((key) => currentVersionPattern.test(key) && localStorage.getItem(key) !== null)
+    }
+
+    /**
+     * 检查是否存在任何版本的存储数据
+     */
+    private hasAnyVersionStorage(): boolean {
+        const storageKeys = Object.keys(localStorage)
+        const versionPattern = StorageConfig.createVersionPattern()
+
+        return storageKeys.some((key) => versionPattern.test(key) && localStorage.getItem(key) !== null)
+    }
+
+    /**
+     * 获取旧格式的本地存储数据
+     */
+    private getLegacyStorageData(): Record<string, any> {
+        try {
+            const systemStorage = this.getSystemStorage()
+            return systemStorage || {}
+        } catch (error) {
+            console.warn('[Storage] 解析旧格式存储数据失败:', error)
+            return {}
+        }
+    }
+
+    /**
+     * 显示存储错误消息
+     */
+    private showStorageError(): void {
+        ElMessage({
+            type: 'error',
+            offset: 40,
+            duration: 5000,
+            message: '系统检测到本地数据异常，请重新登录系统恢复使用！'
+        })
+    }
+
+    /**
+     * 执行系统登出
+     */
+    private performSystemLogout(): void {
+        setTimeout(() => {
+            try {
+                localStorage.clear()
+                useUserStore().logOut()
+                router.push({name: 'Login'})
+                console.info('[Storage] 已执行系统登出')
+            } catch (error) {
+                console.error('[Storage] 系统登出失败:', error)
+            }
+        }, StorageConfig.LOGOUT_DELAY)
+    }
+
+    /**
+     * 处理存储异常
+     */
+    private handleStorageError(): void {
+        this.showStorageError()
+        this.performSystemLogout()
+    }
+
+    /**
      * 验证存储数据完整性
      * @param requireAuth 是否需要验证登录状态（默认 false）
      */
@@ -142,75 +211,6 @@ class StorageCompatibilityManager {
             console.error('[Storage] 兼容性检查异常:', error)
             return false
         }
-    }
-
-    /**
-     * 检查当前版本是否有存储数据
-     */
-    private hasCurrentVersionStorage(): boolean {
-        const storageKeys = Object.keys(localStorage)
-        const currentVersionPattern = StorageConfig.createCurrentVersionPattern()
-
-        return storageKeys.some((key) => currentVersionPattern.test(key) && localStorage.getItem(key) !== null)
-    }
-
-    /**
-     * 检查是否存在任何版本的存储数据
-     */
-    private hasAnyVersionStorage(): boolean {
-        const storageKeys = Object.keys(localStorage)
-        const versionPattern = StorageConfig.createVersionPattern()
-
-        return storageKeys.some((key) => versionPattern.test(key) && localStorage.getItem(key) !== null)
-    }
-
-    /**
-     * 获取旧格式的本地存储数据
-     */
-    private getLegacyStorageData(): Record<string, any> {
-        try {
-            const systemStorage = this.getSystemStorage()
-            return systemStorage || {}
-        } catch (error) {
-            console.warn('[Storage] 解析旧格式存储数据失败:', error)
-            return {}
-        }
-    }
-
-    /**
-     * 显示存储错误消息
-     */
-    private showStorageError(): void {
-        ElMessage({
-            type: 'error',
-            offset: 40,
-            duration: 5000,
-            message: '系统检测到本地数据异常，请重新登录系统恢复使用！'
-        })
-    }
-
-    /**
-     * 执行系统登出
-     */
-    private performSystemLogout(): void {
-        setTimeout(() => {
-            try {
-                localStorage.clear()
-                useUserStore().logOut()
-                router.push({name: 'Login'})
-                console.info('[Storage] 已执行系统登出')
-            } catch (error) {
-                console.error('[Storage] 系统登出失败:', error)
-            }
-        }, StorageConfig.LOGOUT_DELAY)
-    }
-
-    /**
-     * 处理存储异常
-     */
-    private handleStorageError(): void {
-        this.showStorageError()
-        this.performSystemLogout()
     }
 }
 
