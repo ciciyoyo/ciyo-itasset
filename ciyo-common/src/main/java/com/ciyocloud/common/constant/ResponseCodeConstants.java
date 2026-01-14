@@ -25,6 +25,11 @@ public interface ResponseCodeConstants {
     int UNAUTHORIZED = 401;
 
     /**
+     * 权限不足
+     */
+    int FORBIDDEN = 403;
+
+    /**
      * 需要验证的请求
      */
     int NEED_VERIFICATION = 416;

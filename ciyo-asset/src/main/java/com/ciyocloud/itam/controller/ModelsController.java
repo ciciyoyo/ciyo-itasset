@@ -14,7 +14,7 @@ import com.ciyocloud.itam.vo.ModelsVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class ModelsController {
     /**
      * 查询型号列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:page')")
+    @SaCheckPermission("itam:models:page")
     @GetMapping("/page")
     public Result<PageResultVO<ModelsVO>> queryPage(PageRequest page, ModelsEntity models) {
         return Result.success(new PageResultVO<>(modelsService.selectPageVo(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(models))));
@@ -45,7 +45,7 @@ public class ModelsController {
     /**
      * 查询型号列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:page')")
+    @SaCheckPermission("itam:models:page")
     @GetMapping("/list")
     public Result<List<ModelsVO>> list(ModelsEntity models) {
         return Result.success(modelsService.selectListVo(QueryWrapperUtils.toSimpleQuery(models)));
@@ -54,7 +54,7 @@ public class ModelsController {
     /**
      * 导出型号列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:export')")
+    @SaCheckPermission("itam:models:export")
     @Log(title = "型号", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(ModelsEntity models) {
@@ -67,7 +67,7 @@ public class ModelsController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:query')")
+    @SaCheckPermission("itam:models:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<ModelsEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(modelsService.getById(id));
@@ -76,7 +76,7 @@ public class ModelsController {
     /**
      * 新增型号
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:add')")
+    @SaCheckPermission("itam:models:add")
     @Log(title = "型号", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody ModelsEntity models) {
@@ -87,7 +87,7 @@ public class ModelsController {
     /**
      * 修改型号
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:update')")
+    @SaCheckPermission("itam:models:update")
     @Log(title = "型号", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody ModelsEntity models) {
@@ -100,7 +100,7 @@ public class ModelsController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:models:delete')")
+    @SaCheckPermission("itam:models:delete")
     @Log(title = "型号", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {

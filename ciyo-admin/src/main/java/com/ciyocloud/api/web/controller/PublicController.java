@@ -1,5 +1,6 @@
 package com.ciyocloud.api.web.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.codec.Base64Encoder;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.envconfig.service.SysEnvConfigService;
@@ -28,7 +29,7 @@ public class PublicController {
      * @return 系统信息配置
      */
     @GetMapping("systemInfoConfig")
-    @PermitAll
+    @SaIgnore
     public Result<String> getSystemInfoConfig() {
         // 系统配置
         String value = configService.getValueByKey(SYSTEM_INFO_CONFIG);

@@ -12,7 +12,7 @@ import com.ciyocloud.system.service.SysDeptPostService;
 import com.ciyocloud.system.service.SysPostService;
 import com.ciyocloud.system.vo.SysDeptPostVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class SysDeptPostController {
     /**
      * 查询部门岗位关系列表
      */
-    @PreAuthorize("@ss.hasPermi('system:deptpost:list')")
+    @SaCheckPermission("system:deptpost:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysDeptPostEntity sysDeptPost) {
         return Result.success(sysDeptPostService.page(page, sysDeptPost));
@@ -46,7 +46,7 @@ public class SysDeptPostController {
     /**
      * 查询部门下不存在的岗位列表
      */
-    @PreAuthorize("@ss.hasPermi('system:deptpost:setting')")
+    @SaCheckPermission("system:deptpost:setting")
     @GetMapping("/queryDeptNotInPost")
     public Result queryDeptNotInPostPage(Page page, SysDeptPostVO sysDeptPost) {
         List<SysDeptPostEntity> list = sysDeptPostService.list(Wrappers.<SysDeptPostEntity>lambdaQuery().eq(SysDeptPostEntity::getDeptId, sysDeptPost.getDeptId()));
@@ -73,7 +73,7 @@ public class SysDeptPostController {
     /**
      * 修改岗位部门关系
      */
-    @PreAuthorize("@ss.hasPermi('system:deptpost:update')")
+    @SaCheckPermission("system:deptpost:update")
     @PostMapping("/update")
     public Result update(@RequestBody SysDeptPostEntity sysDeptPost) {
         sysDeptPostService.updateById(sysDeptPost);
@@ -84,7 +84,7 @@ public class SysDeptPostController {
     /**
      * 设置部门岗位
      */
-    @PreAuthorize("@ss.hasPermi('system:deptpost:setting')")
+    @SaCheckPermission("system:deptpost:setting")
     @PostMapping("/settingDeptPost")
     public Result settingDeptPost(@RequestBody DeptPostRequest.Setting settingRequest) {
         if (CollUtil.isEmpty(settingRequest.getIds())) {
@@ -107,7 +107,7 @@ public class SysDeptPostController {
     /**
      * 删除部门岗位关系
      */
-    @PreAuthorize("@ss.hasPermi('system:deptpost:delete')")
+    @SaCheckPermission("system:deptpost:delete")
     @DeleteMapping("/{ids}")
     public Result delete(@PathVariable List<Long> ids) {
         return Result.success(sysDeptPostService.removeByIds(ids));

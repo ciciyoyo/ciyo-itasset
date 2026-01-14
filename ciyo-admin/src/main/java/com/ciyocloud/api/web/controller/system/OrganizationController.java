@@ -1,6 +1,7 @@
 package com.ciyocloud.api.web.controller.system;
 
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.tree.Tree;
@@ -62,7 +63,7 @@ public class OrganizationController {
      * @return 部门树
      */
     @GetMapping("deptTrees")
-    @PermitAll
+    @SaIgnore
     public Result<List<Map<String, Object>>> getDeptTrees(String formKey, Long formItemId) {
         List<SysDeptEntity> depts = deptService.listDept(new SysDeptEntity());
         depts = deptService.buildDeptTree(depts);
@@ -86,7 +87,7 @@ public class OrganizationController {
      * @return
      */
     @GetMapping("empTrees")
-    @PermitAll
+    @SaIgnore
     public Result<List<Tree<String>>> getDeptEmployees(String formKey, Long formItemId) {
         List<SysDeptEntity> depts = deptService.listDept(new SysDeptEntity());
         handleDeptParentId(depts);

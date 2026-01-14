@@ -10,7 +10,7 @@ import com.ciyocloud.system.service.SysMenuService;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class SysMenuController {
     /**
      * 获取菜单列表
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:list')")
+    @SaCheckPermission("system:menu:list")
     @GetMapping("/list")
     public Result list(SysMenuEntity menu) {
         Long userId = SecurityUtils.getUserId();
@@ -43,7 +43,7 @@ public class SysMenuController {
     /**
      * 根据菜单编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:query')")
+    @SaCheckPermission("system:menu:query")
     @GetMapping(value = "/{menuId}")
     public Result getInfo(@PathVariable Long menuId) {
         return Result.success(menuService.getById(menuId));
@@ -85,7 +85,7 @@ public class SysMenuController {
     /**
      * 新增菜单
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:add')")
+    @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysMenuEntity menu) {
@@ -102,7 +102,7 @@ public class SysMenuController {
     /**
      * 修改菜单
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:edit')")
+    @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysMenuEntity menu) {
@@ -121,7 +121,7 @@ public class SysMenuController {
     /**
      * 删除菜单
      */
-    @PreAuthorize("@ss.hasPermi('system:menu:remove')")
+    @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{menuId}")
     public Result delete(@PathVariable("menuId") Long menuId) {

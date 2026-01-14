@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.util;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.ciyocloud.itam.enums.AssetType;
-import com.ciyocloud.system.service.security.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AssetPermissionUtils {
 
-    private final PermissionService permissionService;
 
     /**
      * 检查是否有某种资产类型的某个权限
@@ -35,7 +34,7 @@ public class AssetPermissionUtils {
         }
 
         String permission = "itam:" + resource + ":" + action;
-        return permissionService.hasPermi(permission);
+        return StpUtil.hasPermission(permission);
     }
 
     /**

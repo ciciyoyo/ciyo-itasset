@@ -12,7 +12,7 @@ import com.ciyocloud.job.service.SysJobService;
 import com.ciyocloud.job.util.CronUtils;
 import com.ciyocloud.job.util.ScheduleUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -29,7 +29,7 @@ public class SysJobController {
     /**
      * 查询定时任务列表
      */
-    @PreAuthorize("@ss.hasPermi('system:job:list')")
+    @SaCheckPermission("system:job:list")
     @GetMapping("/page")
     public Result<Page<SysJobEntity>> list(Page<SysJobEntity> page, SysJobEntity sysJob) {
         return Result.success(jobService.page(page, Wrappers.<SysJobEntity>lambdaQuery()
@@ -42,7 +42,7 @@ public class SysJobController {
     /**
      * 获取定时任务详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:job:query')")
+    @SaCheckPermission("system:job:query")
     @GetMapping(value = "/{jobId}")
     public Result<SysJobEntity> getInfo(@PathVariable("jobId") Long jobId) {
         return Result.success(jobService.getById(jobId));
@@ -51,7 +51,7 @@ public class SysJobController {
     /**
      * 新增定时任务
      */
-    @PreAuthorize("@ss.hasPermi('system:job:add')")
+    @SaCheckPermission("system:job:add")
     @PostMapping("/add")
     public Result<Boolean> add(@RequestBody SysJobEntity job) {
         if (!CronUtils.isValid(job.getCronExpression())) {
@@ -74,7 +74,7 @@ public class SysJobController {
     /**
      * 修改定时任务
      */
-    @PreAuthorize("@ss.hasPermi('system:job:update')")
+    @SaCheckPermission("system:job:update")
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody SysJobEntity job) {
         if (!CronUtils.isValid(job.getCronExpression())) {
@@ -97,7 +97,7 @@ public class SysJobController {
     /**
      * 定时任务状态修改
      */
-    @PreAuthorize("@ss.hasPermi('system:job:changeStatus')")
+    @SaCheckPermission("system:job:changeStatus")
     @PostMapping("/changeStatus")
     public Result<Boolean> changeStatus(@RequestBody SysJobEntity job) {
         SysJobEntity newJob = jobService.getById(job.getId());
@@ -108,7 +108,7 @@ public class SysJobController {
     /**
      * 定时任务立即执行一次
      */
-    @PreAuthorize("@ss.hasPermi('system:job:changeStatus')")
+    @SaCheckPermission("system:job:changeStatus")
     @PostMapping("/run")
     public Result<Boolean> run(@RequestBody SysJobEntity job) {
         boolean result = jobService.run(job);
@@ -118,7 +118,7 @@ public class SysJobController {
     /**
      * 删除定时任务
      */
-    @PreAuthorize("@ss.hasPermi('system:job:remove')")
+    @SaCheckPermission("system:job:remove")
     @PostMapping("/delete/{jobIds}")
     public Result<Boolean> remove(@PathVariable Long[] jobIds) {
         jobService.deleteJobByIds(jobIds);

@@ -31,10 +31,15 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>compile</scope>
         </dependency>
-        <!-- spring security 安全认证 -->
+        <!-- Sa-Token 权限认证 -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot3-starter</artifactId>
+        </dependency>
+        <!-- Sa-Token 整合 Redis (使用 jackson 序列化) -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
         </dependency>
         <!-- SpringBoot Web容器 -->
         <dependency>

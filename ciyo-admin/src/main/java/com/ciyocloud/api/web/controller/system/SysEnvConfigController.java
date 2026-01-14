@@ -6,7 +6,7 @@ import com.ciyocloud.envconfig.service.SysEnvConfigService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ public class SysEnvConfigController {
     /**
      * 保存系统环境配置
      */
-    @PreAuthorize("@ss.hasPermi('system:envconfig:save')")
+    @SaCheckPermission("system:envconfig:save")
     @Log(title = "修改系统配置", businessType = BusinessType.OTHER, isSaveRequestData = false)
     @PostMapping("/save")
     public Result save(@RequestBody @Validated SysEnvConfigEntity config) {
@@ -38,7 +38,7 @@ public class SysEnvConfigController {
      * 根据参数编号获取详细信息
      */
     @GetMapping(value = "/{configKey}")
-    @PreAuthorize("@ss.hasPermi('system:envconfig:save')")
+    @SaCheckPermission("system:envconfig:save")
     public Result getInfo(@PathVariable String configKey) {
         return Result.success(configService.getByKey(configKey));
     }
@@ -60,7 +60,7 @@ public class SysEnvConfigController {
      * 根据参数编号获取详细信息
      */
     @GetMapping(value = "/value/{configKey}")
-    @PreAuthorize("@ss.hasPermi('system:envconfig:save')")
+    @SaCheckPermission("system:envconfig:save")
     public Result getConfigValue(@PathVariable String configKey) {
         return Result.success(configService.getValueByKey(configKey));
     }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -46,6 +47,9 @@ public class SysPermissionService {
      * @return 菜单权限信息
      */
     public Set<String> getMenuPermission(SysUserVO user) {
+        if(Objects.isNull(user)) {
+            return new HashSet<>();
+        }
         Set<String> perms = new HashSet<String>();
         // 管理员拥有所有权限
         if (SecurityUtils.isAdmin(user.getId())) {

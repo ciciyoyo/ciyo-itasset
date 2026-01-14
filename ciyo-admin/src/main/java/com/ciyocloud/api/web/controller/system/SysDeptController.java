@@ -14,7 +14,7 @@ import com.ciyocloud.system.service.SysDeptService;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class SysDeptController {
     /**
      * 获取部门列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    @SaCheckPermission("system:dept:list")
     @GetMapping("/page")
     public Result queryPage(SysDeptEntity dept) {
         return Result.success(deptService.listDept(dept));
@@ -53,7 +53,7 @@ public class SysDeptController {
     /**
      * 查询部门列表（排除节点）
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    @SaCheckPermission("system:dept:list")
     @GetMapping("/list/exclude/{deptId}")
     public Result excludeChild(@PathVariable(value = "deptId", required = false) Long deptId) {
         List<SysDeptEntity> depts = deptService.list();
@@ -71,7 +71,7 @@ public class SysDeptController {
     /**
      * 根据部门编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:query')")
+    @SaCheckPermission("system:dept:query")
     @GetMapping(value = "/{deptId}")
     public Result getInfo(@PathVariable Long deptId) {
         return Result.success(deptService.getById(deptId));
@@ -81,7 +81,7 @@ public class SysDeptController {
      * 获取部门下拉树列表
      */
     @GetMapping("/treeselect")
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+    @SaCheckPermission("system:dept:list")
     public Result treeselect(SysDeptEntity dept) {
         List<SysDeptEntity> depts = deptService.listDept(dept);
         return Result.success(deptService.buildDeptTreeSelect(depts));
@@ -102,7 +102,7 @@ public class SysDeptController {
     /**
      * 新增部门
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:add')")
+    @SaCheckPermission("system:dept:add")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysDeptEntity dept) {
@@ -117,7 +117,7 @@ public class SysDeptController {
     /**
      * 修改部门
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:edit')")
+    @SaCheckPermission("system:dept:edit")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysDeptEntity dept) {
@@ -136,7 +136,7 @@ public class SysDeptController {
     /**
      * 删除部门
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:remove')")
+    @SaCheckPermission("system:dept:remove")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
     public Result delete(@PathVariable Long deptId) {

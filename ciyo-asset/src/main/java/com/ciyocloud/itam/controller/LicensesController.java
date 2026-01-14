@@ -18,7 +18,7 @@ import com.ciyocloud.itam.vo.LicensesVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +43,7 @@ public class LicensesController {
     /**
      * 查询软件授权列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:page')")
+    @SaCheckPermission("itam:licenses:page")
     @GetMapping("/page")
     public Result<PageResultVO<LicensesVO>> queryPage(PageRequest page, LicensePageReq req) {
         return Result.success(new PageResultVO<>(licensesService.queryPageVo(page.toMpPage(), req)));
@@ -52,7 +52,7 @@ public class LicensesController {
     /**
      * 导出软件授权列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:export')")
+    @SaCheckPermission("itam:licenses:export")
     @Log(title = "软件授权", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(LicensePageReq req) {
@@ -65,7 +65,7 @@ public class LicensesController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:query')")
+    @SaCheckPermission("itam:licenses:query")
     @GetMapping(value = "/{id}")
     public Result<LicensesEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(licensesService.getById(id));
@@ -74,7 +74,7 @@ public class LicensesController {
     /**
      * 新增软件授权
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:add')")
+    @SaCheckPermission("itam:licenses:add")
     @Log(title = "软件授权", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody LicensesEntity licenses) {
@@ -85,7 +85,7 @@ public class LicensesController {
     /**
      * 修改软件授权
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:update')")
+    @SaCheckPermission("itam:licenses:update")
     @Log(title = "软件授权", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody LicensesEntity licenses) {
@@ -98,7 +98,7 @@ public class LicensesController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:delete')")
+    @SaCheckPermission("itam:licenses:delete")
     @Log(title = "软件授权", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -108,7 +108,7 @@ public class LicensesController {
     /**
      * 分配软件授权
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:allocate')")
+    @SaCheckPermission("itam:licenses:allocate")
     @Log(title = "软件授权", businessType = BusinessType.INSERT)
     @PostMapping("/allocate")
     public Result<Boolean> allocate(@RequestBody LicenseAllocationReq req) {
@@ -118,7 +118,7 @@ public class LicensesController {
     /**
      * 解除授权到设备
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:allocate')")
+    @SaCheckPermission("itam:licenses:allocate")
     @Log(title = "软件授权", businessType = BusinessType.UPDATE)
     @PostMapping("/deallocate/{allocationId}")
     public Result<Boolean> deallocate(@PathVariable Long allocationId) {
@@ -128,7 +128,7 @@ public class LicensesController {
     /**
      * 获取每月授权价值统计
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:query')")
+    @SaCheckPermission("itam:licenses:query")
     @GetMapping("/stats/monthly-value")
     public Result<List<AssetsReportVO>> getMonthlyValueStats() {
         return Result.success(assetsReportService.getMonthlyTrend(AssetType.LICENSE));
@@ -137,7 +137,7 @@ public class LicensesController {
     /**
      * 获取授权分类统计
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:query')")
+    @SaCheckPermission("itam:licenses:query")
     @GetMapping("/stats/category")
     public Result<List<Map<String, Object>>> getCategoryStats() {
         return Result.success(licensesService.getCategoryStats());
@@ -146,7 +146,7 @@ public class LicensesController {
     /**
      * 获取常用指标统计
      */
-    @PreAuthorize("@ss.hasPermi('itam:licenses:query')")
+    @SaCheckPermission("itam:licenses:query")
     @GetMapping("/stats/indicators")
     public Result<Map<String, Object>> getIndicatorStats() {
         return Result.success(licensesService.getIndicatorStats());

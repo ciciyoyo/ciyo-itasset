@@ -28,7 +28,9 @@ public class AutoFillMetaInfoHandler implements MetaObjectHandler {
         // 填充创建人
         if (metaObject.hasSetter(SysBaseEntity.Fields.createBy)) {
             if (null == this.getFieldValByName(SysBaseEntity.Fields.createBy, metaObject)) {
-                this.strictInsertFill(metaObject, SysBaseEntity.Fields.createBy, Long.class, SecurityUtils.getUserId());
+                try {
+                    this.strictInsertFill(metaObject, SysBaseEntity.Fields.createBy, Long.class, SecurityUtils.getUserId());
+                }catch (Exception ignored) {}
             }
         }
         // 填充逻辑删除标识
@@ -46,7 +48,10 @@ public class AutoFillMetaInfoHandler implements MetaObjectHandler {
         // 更新人
         if (metaObject.hasSetter(SysBaseEntity.Fields.updateBy)) {
             if (null == this.getFieldValByName(SysBaseEntity.Fields.updateBy, metaObject)) {
-                this.strictUpdateFill(metaObject, SysBaseEntity.Fields.updateBy, Long.class, SecurityUtils.getUserId());
+                try {
+                    this.strictUpdateFill(metaObject, SysBaseEntity.Fields.updateBy, Long.class, SecurityUtils.getUserId());
+                }catch (Exception ignored) {
+                }
             }
         }
     }

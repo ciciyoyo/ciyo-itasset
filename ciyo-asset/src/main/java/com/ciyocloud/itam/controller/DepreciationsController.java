@@ -13,7 +13,7 @@ import com.ciyocloud.itam.service.DepreciationsService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class DepreciationsController {
     /**
      * 查询折旧规则列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:page')")
+    @SaCheckPermission("itam:depreciations:page")
     @GetMapping("/page")
     public Result<PageResultVO<DepreciationsEntity>> queryPage(PageRequest page, DepreciationsEntity depreciations) {
         return Result.success(new PageResultVO<>(depreciationsService.page(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(depreciations))));
@@ -45,7 +45,7 @@ public class DepreciationsController {
     /**
      * 查询折旧规则列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:page')")
+    @SaCheckPermission("itam:depreciations:page")
     @GetMapping("/list")
     public Result<List<DepreciationsEntity>> list(DepreciationsEntity depreciations) {
         return Result.success(depreciationsService.list(QueryWrapperUtils.toSimpleQuery(depreciations)));
@@ -54,7 +54,7 @@ public class DepreciationsController {
     /**
      * 导出折旧规则列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:export')")
+    @SaCheckPermission("itam:depreciations:export")
     @Log(title = "折旧规则", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(DepreciationsEntity depreciations) {
@@ -67,7 +67,7 @@ public class DepreciationsController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:query')")
+    @SaCheckPermission("itam:depreciations:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<DepreciationsEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(depreciationsService.getById(id));
@@ -76,7 +76,7 @@ public class DepreciationsController {
     /**
      * 新增折旧规则
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:add')")
+    @SaCheckPermission("itam:depreciations:add")
     @Log(title = "折旧规则", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody DepreciationsEntity depreciations) {
@@ -115,7 +115,7 @@ public class DepreciationsController {
     /**
      * 修改折旧规则
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:update')")
+    @SaCheckPermission("itam:depreciations:update")
     @Log(title = "折旧规则", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody DepreciationsEntity depreciations) {
@@ -128,7 +128,7 @@ public class DepreciationsController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:depreciations:delete')")
+    @SaCheckPermission("itam:depreciations:delete")
     @Log(title = "折旧规则", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {

@@ -13,7 +13,7 @@ import com.ciyocloud.itam.service.SuppliersService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +36,7 @@ public class SuppliersController {
     /**
      * 查询供应商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:page')")
+    @SaCheckPermission("itam:suppliers:page")
     @GetMapping("/page")
     public Result<PageResultVO<SuppliersEntity>> queryPage(PageRequest page, SuppliersEntity suppliers) {
         return Result.success(new PageResultVO<>(suppliersService.page(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(suppliers))));
@@ -45,7 +45,7 @@ public class SuppliersController {
     /**
      * 查询供应商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:page')")
+    @SaCheckPermission("itam:suppliers:page")
     @GetMapping("/list")
     public Result<List<SuppliersEntity>> list(SuppliersEntity suppliers) {
         return Result.success(suppliersService.list(QueryWrapperUtils.toSimpleQuery(suppliers)));
@@ -54,7 +54,7 @@ public class SuppliersController {
     /**
      * 导出供应商列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:export')")
+    @SaCheckPermission("itam:suppliers:export")
     @Log(title = "供应商", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(SuppliersEntity suppliers) {
@@ -67,7 +67,7 @@ public class SuppliersController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:query')")
+    @SaCheckPermission("itam:suppliers:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<SuppliersEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(suppliersService.getById(id));
@@ -76,7 +76,7 @@ public class SuppliersController {
     /**
      * 新增供应商
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:add')")
+    @SaCheckPermission("itam:suppliers:add")
     @Log(title = "供应商", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody SuppliersEntity suppliers) {
@@ -87,7 +87,7 @@ public class SuppliersController {
     /**
      * 修改供应商
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:update')")
+    @SaCheckPermission("itam:suppliers:update")
     @Log(title = "供应商", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody SuppliersEntity suppliers) {
@@ -100,7 +100,7 @@ public class SuppliersController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:suppliers:delete')")
+    @SaCheckPermission("itam:suppliers:delete")
     @Log(title = "供应商", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {

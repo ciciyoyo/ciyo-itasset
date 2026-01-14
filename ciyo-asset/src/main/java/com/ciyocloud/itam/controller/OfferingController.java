@@ -21,7 +21,7 @@ import com.ciyocloud.itam.vo.SupplierFailureStatsVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +48,7 @@ public class OfferingController {
     /**
      * 查询服务列表 (VO)
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:page')")
+    @SaCheckPermission("itam:offering:page")
     @GetMapping("/page")
     public Result<PageResultVO<OfferingVO>> queryPageVo(PageRequest page, OfferingPageReq req) {
         return Result.success(new PageResultVO<>(offeringService.queryPageVo(page.toMpPage(), req)));
@@ -57,7 +57,7 @@ public class OfferingController {
     /**
      * 导出服务列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:export')")
+    @SaCheckPermission("itam:offering:export")
     @Log(title = "服务", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(OfferingPageReq req) {
@@ -70,7 +70,7 @@ public class OfferingController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:query')")
+    @SaCheckPermission("itam:offering:query")
     @GetMapping(value = "/{id}")
     public Result<OfferingVO> getInfo(@PathVariable("id") Long id) {
         return Result.success(offeringService.getOfferingDetail(id));
@@ -79,7 +79,7 @@ public class OfferingController {
     /**
      * 新增服务
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:add')")
+    @SaCheckPermission("itam:offering:add")
     @Log(title = "服务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody OfferingEntity offering) {
@@ -91,7 +91,7 @@ public class OfferingController {
     /**
      * 修改服务
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:update')")
+    @SaCheckPermission("itam:offering:update")
     @Log(title = "服务", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody OfferingEntity offering) {
@@ -104,7 +104,7 @@ public class OfferingController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:delete')")
+    @SaCheckPermission("itam:offering:delete")
     @Log(title = "服务", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -114,7 +114,7 @@ public class OfferingController {
     /**
      * 服务归属到设备
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:update')")
+    @SaCheckPermission("itam:offering:update")
     @Log(title = "服务", businessType = BusinessType.UPDATE)
     @PostMapping("/bind-asset")
     public Result<Boolean> bindAsset(@RequestBody OfferingEntity offering) {
@@ -128,7 +128,7 @@ public class OfferingController {
     /**
      * 解除服务归属
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:update')")
+    @SaCheckPermission("itam:offering:update")
     @Log(title = "服务", businessType = BusinessType.UPDATE)
     @PostMapping("/unbind")
     public Result<Boolean> unbind(@RequestBody OfferingEntity offering) {
@@ -142,7 +142,7 @@ public class OfferingController {
     /**
      * 报告故障
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:update')")
+    @SaCheckPermission("itam:offering:update")
     @Log(title = "故障", businessType = BusinessType.INSERT)
     @PostMapping("/report-exception")
     public Result<Boolean> report(@RequestBody FailuresEntity failures) {
@@ -153,7 +153,7 @@ public class OfferingController {
     /**
      * 解决故障
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:update')")
+    @SaCheckPermission("itam:offering:update")
     @Log(title = "故障", businessType = BusinessType.UPDATE)
     @PostMapping("/resolve-exception")
     public Result<Boolean> resolve(@RequestBody FailuresEntity failures) {
@@ -165,7 +165,7 @@ public class OfferingController {
     /**
      * 获取服务常用指标统计
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:page')")
+    @SaCheckPermission("itam:offering:page")
     @GetMapping("/statistics")
     public Result<Map<String, Object>> getOfferingStatistics() {
         return Result.success(offeringService.getOfferingStatistics());
@@ -176,7 +176,7 @@ public class OfferingController {
      *
      * @param year 年份
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:page')")
+    @SaCheckPermission("itam:offering:page")
     @GetMapping("/statistics/service-value")
     public Result<List<AssetsReportVO>> getServiceValueStats(@RequestParam(required = false) Integer year) {
         return Result.success(assetsReportService.getMonthlyTrend(AssetType.SERVICE));
@@ -186,7 +186,7 @@ public class OfferingController {
     /**
      * 统计不同服务商提供的服务出现异常的数量
      */
-    @PreAuthorize("@ss.hasPermi('itam:offering:page')")
+    @SaCheckPermission("itam:offering:page")
     @GetMapping("/statistics/supplier-failure-stats")
     public Result<List<SupplierFailureStatsVO>> getSupplierFailureStats() {
         return Result.success(assetsReportService.getSupplierFailureStats());

@@ -1,5 +1,8 @@
 package com.ciyocloud.api.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.hutool.core.exceptions.ValidateException;
 import com.ciyocloud.common.constant.ResponseCodeConstants;
 import com.ciyocloud.common.exception.AuthorizationException;
@@ -46,6 +49,53 @@ public class BaseExceptionHandler {
     public Result handlerAuthorizationException(AuthorizationException e) {
         log.error(e.getMessage(), e);
         return Result.failed(ResponseCodeConstants.UNAUTHORIZED, "{sys.login.expired}");
+    }
+
+    /**
+     * Sa-Token 未登录异常处理
+     */
+    @ExceptionHandler(NotLoginException.class)
+    public Result handleNotLoginException(NotLoginException e) {
+        log.warn("User not logged in: {}", e.getMessage());
+        String message = "";
+        switch (e.getType()) {
+            case NotLoginException.NOT_TOKEN:
+                message = "未提供登录凭证";
+                break;
+            case NotLoginException.INVALID_TOKEN:
+                message = "登录凭证无效";
+                break;
+            case NotLoginException.TOKEN_TIMEOUT:
+                message = "登录已过期，请重新登录";
+                break;
+            case NotLoginException.BE_REPLACED:
+                message = "账号已在其他地方登录";
+                break;
+            case NotLoginException.KICK_OUT:
+                message = "账号已被踢下线";
+                break;
+            default:
+                message = "请登录后访问";
+        }
+        return Result.failed(ResponseCodeConstants.UNAUTHORIZED, message);
+    }
+
+    /**
+     * Sa-Token 权限不足异常处理
+     */
+    @ExceptionHandler(NotPermissionException.class)
+    public Result handleNotPermissionException(NotPermissionException e) {
+        log.warn("Permission denied: {}", e.getMessage());
+        return Result.failed(ResponseCodeConstants.FORBIDDEN, "权限不足，无法访问");
+    }
+
+    /**
+     * Sa-Token 角色不足异常处理
+     */
+    @ExceptionHandler(NotRoleException.class)
+    public Result handleNotRoleException(NotRoleException e) {
+        log.warn("Role denied: {}", e.getMessage());
+        return Result.failed(ResponseCodeConstants.FORBIDDEN, "角色权限不足，无法访问");
     }
 
 

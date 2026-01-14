@@ -36,6 +36,7 @@
   import { i18n } from '@/i18n'
   import { useWorktabStore } from '@/store/modules/worktab'
   import { useRouter } from 'vue-router'
+  import { MessageUtil } from '../../../../utils/messageUtil.ts'
 
   export default {
     setup() {
@@ -99,7 +100,7 @@
         this.$refs['form'].validate((valid) => {
           if (valid) {
             updateUserPwd(encrypt(this.user.oldPassword), encrypt(this.user.newPassword)).then((response) => {
-              this.msgSuccess(i18n.global.t('system.changePassword.updateSuccess'))
+              MessageUtil.success(i18n.global.t('system.changePassword.updateSuccess'))
             })
           }
         })

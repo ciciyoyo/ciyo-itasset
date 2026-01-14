@@ -26,7 +26,7 @@ import com.ciyocloud.itam.vo.DeviceVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,7 +53,7 @@ public class DeviceController {
     /**
      * 查询设备列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:page')")
+    @SaCheckPermission("itam:device:page")
     @GetMapping("/page")
     public Result<PageResultVO<DeviceVO>> queryPage(PageRequest page, DevicePageReq req) {
         return Result.success(new PageResultVO<>(deviceService.queryPageVo(page.toMpPage(), req)));
@@ -62,7 +62,7 @@ public class DeviceController {
     /**
      * 查询设备列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:page')")
+    @SaCheckPermission("itam:device:page")
     @GetMapping("/list")
     public Result<List<DeviceEntity>> queryList(DevicePageReq req) {
         LambdaQueryWrapper<DeviceEntity> queryWrapper = Wrappers.<DeviceEntity>lambdaQuery();
@@ -73,7 +73,7 @@ public class DeviceController {
     /**
      * 导出设备列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:export')")
+    @SaCheckPermission("itam:device:export")
     @Log(title = "设备管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(DevicePageReq req) {
@@ -86,7 +86,7 @@ public class DeviceController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:query')")
+    @SaCheckPermission("itam:device:query")
     @GetMapping(value = "/{id:\\d+}")
     public Result<DeviceEntity> getInfo(@PathVariable Long id) {
         return Result.success(deviceService.getById(id));
@@ -95,7 +95,7 @@ public class DeviceController {
     /**
      * 新增设备
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:add')")
+    @SaCheckPermission("itam:device:add")
     @Log(title = "设备管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody DeviceEntity device) {
@@ -107,7 +107,7 @@ public class DeviceController {
     /**
      * 修改设备
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:update')")
+    @SaCheckPermission("itam:device:update")
     @Log(title = "设备管理", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody DeviceEntity device) {
@@ -120,7 +120,7 @@ public class DeviceController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:delete')")
+    @SaCheckPermission("itam:device:delete")
     @Log(title = "设备管理", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
@@ -130,7 +130,7 @@ public class DeviceController {
     /**
      * 报告故障
      */
-    @PreAuthorize("@ss.hasPermi('itam:assets:report')")
+    @SaCheckPermission("itam:assets:report")
     @Log(title = "故障", businessType = BusinessType.INSERT)
     @PostMapping("/report")
     public Result<Boolean> report(@RequestBody FailuresEntity failures) {
@@ -141,7 +141,7 @@ public class DeviceController {
     /**
      * 设备报废
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:scrap')")
+    @SaCheckPermission("itam:device:scrap")
     @Log(title = "设备管理", businessType = BusinessType.UPDATE)
     @PostMapping("/scrap")
     public Result<Boolean> scrap(@RequestBody IdListRequest request) {
@@ -151,7 +151,7 @@ public class DeviceController {
     /**
      * 解决故障
      */
-    @PreAuthorize("@ss.hasPermi('itam:assets:resolve')")
+    @SaCheckPermission("itam:assets:resolve")
     @Log(title = "故障", businessType = BusinessType.UPDATE)
     @PostMapping("/resolve")
     public Result<Boolean> resolve(@RequestBody FailuresEntity failures) {
@@ -163,7 +163,7 @@ public class DeviceController {
     /**
      * 分配配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "配件", businessType = BusinessType.UPDATE)
     @PostMapping("/allocate")
     public Result<Boolean> allocate(@RequestBody AllocationsEntity allocations) {
@@ -174,7 +174,7 @@ public class DeviceController {
     /**
      * 取消分配配件
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:update')")
+    @SaCheckPermission("itam:accessories:update")
     @Log(title = "配件", businessType = BusinessType.UPDATE)
     @PostMapping("/deallocate/{id}")
     public Result<Boolean> deallocate(@PathVariable Long id) {
@@ -184,7 +184,7 @@ public class DeviceController {
     /**
      * 查询配件分配列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     @GetMapping("/allocation/page")
     public Result<PageResultVO<AllocationsVO>> queryAllocationPage(PageRequest page, AllocationsPageReq req) {
         if (req == null) {
@@ -198,7 +198,7 @@ public class DeviceController {
      * 获取当年内每月设备价值的趋势
      */
     @GetMapping("/stats/monthly-value")
-    @PreAuthorize("@ss.hasPermi('itam:accessories:page')")
+    @SaCheckPermission("itam:accessories:page")
     public Result<List<AssetsReportVO>> getMonthlyValueStats() {
         return Result.success(assetsReportService.getMonthlyTrend(AssetType.DEVICE));
     }
@@ -216,7 +216,7 @@ public class DeviceController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:device:query')")
+    @SaCheckPermission("itam:device:query")
     @GetMapping(value = "/detail/{id:\\d+}")
     public Result<DeviceDetailVO> getDetail(@PathVariable Long id) {
         return Result.success(deviceDetailService.getDeviceDetail(id));

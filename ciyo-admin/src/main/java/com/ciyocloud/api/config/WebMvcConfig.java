@@ -2,6 +2,7 @@ package com.ciyocloud.api.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.ciyocloud.api.security.SaAuthInterceptor;
 import com.ciyocloud.api.web.interceptor.WebDataPermissionCleanupInterceptor;
 import com.ciyocloud.common.converter.IntCodeToEnumConverterFactory;
 import com.ciyocloud.common.converter.StringCodeToEnumConverterFactory;
@@ -89,6 +90,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 注册 Sa-Token 认证拦截器
+        registry.addInterceptor(new SaAuthInterceptor()).addPathPatterns("/**");
+
+        // 注册数据权限清理拦截器
         registry.addInterceptor(new WebDataPermissionCleanupInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns(staticResources);
     }

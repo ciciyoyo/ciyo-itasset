@@ -12,7 +12,7 @@ import com.ciyocloud.system.constant.UserConstants;
 import com.ciyocloud.system.entity.SysPostEntity;
 import com.ciyocloud.system.service.SysPostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +32,14 @@ public class SysPostController {
     /**
      * 获取岗位列表
      */
-    @PreAuthorize("@ss.hasPermi('system:post:list')")
+    @SaCheckPermission("system:post:list")
     @GetMapping("/page")
     public Result queryPage(Page page, SysPostEntity post) {
         return Result.success(postService.page(page, QueryWrapperUtils.toSimpleQuery(post)));
     }
 
     @Log(title = "岗位管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:post:export')")
+    @SaCheckPermission("system:post:export")
     @GetMapping("/export")
     public void export(SysPostEntity post) {
         List<SysPostEntity> list = postService.list(QueryWrapperUtils.toSimpleQuery(post));
@@ -49,7 +49,7 @@ public class SysPostController {
     /**
      * 根据岗位编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:post:query')")
+    @SaCheckPermission("system:post:query")
     @GetMapping(value = "/{postId}")
     public Result getInfo(@PathVariable Long postId) {
         return Result.success(postService.getById(postId));
@@ -58,7 +58,7 @@ public class SysPostController {
     /**
      * 新增岗位
      */
-    @PreAuthorize("@ss.hasPermi('system:post:add')")
+    @SaCheckPermission("system:post:add")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result save(@Validated @RequestBody SysPostEntity post) {
@@ -75,7 +75,7 @@ public class SysPostController {
     /**
      * 修改岗位
      */
-    @PreAuthorize("@ss.hasPermi('system:post:edit')")
+    @SaCheckPermission("system:post:edit")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result update(@Validated @RequestBody SysPostEntity post) {
@@ -91,7 +91,7 @@ public class SysPostController {
     /**
      * 删除岗位
      */
-    @PreAuthorize("@ss.hasPermi('system:post:remove')")
+    @SaCheckPermission("system:post:remove")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{postIds}")
     public Result delete(@PathVariable List<Long> postIds) {

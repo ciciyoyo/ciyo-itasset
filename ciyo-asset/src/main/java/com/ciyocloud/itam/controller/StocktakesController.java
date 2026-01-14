@@ -14,7 +14,7 @@ import com.ciyocloud.itam.vo.StocktakesVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +37,7 @@ public class StocktakesController {
     /**
      * 查询盘点任务列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:page')")
+    @SaCheckPermission("itam:stocktakes:page")
     @GetMapping("/page")
     public Result<PageResultVO<StocktakesVO>> queryPage(PageRequest page, StocktakesPageReq req) {
         return Result.success(new PageResultVO<>(stocktakesService.queryPageVo(page.toMpPage(), req)));
@@ -46,7 +46,7 @@ public class StocktakesController {
     /**
      * 导出盘点任务列表
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:export')")
+    @SaCheckPermission("itam:stocktakes:export")
     @Log(title = "盘点任务", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(StocktakesPageReq req) {
@@ -59,7 +59,7 @@ public class StocktakesController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:query')")
+    @SaCheckPermission("itam:stocktakes:query")
     @GetMapping(value = "/{id}")
     public Result<StocktakesEntity> getInfo(@PathVariable("id") Long id) {
         return Result.success(stocktakesService.getById(id));
@@ -68,7 +68,7 @@ public class StocktakesController {
     /**
      * 新增盘点任务
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:add')")
+    @SaCheckPermission("itam:stocktakes:add")
     @Log(title = "盘点任务", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody StocktakesEntity stocktakes) {
@@ -79,7 +79,7 @@ public class StocktakesController {
     /**
      * 修改盘点任务
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:update')")
+    @SaCheckPermission("itam:stocktakes:update")
     @Log(title = "盘点任务", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody StocktakesEntity stocktakes) {
@@ -92,7 +92,7 @@ public class StocktakesController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasPermi('itam:stocktakes:delete')")
+    @SaCheckPermission("itam:stocktakes:delete")
     @Log(title = "盘点任务", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
