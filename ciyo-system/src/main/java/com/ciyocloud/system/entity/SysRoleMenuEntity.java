@@ -1,6 +1,7 @@
 package com.ciyocloud.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ciyocloud.common.entity.BaseEntity;
 import com.ciyocloud.common.entity.SysBaseEntity;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_role_menu")
-public class SysRoleMenuEntity extends SysBaseEntity {
+public class SysRoleMenuEntity extends BaseEntity {
 
     /**
      * 角色ID

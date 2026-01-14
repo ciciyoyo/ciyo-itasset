@@ -16,7 +16,6 @@
           <el-option :label="$t('system.fileConfig.aliyun')" value="ALIYUN" />
           <el-option :label="$t('system.fileConfig.qiniu')" value="QINIU" />
           <el-option label="腾讯" value="TENCENT" />
-          <el-option :label="$t('system.fileConfig.upyun')" value="UPYUN" />
           <el-option :label="$t('system.fileConfig.local')" value="LOCAL" />
           <el-option :label="$t('system.fileConfig.genericS3')" value="S3" />
           <el-option label="Minio" value="MINIO" />
