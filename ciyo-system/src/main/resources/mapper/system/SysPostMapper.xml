@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.system.mapper.SysPostMapper">
+    <resultMap type="SysPostEntity" id="SysPostResult">
+        <id property="id" column="id"/>
+        <result property="postCode" column="post_code"/>
+        <result property="postName" column="post_name"/>
+        <result property="status" column="status"/>
+        <result property="level" column="level"/>
+        <result property="leaderPost" column="leaderPost"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectPostVo">
+        select id,
+               post_code,
+               post_name,
+               status,
+               create_by,
+               create_time,
+               remark
+        from sys_post
+    </sql>
+
+
+    <select id="selectPostsByUserName" parameterType="String" resultMap="SysPostResult">
+        SELECT
+            p.id,
+            p.post_name,
+            p.post_code
+        FROM
+            sys_post p
+                LEFT JOIN sys_dept_post dp on  dp.post_id= p.id
+                LEFT JOIN sys_user_post up ON up.post_id = dp.id
+                LEFT JOIN sys_user u ON u.id = up.user_id
+        WHERE u.user_name = #{userName}
+    </select>
+
+    <select id="checkPostNameUnique" parameterType="String" resultMap="SysPostResult">
+        <include refid="selectPostVo"/>
+        where post_name=#{postName}
+    </select>
+
+    <select id="checkPostCodeUnique" parameterType="String" resultMap="SysPostResult">
+        <include refid="selectPostVo"/>
+        where post_code=#{postCode}
+    </select>
+</mapper>

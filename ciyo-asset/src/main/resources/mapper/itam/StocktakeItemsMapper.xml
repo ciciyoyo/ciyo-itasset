@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.StocktakeItemsMapper">
+
+    <select id="queryPageVo" resultType="com.ciyocloud.itam.vo.StocktakeItemsVO">
+        SELECT
+            t1.*,
+            t2.name AS stocktakeName,
+            t3.name AS assetName,
+            t3.asset_code AS assetCode,
+            t4.name AS expectedLocationName,
+            t5.name AS actualLocationName
+        FROM itam_stocktake_items t1
+        LEFT JOIN itam_stocktakes t2 ON t1.stocktake_id = t2.id
+        LEFT JOIN itam_device t3 ON t1.asset_id = t3.id
+        LEFT JOIN itam_locations t4 ON t1.expected_location_id = t4.id
+        LEFT JOIN itam_locations t5 ON t1.actual_location_id = t5.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="queryListVo" resultType="com.ciyocloud.itam.vo.StocktakeItemsVO">
+        SELECT
+        t1.*,
+        t2.name AS stocktakeName,
+        t3.name AS assetName,
+        t3.asset_code AS assetCode,
+        t4.name AS expectedLocationName,
+        t5.name AS actualLocationName
+        FROM itam_stocktake_items t1
+        LEFT JOIN itam_stocktakes t2 ON t1.stocktake_id = t2.id
+        LEFT JOIN itam_device t3 ON t1.asset_id = t3.id
+        LEFT JOIN itam_locations t4 ON t1.expected_location_id = t4.id
+        LEFT JOIN itam_locations t5 ON t1.actual_location_id = t5.id
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

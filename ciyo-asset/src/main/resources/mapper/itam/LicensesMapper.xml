@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.LicensesMapper">
+
+
+    <select id="selectPageVo" resultType="com.ciyocloud.itam.vo.LicensesVO">
+        SELECT
+            t1.*,
+            t2.name AS categoryName,
+            t3.name AS manufacturerName,
+            t4.name AS supplierName
+        FROM itam_licenses t1
+        LEFT JOIN itam_categories t2 ON t1.category_id = t2.id
+        LEFT JOIN itam_manufacturers t3 ON t1.manufacturer_id = t3.id
+        LEFT JOIN itam_suppliers t4 ON t1.supplier_id = t4.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectListVo" resultType="com.ciyocloud.itam.vo.LicensesVO">
+        SELECT
+            t1.*,
+            t2.name AS categoryName,
+            t3.name AS manufacturerName,
+            t4.name AS supplierName
+        FROM itam_licenses t1
+        LEFT JOIN itam_categories t2 ON t1.category_id = t2.id
+        LEFT JOIN itam_manufacturers t3 ON t1.manufacturer_id = t3.id
+        LEFT JOIN itam_suppliers t4 ON t1.supplier_id = t4.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectAllocationsPage" resultType="com.ciyocloud.itam.vo.LicenseAllocationVO">
+        SELECT
+            t1.*,
+            CASE
+                WHEN t1.owner_type = 'user' THEN t2.nick_name
+                WHEN t1.owner_type = 'asset' THEN t3.name
+                WHEN t1.owner_type = 'location' THEN t4.name
+                ELSE NULL
+            END AS ownerName
+        FROM itam_allocations t1
+        LEFT JOIN sys_user t2 ON t1.owner_type = 'user' AND t1.owner_id = t2.id
+        LEFT JOIN itam_device t3 ON t1.owner_type = 'asset' AND t1.owner_id = t3.id
+        LEFT JOIN itam_locations t4 ON t1.owner_type = 'location' AND t1.owner_id = t4.id
+        WHERE t1.item_type = 'license' AND t1.item_id = #{licenseId}
+    </select>
+
+    <select id="selectCategoryStats" resultType="java.util.Map">
+        SELECT
+            t2.name as categoryName,
+            count(*) as count
+        FROM itam_licenses t1
+        JOIN itam_categories t2 ON t1.category_id = t2.id
+        WHERE t1.deleted = 0
+        GROUP BY t2.id, t2.name
+    </select>
+</mapper>
+

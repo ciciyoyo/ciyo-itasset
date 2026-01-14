@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ciyocloud</groupId>
+    <artifactId>ciyo-itasset</artifactId>
+    <version>0.0.1</version>
+
+    <name>ciyo-itasset</name>
+    <description>西柚资产管理（ITAM）系统</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- 统一依赖管理 -->
+        <spring.boot.version>3.4.1</spring.boot.version>
+        <!-- Web 相关 -->
+        <springdoc.version>2.8.3</springdoc.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <servlet.version>6.0.0</servlet.version>
+        <!-- DB 相关 -->
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+
+        <!-- 工具类相关 -->
+        <lombok.version>1.18.42</lombok.version>
+        <hutool.version>5.8.43</hutool.version>
+        <easyexcel.version>4.0.3</easyexcel.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <velocity.version>2.4.1</velocity.version>
+        <fastjson.version>2.0.60</fastjson.version>
+        <ip2region.version>2.7.0</ip2region.version>
+        <commons.lang3.version>3.20.0</commons.lang3.version>
+        <commons.io.version>2.18.0</commons.io.version>
+        <commons.configuration.version>1.10</commons.configuration.version>
+        <!-- 三方云服务相关 -->
+        <okio.version>3.9.1</okio.version>
+        <okhttp3.version>4.12.0</okhttp3.version>
+        <aliyun-java-sdk-dysmsapi.version>4.4.0</aliyun-java-sdk-dysmsapi.version>
+        <tencentcloud-sdk-java.version>3.1.1396</tencentcloud-sdk-java.version>
+        <baiducloud-sdk-java.version>4.16.23</baiducloud-sdk-java.version>
+        <!--        oss-->
+        <upyun.version>4.2.3</upyun.version>
+        <aliyun-oss.sdk.version>3.18.4</aliyun-oss.sdk.version>
+        <qiniu-oss.version>7.19.0</qiniu-oss.version>
+        <aws-java-sdk-s3.version>1.12.797</aws-java-sdk-s3.version>
+        <minio.version>8.6.0</minio.version>
+        <justauth.version>1.16.7</justauth.version>
+        <weixin-java.version>4.8.0-20260110.142351</weixin-java.version>
+        <captcha.version>1.3.0</captcha.version>
+        <jwt.version>0.13.0</jwt.version>
+        <poi.version>5.5.1</poi.version>
+        <alibaba-ttl.version>2.14.5</alibaba-ttl.version>
+        <zxing.version>3.5.3</zxing.version>
+        <x-easypdf.version>3.3.1</x-easypdf.version>
+        <mysql-connector-java.version>9.5.0</mysql-connector-java.version>
+        <!-- Maven 相关 -->
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>ciyo-file</module>
+        <module>ciyo-common</module>
+        <module>ciyo-system</module>
+        <module>ciyo-admin</module>
+        <module>ciyo-generator</module>
+        <module>ciyo-message</module>
+        <module>ciyo-job</module>
+        <module>ciyo-asset</module>
+    </modules>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 统一依赖管理 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 业务组件 -->
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-common</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-file</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-system</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-message</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-job</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ciyocloud</groupId>
+                <artifactId>ciyo-asset</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+
+            <!-- Spring 核心 -->
+            <dependency>
+                <!-- 用于生成自定义的 Spring @ConfigurationProperties 配置类的说明文件 -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <!-- Web 相关 -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- DB 相关 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                        <groupId>org.springframework.boot</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- Test 测试相关 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>asm</artifactId>
+                        <groupId>org.ow2.asm</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+            <!-- 工具类相关 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId> <!-- use mapstruct-jdk8 for Java 8 or higher -->
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-jdk8</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!--   excel-->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <!-- POI excel-->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <!-- word-->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-scratchpad</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.poi</groupId>
+                        <artifactId>poi-ooxml-schemas</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- 三方云服务相关 -->
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>${okhttp3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baidu.aip</groupId>
+                <artifactId>java-sdk</artifactId>
+                <version>${baiducloud-sdk-java.version}</version>
+            </dependency>
+            <!-- SMS SDK begin -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>${aliyun-java-sdk-dysmsapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tencentcloudapi</groupId>
+                <artifactId>tencentcloud-sdk-java</artifactId>
+                <version>${tencentcloud-sdk-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tencentcloudapi</groupId>
+                <artifactId>tencentcloud-sdk-java-common</artifactId>
+                <version>${tencentcloud-sdk-java.version}</version>
+            </dependency>
+            <!--云存储-->
+            <dependency>
+                <groupId>com.upyun</groupId>
+                <artifactId>java-sdk</artifactId>
+                <version>${upyun.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun-oss.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu-oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws-java-sdk-s3.version}</version>
+            </dependency>
+            <!-- SMS SDK end -->
+            <dependency>
+                <groupId>me.zhyd.oauth</groupId>
+                <artifactId>JustAuth</artifactId>
+                <version>${justauth.version}</version>
+            </dependency>
+
+            <!--  微信依赖-->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-mp</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-miniapp</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-pay</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-cp</artifactId>
+                <version>${weixin-java.version}</version>
+            </dependency>
+            <!--    线程-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${alibaba-ttl.version}</version>
+            </dependency>
+            <!-- jwt-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+            <!--  滑动验证码-->
+            <dependency>
+                <groupId>com.anji-plus</groupId>
+                <artifactId>spring-boot-starter-captcha</artifactId>
+                <version>${captcha.version}</version>
+            </dependency>
+            <!-- SpringBoot Websocket -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <!--数据库连接驱动-->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+
+            <!-- H2数据库 -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>2.2.224</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

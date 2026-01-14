@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.FailuresMapper">
+
+    <select id="selectPageVo" resultType="com.ciyocloud.itam.vo.FailuresVO">
+        SELECT
+            t1.*,
+            CASE
+                WHEN t1.target_type = 'service' THEN t2.name
+                WHEN t1.target_type = 'device' THEN t3.name
+                WHEN t1.target_type = 'accessory' THEN t4.name
+                ELSE NULL
+            END AS targetName,
+            u1.nick_name AS reportedByName,
+            u2.nick_name AS resolvedByName
+        FROM itam_failures t1
+        LEFT JOIN itam_offering t2 ON t1.target_id = t2.id AND t1.target_type = 'service'
+        LEFT JOIN itam_device t3 ON t1.target_id = t3.id AND t1.target_type = 'device'
+        LEFT JOIN itam_accessories t4 ON t1.target_id = t4.id AND t1.target_type = 'accessory'
+        LEFT JOIN sys_user u1 ON t1.reported_by = u1.id
+        LEFT JOIN sys_user u2 ON t1.resolved_by = u2.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="countSupplierFailures" resultType="com.ciyocloud.itam.vo.SupplierFailureStatsVO">
+        SELECT
+            s.id AS supplierId,
+            s.name AS supplierName,
+            COUNT(f.id) AS failureCount
+        FROM itam_suppliers s
+        JOIN itam_offering o ON s.id = o.supplier_id
+        JOIN itam_failures f ON o.id = f.target_id AND f.target_type = 'service'
+        WHERE s.deleted = 0 AND o.deleted = 0 AND f.deleted = 0
+        GROUP BY s.id, s.name
+    </select>
+
+</mapper>

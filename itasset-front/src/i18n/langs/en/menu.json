@@ -1,0 +1,37 @@
+{
+  "menuName": {
+    "userCenter": "User Center",
+    "announcement": "Notice Announcement",
+    "assignRoles": "Assign Roles",
+    "codeGeneration": "Code Generation",
+    "codeGenerationDetails": "Code Generation Details",
+    "dataCentralControl": "Data Central Control",
+    "departmentManagement": "Department Management",
+    "departmentPositions": "Department Positions",
+    "dictionaryData": "Dictionary Data",
+    "dictionaryManagement": "Dictionary Management",
+    "initialParameters": "Initial Parameters",
+    "initiateWorkflow": "Initiate Workflow",
+    "menuManagement": "Menu Management",
+    "messageCenter": "Message Center",
+    "messageLog": "Message Log",
+    "mobileConfig": "System Config",
+    "mobileConfiguration": "Mobile Configuration",
+    "userList": "User Management",
+    "myMessages": "My Messages",
+    "operationLog": "Operation Log",
+    "otherTools": "Other Tools",
+    "positionManagement": "Position Management",
+    "publicTemplates": "Public Templates",
+    "questionBankQuestions": "Question Bank",
+    "recycleBin": "Recycle Center",
+    "roleManagement": "Role Management",
+    "scheduledTasks": "Scheduled Tasks",
+    "systemConfiguration": "System Configuration",
+    "systemManagement": "System Management",
+    "taskLog": "Task Log",
+    "login": {
+      "title": "Login"
+    }
+  }
+}

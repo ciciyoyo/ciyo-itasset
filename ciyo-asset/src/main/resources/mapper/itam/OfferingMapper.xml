@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.OfferingMapper">
+
+    <select id="selectOfferingPage" resultType="com.ciyocloud.itam.vo.OfferingVO">
+        SELECT
+            t1.*,
+            t2.name AS supplierName
+        FROM itam_offering t1
+        LEFT JOIN itam_suppliers t2 ON t1.supplier_id = t2.id AND t2.deleted = 0
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectOfferingList" resultType="com.ciyocloud.itam.vo.OfferingVO">
+        SELECT
+        t1.*,
+        t2.name AS supplierName
+        FROM itam_offering t1
+        LEFT JOIN itam_suppliers t2 ON t1.supplier_id = t2.id AND t2.deleted = 0
+        ${ew.customSqlSegment}
+    </select>
+
+</mapper>

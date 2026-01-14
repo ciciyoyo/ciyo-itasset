@@ -1,0 +1,29 @@
+{
+  "imageUpload": {
+    "pleaseUpload": "请上传",
+    "sizeNotExceed": "大小不超过",
+    "formatIs": "格式为",
+    "file": "的文件",
+    "preview": "图片预览",
+    "formatError": "文件格式不正确, 请上传{format}格式文件!",
+    "sizeError": "上传文件大小不能超过 {size} MB!",
+    "uploadSuccess": "上传成功",
+    "uploadFailed": "上传失败",
+    "uploadFailedRetry": "上传失败, 请重试"
+  },
+  "excelImport": {
+    "buttonText": "Excel 导入",
+    "title": "Excel 导入",
+    "dragText": "将文件拖到此处，或",
+    "clickUpload": "点击上传",
+    "tip": "仅支持 .xls, .xlsx 格式文件，文件大小不超过 {size}MB",
+    "cancel": "取消",
+    "confirm": "确定导入",
+    "formatError": "上传文件只能是 xls, xlsx 格式",
+    "sizeError": "上传文件大小不能超过 {size}MB!",
+    "pleaseSelect": "请选择要导入的文件",
+    "success": "导入成功",
+    "fail": "导入失败",
+    "error": "上传过程中发生错误"
+  }
+}
