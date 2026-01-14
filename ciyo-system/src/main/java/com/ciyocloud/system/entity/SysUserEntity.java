@@ -95,6 +95,7 @@ public class SysUserEntity extends SysBaseEntity {
      */
     @ExcelProperty(value = "密码")
     @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.IMPORT)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     /**
