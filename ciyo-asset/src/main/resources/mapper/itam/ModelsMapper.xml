@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.ModelsMapper">
+
+
+    <select id="selectPageVo" resultType="com.ciyocloud.itam.vo.ModelsVO">
+        SELECT
+            t1.*,
+            t2.name AS categoryName,
+            t3.name AS manufacturerName,
+            t4.name AS depreciationName
+        FROM itam_models t1
+        LEFT JOIN itam_categories t2 ON t1.category_id = t2.id
+        LEFT JOIN itam_manufacturers t3 ON t1.manufacturer_id = t3.id
+        LEFT JOIN itam_depreciations t4 ON t1.depreciation_id = t4.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectListVo" resultType="com.ciyocloud.itam.vo.ModelsVO">
+        SELECT
+            t1.*,
+            t2.name AS categoryName,
+            t3.name AS manufacturerName,
+            t4.name AS depreciationName
+        FROM itam_models t1
+        LEFT JOIN itam_categories t2 ON t1.category_id = t2.id
+        LEFT JOIN itam_manufacturers t3 ON t1.manufacturer_id = t3.id
+        LEFT JOIN itam_depreciations t4 ON t1.depreciation_id = t4.id
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

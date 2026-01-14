@@ -1,0 +1,53 @@
+package ${packageName}.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.ciyocloud.common.entity.BaseEntity;
+
+#foreach ($import in $importList)
+import ${import};
+#end
+#if($table.crud || $table.sub)
+#elseif($table.tree)
+import com.ciyocloud.common.entity.TreeEntity;
+#end
+
+/**
+ * ${functionName}对象 ${tableName}
+ *
+ * @author ${author}
+ * @since ${datetime}
+ */
+#if($table.crud || $table.sub)
+    #set($Entity="BaseEntity")
+#elseif($table.tree)
+    #set($Entity="TreeEntity<${ClassName}>")
+#end
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("${tableName}")
+
+public class ${ClassName}Entity extends ${Entity} {
+
+    private static final long serialVersionUID = 1L;
+
+    #foreach ($column in $columns)
+        #if(!$table.isSuperColumn($column.javaField))
+            /**
+             * $column.columnComment
+             */
+            #if($column.javaField=='delFlag')
+            @TableLogic
+            #end
+            #if($column.javaField=='version')
+            @Version
+            #end
+            #if($column.pk)
+            @TableId(value = "$column.columnName")
+            #end
+        private $column.javaType $column.javaField;
+        #end
+    #end
+
+}

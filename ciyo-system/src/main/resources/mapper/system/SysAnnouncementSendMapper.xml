@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ciyocloud.system.mapper.SysAnnouncementSendMapper">
+    <select id="selectMyAnnouncementSendList" resultType="com.ciyocloud.system.vo.AnnouncementSendVO">
+        select sas.id,
+        sas.annt_id,
+        sas.user_id,
+        sas.read_flag,
+        sa.title as title,
+        sa.msg_content as msg_content,
+        sa.sender as sender,
+        sa.priority as priority,
+        sa.msg_category,
+        sa.send_time as send_time,
+        sa.bus_id as bus_id,
+        sa.open_type as open_type,
+        sa.open_page as open_page,
+        sa.msg_abstract
+        from sys_announcement_send sas
+        left join sys_announcement sa ON sas.annt_id = sa.id
+            ${ew.getCustomSqlSegment}
+    </select>
+    <select id="selectUnReadAnnouncementList" resultType="com.ciyocloud.system.vo.UnReadAnnouncementVO">
+        select id,
+        title,
+        msg_content,
+        msg_category,
+        priority,
+        sender,
+        msg_type,
+        send_time
+        from sys_announcement
+        where send_status = '2'
+        and del_flag = '0'
+        <if test="msgCategory != null and msgCategory != ''">
+            and msg_category = #{msgCategory}
+        </if>
+        and id IN (select annt_id from sys_announcement_send where user_id = #{userId} and read_flag = '0')
+        order by create_time DESC
+    </select>
+</mapper>

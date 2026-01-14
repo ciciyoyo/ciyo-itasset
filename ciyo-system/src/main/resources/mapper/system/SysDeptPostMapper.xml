@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ciyocloud.system.mapper.SysDeptPostMapper">
+    <select id="selectDeptPostPage" resultType="com.ciyocloud.system.vo.SysDeptPostVO">
+        SELECT *
+        FROM sys_dept_post dp
+        LEFT JOIN sys_post p ON (dp.post_id = p.id)
+            ${ew.getCustomSqlSegment}
+    </select>
+    <select id="selectPostListByUserId" resultType="java.lang.Long">
+        select p.post_id
+        from sys_dept_post p
+                 left join sys_user_post up on up.post_id = p.id
+                 left join sys_user u on u.id = up.user_id
+        where u.id = #{userId}
+    </select>
+    <select id="selectDeptPostListByUserId" resultType="java.lang.Long">
+        select p.id
+        from sys_dept_post p
+                 left join sys_user_post up on up.post_id = p.id
+                 left join sys_user u on u.id = up.user_id
+        where u.id = #{userId}
+    </select>
+    <select id="selectDeptLeader" resultType="com.ciyocloud.system.entity.SysUserEntity">
+        SELECT u.*
+        FROM sys_user u
+                 LEFT JOIN sys_user_post up ON u.id = up.user_id
+                 LEFT JOIN sys_dept_post dp ON up.post_id = dp.id
+                 LEFT JOIN sys_post p ON dp.post_id = p.id
+        WHERE dp.dept_id = #{deptId}
+          AND p.leader_post = 1
+    </select>
+    <select id="selectPostUserList" resultType="com.ciyocloud.system.entity.SysUserEntity">
+        SELECT u.*
+        FROM sys_user u
+        INNER JOIN sys_user_post up ON u.id = up.user_id
+        INNER JOIN sys_dept_post dp ON up.post_id = dp.id
+        INNER JOIN sys_post p ON dp.post_id = p.id
+        WHERE dp.post_id IN
+        <foreach collection="postIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,26 @@
+package ${packageName}.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+    #if($table.sub)
+    import java.util.ArrayList;
+
+    import org.springframework.transaction.annotation.Transactional;
+    import ${packageName}.entity.${subClassName}Entity;
+    #end
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.entity.${ClassName}Entity;
+import ${packageName}.service.${ClassName}Service;
+
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @author ${author}
+ * @since ${datetime}
+ */
+@Service
+public class ${ClassName}ServiceImpl extends ServiceImpl< ${ClassName}Mapper, ${ClassName}Entity> implements ${ClassName}Service {
+
+}

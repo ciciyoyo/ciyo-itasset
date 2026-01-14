@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ciyocloud.itam.mapper.AllocationsMapper">
+
+    <sql id="selectAllocationsVo">
+        SELECT * FROM (
+            SELECT
+                t1.*,
+                COALESCE(asset.name, license.name, accessory.name, consumable.name, service.name) as item_name,
+                COALESCE(u.nick_name, loc.name, a2.name) as owner_name
+            FROM itam_allocations t1
+            LEFT JOIN itam_device asset ON t1.item_id = asset.id AND t1.item_type = 'device'
+            LEFT JOIN itam_licenses license ON t1.item_id = license.id AND t1.item_type = 'license'
+            LEFT JOIN itam_accessories accessory ON t1.item_id = accessory.id AND t1.item_type = 'accessory'
+            LEFT JOIN itam_consumables consumable ON t1.item_id = consumable.id AND t1.item_type = 'consumable'
+            LEFT JOIN itam_offering service ON t1.item_id = service.id AND t1.item_type = 'service'
+            LEFT JOIN sys_user u ON t1.owner_id = u.id AND t1.owner_type = 'user'
+            LEFT JOIN itam_locations loc ON t1.owner_id = loc.id AND t1.owner_type = 'location'
+            LEFT JOIN itam_device a2 ON t1.owner_id = a2.id AND t1.owner_type = 'asset'
+        ) temp
+    </sql>
+
+    <select id="selectPageVo" resultType="com.ciyocloud.itam.vo.AllocationsVO">
+        <include refid="selectAllocationsVo"/>
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectListVo" resultType="com.ciyocloud.itam.vo.AllocationsVO">
+        <include refid="selectAllocationsVo"/>
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

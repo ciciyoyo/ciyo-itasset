@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: ciyo-crm
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: prod
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    #设置空如何序列化
+    defaultPropertyInclusion: always
+    serialization:
+      # 格式化输出
+      indent_output: false
+      # 忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      #允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
+  servlet:
+    multipart:
+      max-file-size: 10000MB
+      max-request-size: 10000MB
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+    encoding: UTF-8
+
+
+server:
+  port: 8088
+  servlet:
+    context-path: /
+
+# 日志级别
+logging:
+  level:
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: debug
+    org.springframework.web.socket: debug
+    com.ciyocloud: debug
+
+mybatis-plus:
+  type-aliases-package: com.ciyocloud.*.entity
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 原生配置
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    jdbc-type-for-null: varchar
+
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: u5DoAG+a2L+EA84YTflUZU8MMXDLmXLHFMAj2lmBBLAl/jH1Cy0hFZeCPT3ATPsD
+  # 令牌有效期（默认120分钟）
+  expireTime: 120
+
+# 表单数据存储到哪里
+platform:
+  gen: #代码生成是否启用
+    enabled: true
+
+#验证码配置
+aj:
+  captcha:
+    enable: false # 滑动验证码开关
+    water-mark: # 图形验证码水印
+    cache-type: redis
+
+### 接口文档配置
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.ciyocloud
+## 接口文档增强配置
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 实体类列表
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludes:
+  # 富文本链接
+  rich-text-urls:
+    - /sys/msg/template
+    - /sys/announce
+  # 匹配链接
+  url-patterns: /system/*,/monitor/*,/tool/*,/form/*,/user/form/*
+

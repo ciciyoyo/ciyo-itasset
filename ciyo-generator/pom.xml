@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ciyo-itasset</artifactId>
+        <groupId>com.ciyocloud</groupId>
+        <version>0.0.1</version>
+    </parent>
+    <packaging>jar</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ciyo-generator</artifactId>
+    <description>
+        generator代码生成
+    </description>
+
+    <dependencies>
+        <!--velocity代码生成使用模板 -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!-- 通用工具-->
+        <dependency>
+            <groupId>com.ciyocloud</groupId>
+            <artifactId>ciyo-common</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

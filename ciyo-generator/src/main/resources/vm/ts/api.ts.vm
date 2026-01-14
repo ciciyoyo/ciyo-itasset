@@ -1,0 +1,87 @@
+import request from '@/utils/http'
+
+export interface ${BusinessName}Entity extends Api.Common.BaseEntity {
+    #foreach ($column in $columns)
+        #if( $column.javaField != 'updateTime' && $column.javaField != 'createTime' && $column.javaField !=
+            'isDeleted' )
+                $column.javaField: $column.jsType
+        #end
+    #end
+}
+
+type ${BusinessName}List = Api.Common.PaginatedResponse<${BusinessName}Entity>
+
+type ${BusinessName}SearchFields = {
+    #foreach ($column in $columns)
+        #if( $column.javaField != 'updateTime' && $column.javaField != 'createTime' && $column.javaField !=
+            'isDeleted' )
+                $column.javaField: $column.jsType
+        #end
+    #end
+}
+
+type ${BusinessName}SearchParams = ${BusinessName}SearchFields & Api.Common.CommonSearchParams
+
+/**
+ * 获取${functionName}列表
+ */
+export function page${BusinessName}(params: ${BusinessName}SearchParams) {
+    return request.get<${BusinessName}List>({
+        url: '/${moduleName}/${businessName}/page',
+        params
+    })
+}
+
+/**
+ * 获取${functionName}详情
+ * @param id
+ */
+export function get${BusinessName}(id: number): any {
+    return request.get<${BusinessName}Entity>({
+        url: `/${moduleName}/${businessName}/${id}`
+    })
+}
+
+/**
+ * 创建${functionName}
+ * @param data
+ */
+export function add${BusinessName}(data: ${BusinessName}Entity) {
+    return request.post({
+        url: '/${moduleName}/${businessName}/add',
+        data
+    })
+}
+
+/**
+ * 修改${functionName}
+ * @param data
+ */
+export function update${BusinessName}(data: ${BusinessName}Entity) {
+    return request.post({
+        url: '/${moduleName}/${businessName}/update',
+        data
+    })
+}
+
+/**
+ * 删除${functionName}
+ * @param id
+ */
+export function del${BusinessName}(id: number | number[]) {
+    return request.post({
+        url: `/${moduleName}/${businessName}/delete/${id}`
+    })
+}
+
+
+/**
+ * 导出${functionName}
+ */
+export function export${BusinessName}(query: ${BusinessName}SearchParams) {
+    return request.get<Blob>({
+        url: '/${moduleName}/${businessName}/export',
+        responseType: 'blob',
+        params: query
+    })
+}

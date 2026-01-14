@@ -1,0 +1,418 @@
+<template>
+    <div class="log-page art-full-height">
+        <div class="flex flex-col h-full">
+            <ArtSearchBar
+                    v-if="showSearch"
+                    ref="searchBarRef"
+                    v-model="searchForm"
+                    :items="searchFormItems"
+                    @reset="resetSearchParams"
+                    @search="handleSearch">
+            </ArtSearchBar>
+            <ElCard
+                    class="art-table-card flex flex-col flex-1 min-h-0"
+                    shadow="never"
+                    :style="{ 'margin-top': showSearch ? '12px' : '0' }">
+                <ArtTableHeader
+                        v-model:columns="columnChecks"
+                        v-model:showSearchBar="showSearch"
+                        :loading="loading"
+                        @refresh="refreshData">
+                    <template #left>
+                        <ElSpace wrap>
+                            <el-button
+                                    type="primary"
+                                    icon="ele-Plus"
+                                    @click="handleAdd"
+                                    v-ripple
+                                    v-hasPermi="['${moduleName}:${businessName}:add']">
+                                {{$t('common.add')}}
+                            </el-button>
+                            <el-button
+                                    type="danger"
+                                    v-ripple
+                                    icon="ele-Delete"
+                                    @click="handleDelete"
+                                    v-hasPermi="['${moduleName}:${businessName}:delete']">
+                                {{$t('common.delete')}}
+                            </el-button>
+
+                            <el-button
+                                    v-hasPermi="['${moduleName}:${businessName}:export']"
+                                    icon="ele-Download"
+                                    v-ripple
+                                    @click="handleExport">
+                                {{$t('common.export')}}
+                            </el-button>
+                        </ElSpace>
+                    </template>
+                </ArtTableHeader>
+
+                <!-- Table -->
+                <ArtTable
+                        class="flex-1"
+                        :loading="loading"
+                        :data="data"
+                        :columns="columns"
+                        :pagination="pagination"
+                        @selection-change="handleSelectionChange"
+                        @pagination:size-change="handleSizeChange"
+                        @pagination:current-change="handleCurrentChange">
+                    <template #operation="{ row }">
+                        <el-button
+                                link
+                                type="primary"
+                                @click="handleUpdate(row)"
+                                v-hasPermi="['${moduleName}:${businessName}:update']">
+                            {{ $t('system.roleManagement.edit') }}
+                        </el-button>
+                        <el-button
+                                link
+                                type="danger"
+                                @click="handleDelete(row)"
+                                v-hasPermi="['${moduleName}:${businessName}:delete']">
+                            {{ $t('system.roleManagement.delete') }}
+                        </el-button>
+                    </template>
+                </ArtTable>
+            </ElCard>
+        </div>
+        <!-- 添加或修改${functionName}对话框 -->
+        <el-dialog :title="dialogTitle" v-model="open" width="500px" append-to-body>
+            <el-form ref="${businessName}Ref" :model="form" :rules="formRules" label-width="80px">
+                #foreach($column in $columns)
+                    #set($field=$column.javaField)
+                    #if($column.insert && !$column.pk)
+                        #set($parentheseIndex=$column.columnComment.indexOf("（"))
+                        #if($parentheseIndex != -1)
+                            #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+                        #else
+                            #set($comment=$column.columnComment)
+                        #end
+                        #set($dictType=$column.dictType)
+                        <el-form-item label="${comment}" prop="${field}">
+                            #if($column.htmlType == "input")
+                                <el-input v-model="form.${field}" placeholder="请输入${comment}"/>
+                            #elseif($column.htmlType == "textarea")
+                                <el-input v-model="form.${field}" type="textarea" placeholder="请输入内容"/>
+                            #elseif($column.htmlType == "select" && "" != $dictType)
+                                <el-select v-model="form.${field}" placeholder="请选择${comment}">
+                                    <el-option
+                                            v-for="dict in ${dictType}"
+                                            :key="dict.value"
+                                            :label="dict.label"
+                                            :value="dict.value"
+                                    ></el-option>
+                                </el-select>
+                            #elseif($column.htmlType == "datetime")
+                                <el-date-picker
+                                        clearable
+                                        v-model="form.${field}"
+                                        type="datetime"
+                                        value-format="YYYY-MM-DD HH:mm:ss"
+                                        placeholder="请选择${comment}">
+                                </el-date-picker>
+                            #end
+                        </el-form-item>
+                    #end
+                #end
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="cancel">{{ $t('common.cancel') }}</el-button>
+                    <el-button :loading="saveLoading" type="primary" @click="submitForm">{{
+                        $t('common.submit')
+                        }}
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+    </div>
+</template>
+
+<script setup lang="ts">
+    import {computed, ref, useTemplateRef} from 'vue'
+    import {ElMessageBox} from 'element-plus'
+    import {useTable} from '@/hooks/core/useTable'
+    import {MessageUtil} from '@/utils/messageUtil'
+    import {download, resetFormRef} from '@/utils/business'
+    import {useI18n} from 'vue-i18n'
+
+    import {add${BusinessName}, del${BusinessName}, ${BusinessName}Entity, export${BusinessName}, get${BusinessName}, page${BusinessName}, update${BusinessName}} from '@/api/'
+
+    defineOptions({
+        name: '${businessName}'
+    })
+
+    const {t} = useI18n()
+
+    const showSearch = ref(true)
+
+    const selectedRows = ref < ${BusinessName}Entity[] > ([])
+
+    const searchForm = ref({
+        #foreach ($column in $columns)
+            #if($column.query)
+                    $column.javaField: undefined,
+            #end
+        #end
+    })
+
+    // 表单配置
+    const searchFormItems = computed(() => [
+        #foreach($column in $columns)
+            #if($column.query)
+                #set($parentheseIndex=$column.columnComment.indexOf("（"))
+                #if($parentheseIndex != -1)
+                    #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+                #else
+                    #set($comment=$column.columnComment)
+                #end
+                {
+                    label: '${comment}',
+                    key: '${column.javaField}',
+                    #if($column.htmlType == "input")
+                        type: 'input',
+                        placeholder: '请输入${comment}',
+                    #elseif($column.htmlType == "select" || $column.htmlType == "radio")
+                        type: 'select',
+                        placeholder: '请选择${comment}',
+                        options: ${column.dictType},
+                    #elseif($column.htmlType == "datetime")
+                        type: 'date',
+                    #end
+                    clearable: true
+                },
+            #end
+        #end
+    ])
+
+    const {
+        columns,
+        columnChecks,
+        data,
+        loading,
+        getData,
+        pagination,
+        searchParams,
+        resetSearchParams,
+        handleSizeChange,
+        handleCurrentChange,
+        refreshData
+    } = useTable({
+        core: {
+            apiFn: page${BusinessName},
+            apiParams: {
+                current: 1,
+                size: 10,
+                ...searchForm.value
+            },
+            columnsFactory: () => [
+                {type: 'selection'},
+                #foreach($column in $columns)
+                    #if($column.list)
+                        #set($parentheseIndex=$column.columnComment.indexOf("（"))
+                        #if($parentheseIndex != -1)
+                            #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+                        #else
+                            #set($comment=$column.columnComment)
+                        #end
+                        {prop: '${column.javaField}', label: '${comment}', minWidth: 120},
+                    #end
+                #end
+                {
+                    prop: 'operation',
+                    label: t('system.noticeLog.operation'),
+                    useSlot: true,
+                    minWidth: 100,
+                    fixed: 'right'
+                }
+            ]
+        }
+    })
+
+    const searchBarRef = ref()
+
+    const handleSearch = () => {
+        searchBarRef.value.validate().then(() => {
+            Object.assign(searchParams, searchForm.value)
+            getData()
+        })
+    }
+
+    const handleSelectionChange = (selection: any[])
+    :
+    void
+    =>
+    {
+        selectedRows.value = selection
+    }
+
+    const open = ref(false)
+
+    const form = ref < ${BusinessName}Entity > ({
+        #foreach ($column in $columns)
+            #if($column.htmlType == "checkbox")
+                    $column.javaField: [],
+            #elseif($column.javaType == "Long" || $column.javaType == "Integer")
+                    $column.javaField: 0,
+            #else
+                    $column.javaField: '',
+            #end
+        #end
+    })
+
+    const formRules = ref({
+        #foreach ($column in $columns)
+            #if($column.required)
+                #set($parentheseIndex=$column.columnComment.indexOf("（"))
+                #if($parentheseIndex != -1)
+                    #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+                #else
+                    #set($comment=$column.columnComment)
+                #end
+                    $column.javaField: [
+                    {
+                        required: true,
+                        message: '${comment}不能为空',
+                    trigger: #if($column.htmlType == "select" || $column.htmlType == "radio")'change'#else'blur'#end
+                    }
+                ],
+            #end
+        #end
+    })
+
+    const ${businessName}Ref = useTemplateRef('${businessName}Ref')
+    const dialogTitle = ref('')
+    const saveLoading = ref(false)
+
+    // 表单重置
+    const reset = () => {
+        form.value = {
+            #foreach ($column in $columns)
+                #if($column.htmlType == "checkbox")
+                        $column.javaField: [],
+                #elseif($column.javaType == "Long" || $column.javaType == "Integer")
+                        $column.javaField: null,
+                #else
+                        $column.javaField: '',
+                #end
+            #end
+        }
+        resetFormRef(${businessName}Ref)
+    }
+
+    /** 新增按钮操作 */
+    const handleAdd = () => {
+        reset()
+        open.value = true
+        dialogTitle.value = '添加${functionName}'
+    }
+
+    /** 修改按钮操作 */
+    const handleUpdate = (row: ${BusinessName}Entity) => {
+        reset()
+        if (row.${pkColumn.javaField}) {
+            get${BusinessName}(row.${pkColumn.javaField}).then((data: ${BusinessName}Entity) => {
+                form.value = data
+                #foreach ($column in $columns)
+                    #if($column.htmlType == "checkbox")
+                        form.value.$column.javaField = form.value.${column.javaField}.split(",");
+                    #end
+                #end
+                open.value = true
+                dialogTitle.value = '修改${functionName}'
+            })
+        }
+    }
+
+    /** 提交按钮 */
+    const submitForm = () => {
+            ${businessName}Ref.value
+        !
+    .
+        validate((valid: boolean) => {
+            if (valid) {
+                saveLoading.value = true
+                #foreach($column in $columns)
+                    #if($column.htmlType == "checkbox")
+                        form.value.$column.javaField = form.value.${column.javaField}.join(",");
+                    #end
+                #end
+                if (form.value.${pkColumn.javaField} != null) {
+                    update${BusinessName}(form.value)
+                            .then(() => {
+                                MessageUtil.success(t('common.saveSuccess'))
+                                open.value = false
+                                refreshData()
+                            })
+                            .finally(() => {
+                                saveLoading.value = false
+                            })
+                } else {
+                    add${BusinessName}(form.value)
+                            .then(() => {
+                                MessageUtil.success(t('common.addSuccess'))
+                                open.value = false
+                                refreshData()
+                            })
+                            .finally(() => {
+                                saveLoading.value = false
+                            })
+                }
+            }
+        })
+    }
+
+    const handleDelete = (row
+            ? : any
+    ) =>
+    {
+        const ids = row?.${pkColumn.javaField} || selectedRows.value.map((item) => item.${pkColumn.javaField}).join(',')
+        ElMessageBox.confirm(
+                t('system.noticeLog.confirmDelete') + ids + t('system.noticeLog.dataItem'),
+                t('common.warning')
+        )
+                .then(() => del${BusinessName}(ids))
+                .then(() => {
+                    refreshData()
+                    MessageUtil.success(t('common.deleteSuccess'))
+                })
+                .catch(() => {
+                })
+    }
+
+    // 取消按钮
+    const cancel = () => {
+        open.value = false
+        reset()
+    }
+
+    const exportLoading = ref(false)
+    const handleExport = () => {
+        ElMessageBox.confirm(t('common.exportConfirm'), t('common.warning'), {
+            confirmButtonText: t('common.confirm'),
+            cancelButtonText: t('common.cancel'),
+            type: 'warning'
+        })
+                .then(async () => {
+                    try {
+                        exportLoading.value = true
+                        const response = await export${BusinessName}(searchParams)
+                        download(response, '${functionName}数据')
+                    } catch (error) {
+                        console.error('导出失败:', error)
+                    } finally {
+                        exportLoading.value = false
+                    }
+                })
+                .catch(() => {
+                })
+    }
+</script>
+
+<style scoped lang="scss">
+    .log-page {
+        padding: 16px;
+    }
+</style>

@@ -1,0 +1,29 @@
+{
+  "imageUpload": {
+    "pleaseUpload": "Please upload",
+    "sizeNotExceed": "File size not exceeding",
+    "formatIs": "Format is",
+    "file": "file",
+    "preview": "Image Preview",
+    "formatError": "Incorrect file format, please upload {format} format file!",
+    "sizeError": "Upload file size cannot exceed {size} MB!",
+    "uploadSuccess": "Upload successfully",
+    "uploadFailed": "Upload failed",
+    "uploadFailedRetry": "Upload failed, please retry"
+  },
+  "excelImport": {
+    "buttonText": "Import Excel",
+    "title": "Import Excel",
+    "dragText": "Drag file here, or",
+    "clickUpload": "Click to Upload",
+    "tip": "Only support .xls, .xlsx files, size not exceeding {size}MB",
+    "cancel": "Cancel",
+    "confirm": "Import",
+    "formatError": "File format must be xls or xlsx",
+    "sizeError": "File size cannot exceed {size}MB!",
+    "pleaseSelect": "Please select a file to import",
+    "success": "Import Successful",
+    "fail": "Import Failed",
+    "error": "Error occurred during upload"
+  }
+}

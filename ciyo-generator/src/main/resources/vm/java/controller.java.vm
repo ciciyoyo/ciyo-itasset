@@ -1,0 +1,100 @@
+package ${packageName}.controller;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ciyocloud.common.util.QueryWrapperUtils;
+import com.ciyocloud.common.util.Result;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ciyocloud.oplog.annotation.Log;
+import com.ciyocloud.oplog.enums.BusinessType;
+import com.ciyocloud.common.validator.group.AddGroup;
+import com.ciyocloud.excel.util.ExcelUtils;
+import ${packageName}.entity.${ClassName}Entity;
+import ${packageName}.service.${ClassName}Service;
+
+
+/**
+ * ${functionName}
+ *
+ * @author ${author}
+ * @since  ${datetime}
+ */
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/${moduleName}/${businessName}")
+public class ${ClassName}Controller {
+
+    private final ${ClassName}Service ${className}Service;
+
+    /**
+     * 查询${functionName}列表
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:page')")
+    @GetMapping("/page")
+    public Result<Page<${ClassName}Entity>> queryPage(Page<${ClassName}Entity> page,${ClassName}Entity ${className}) {
+        return Result.success(${className}Service.page(page, QueryWrapperUtils.toSimpleQuery(${className})));
+    }
+
+    /**
+     * 导出${functionName}列表
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:export')")
+    @Log(title = "${functionName}", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public void export(${ClassName}Entity ${className}) {
+        List<${ClassName}Entity> list = ${className}Service.list(QueryWrapperUtils.toSimpleQuery(${className}));
+        ExcelUtils.exportExcel(list, "${functionName}数据", ${ClassName}Entity.class);
+    }
+
+    /**
+     * 获取${functionName}详细信息
+     *
+     * @param ${pkColumn.javaField} 主键
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:query')")
+    @GetMapping(value = "/{${pkColumn.javaField}}")
+    public Result<${ClassName}Entity> getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return Result.success(${className}Service.getById(${pkColumn.javaField}));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:add')")
+    @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+    @PostMapping("/add")
+    public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody ${ClassName}Entity ${className}) {
+        return Result.success(${className}Service.save(${className}));
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:update')")
+    @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+    @PostMapping("/update")
+    public Result<Boolean> update(@RequestBody ${ClassName}Entity ${className}) {
+        return Result.success(${className}Service.updateById(${className}));
+    }
+
+    /**
+     * 删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 主键串
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:delete')")
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+    @PostMapping("/delete/{${pkColumn.javaField}s}")
+    public Result<Boolean> delete(@PathVariable List<${pkColumn.javaType} > ${pkColumn.javaField}s) {
+        return Result.success(${className}Service.removeByIds(${pkColumn.javaField}s));
+    }
+}
