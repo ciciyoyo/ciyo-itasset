@@ -20,8 +20,8 @@ import com.ciyocloud.datapermission.helper.DataPermissionHelper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.BeanResolver;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * 数据权限过滤
  *
- * @author codeck
+ * @author tduck
  */
 @Slf4j
 public class PlusDataPermissionHandler {
@@ -88,7 +88,7 @@ public class PlusDataPermissionHandler {
         try {
             Expression expression = CCJSqlParserUtil.parseExpression(dataFilterSql);
             // 数据权限使用单独的括号 防止与其他条件冲突
-            Parenthesis parenthesis = new Parenthesis().withExpression(expression);
+            ParenthesedExpressionList<Expression> parenthesis = new ParenthesedExpressionList<>(expression);
             if (ObjectUtil.isNotNull(where)) {
                 return new AndExpression(where, parenthesis);
             } else {
