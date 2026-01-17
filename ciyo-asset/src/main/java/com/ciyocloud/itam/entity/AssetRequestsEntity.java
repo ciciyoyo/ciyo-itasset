@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @TableName("itam_asset_requests")
 public class AssetRequestsEntity extends SysBaseEntity {
 
-    private static final long serialVersionUID = 1L;
 
     /**
      * 主键 ID
@@ -66,6 +65,16 @@ public class AssetRequestsEntity extends SysBaseEntity {
      * 申请原因
      */
     private String reason;
+
+    /**
+     * 是否长期使用
+     */
+    private Boolean isLongTerm;
+
+    /**
+     * 预计归还时间
+     */
+    private LocalDateTime expectedReturnTime;
 
     /**
      * 状态 (pending, approved, rejected, canceled)

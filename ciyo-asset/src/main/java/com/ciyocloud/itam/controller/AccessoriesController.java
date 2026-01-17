@@ -1,5 +1,6 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.QueryWrapperUtils;
@@ -24,7 +25,6 @@ import com.ciyocloud.itam.vo.AssetsReportVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,7 +53,7 @@ public class AccessoriesController {
     @SaCheckPermission("itam:accessories:page")
     @GetMapping("/page")
     public Result<PageResultVO<AccessoriesVO>> queryPage(PageRequest page, AccessoriesPageReq req) {
-        return Result.success(new PageResultVO<>(accessoriesService.queryPageVo(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(req, AccessoriesEntity.class))));
+        return Result.success(new PageResultVO<>(accessoriesService.queryPage(page, req)));
     }
 
     /**

@@ -35,4 +35,19 @@ public class AccessoriesPageReq extends BaseRequest {
      * 资产标签
      */
     private String assetTag;
+
+    /**
+     * 分类 ID
+     */
+    private Long categoryId;
+
+    /**
+     * 厂商 ID
+     */
+    private Long manufacturerId;
+
+    /**
+     * 存放位置 ID
+     */
+    private Long locationId;
 }

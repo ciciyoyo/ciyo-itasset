@@ -3,7 +3,9 @@ package com.ciyocloud.itam.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.itam.entity.AccessoriesEntity;
+import com.ciyocloud.itam.req.AccessoriesPageReq;
 import com.ciyocloud.itam.vo.AccessoriesVO;
 
 import java.util.List;
@@ -16,6 +18,15 @@ import java.util.Map;
  * @since 2025-12-29 20:10:26
  */
 public interface AccessoriesService extends IService<AccessoriesEntity> {
+
+    /**
+     * 分页查询配件列表
+     *
+     * @param page 分页参数
+     * @param req  请求参数
+     * @return 结果分页
+     */
+    Page<AccessoriesVO> queryPage(PageRequest page, AccessoriesPageReq req);
 
     Page<AccessoriesVO> queryPageVo(Page<AccessoriesEntity> page, Wrapper<AccessoriesEntity> queryWrapper);
 

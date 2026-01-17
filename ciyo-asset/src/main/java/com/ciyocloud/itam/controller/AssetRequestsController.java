@@ -6,7 +6,7 @@ import com.ciyocloud.common.util.Result;
 import com.ciyocloud.itam.req.AssetRequestsApprovalReq;
 import com.ciyocloud.itam.req.AssetRequestsPageReq;
 import com.ciyocloud.itam.req.AssetRequestsSubmitReq;
-import com.ciyocloud.itam.service.IAssetRequestsService;
+import com.ciyocloud.itam.service.AssetRequestsService;
 import com.ciyocloud.itam.vo.AssetRequestsVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AssetRequestsController {
 
-    private final IAssetRequestsService assetRequestsService;
+    private final AssetRequestsService assetRequestsService;
 
     /**
      * 分页查询申请
@@ -31,6 +31,14 @@ public class AssetRequestsController {
     @GetMapping("/page")
     public Result<PageResultVO<AssetRequestsVO>> page(PageRequest page, AssetRequestsPageReq req) {
         return Result.success(new PageResultVO<>(assetRequestsService.queryPage(page, req)));
+    }
+
+    /**
+     * 管理端分页查询申请
+     */
+    @GetMapping("/manage/page")
+    public Result<PageResultVO<AssetRequestsVO>> managePage(PageRequest page, AssetRequestsPageReq req) {
+        return Result.success(new PageResultVO<>(assetRequestsService.queryManagePage(page, req)));
     }
 
     /**

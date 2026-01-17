@@ -29,8 +29,8 @@
             >
           </div>
           <div class="text-gray-500 text-xs mb-1 font-medium title-font">我的设备</div>
-          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">2</div>
-          <div class="text-xs text-gray-400 mt-2 truncate max-w-[80%]">MacBook Pro, iPhone 15</div>
+          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">{{ stats.deviceCount }}</div>
+          <div class="text-xs text-gray-400 mt-2 truncate max-w-[80%]" :title="stats.deviceDetail">{{ stats.deviceDetail }}</div>
         </div>
       </div>
 
@@ -51,13 +51,17 @@
               <ArtSvgIcon icon="ri:timer-line" class="text-lg" />
             </div>
             <span
+              v-if="stats.pendingRequestCount > 0"
               class="bg-amber-50 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-100"
               >审核中</span
             >
+            <span v-else class="bg-green-50 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-100"
+              >无</span
+            >
           </div>
           <div class="text-gray-500 text-xs mb-1 font-medium">待处理申请</div>
-          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">1</div>
-          <div class="text-xs text-gray-400 mt-2">设备申请 - 2026/01/09</div>
+          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">{{ stats.pendingRequestCount }}</div>
+          <div class="text-xs text-gray-400 mt-2">{{ stats.pendingRequestDetail }}</div>
         </div>
       </div>
 
@@ -79,8 +83,8 @@
             </div>
           </div>
           <div class="text-gray-500 text-xs mb-1 font-medium">使用天数</div>
-          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">156</div>
-          <div class="text-xs text-gray-400 mt-2">自 2025-08-05 起算</div>
+          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">{{ stats.daysInUse }}</div>
+          <div class="text-xs text-gray-400 mt-2">{{ stats.daysInUseDetail }}</div>
         </div>
       </div>
 
@@ -100,13 +104,13 @@
             >
               <ArtSvgIcon icon="ri:hourglass-line" class="text-lg" />
             </div>
-            <span class="bg-gray-50 text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-100"
-              >无需续借</span
-            >
+            <span class="bg-gray-50 text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-100">{{
+              stats.expiringCount > 0 ? '即将到期' : '无需续借'
+            }}</span>
           </div>
           <div class="text-gray-500 text-xs mb-1 font-medium">即将到期</div>
-          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">0</div>
-          <div class="text-xs text-gray-400 mt-2">暂无设备即将到期</div>
+          <div class="text-3xl font-bold mb-3 text-gray-900 tracking-tight">{{ stats.expiringCount }}</div>
+          <div class="text-xs text-gray-400 mt-2">{{ stats.expiringDetail }}</div>
         </div>
       </div>
     </div>
@@ -115,6 +119,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div
         class="bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        @click="showRequestModal = true"
       >
         <div
           class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
@@ -126,6 +131,7 @@
 
       <div
         class="bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        @click="showRepairModal = true"
       >
         <div
           class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
@@ -137,6 +143,7 @@
 
       <div
         class="bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        @click="showReturnModal = true"
       >
         <div
           class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
@@ -148,6 +155,7 @@
 
       <div
         class="bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        @click="handleCustomerService"
       >
         <div
           class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
@@ -165,12 +173,16 @@
           <h2 class="text-lg font-bold mb-1 text-gray-900">我的申请</h2>
           <p class="text-xs text-gray-500">查看您提交的申请记录</p>
         </div>
-        <button class="text-xs text-gray-400 hover:text-blue-600 flex items-center gap-1 transition-colors">
-          查看全部 <ArtSvgIcon icon="ri:arrow-right-line" />
+        <button
+          class="text-xs text-gray-400 hover:text-blue-600 flex items-center gap-1 transition-colors"
+          @click="showAllRequestsModal = true"
+        >
+          查看全部
+          <ArtSvgIcon icon="ri:arrow-right-line" />
         </button>
       </div>
 
-      <div class="flex flex-col gap-6">
+      <div v-if="requestList.length > 0" class="flex flex-col gap-6">
         <div v-for="req in requestList" :key="req.id" class="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
           <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-2">
             <div class="flex items-center gap-3">
@@ -195,12 +207,24 @@
           <div class="flex justify-between items-start">
             <div class="space-y-2">
               <div>
-                <div class="text-xs text-gray-400 mb-1">设备</div>
-                <div class="text-sm font-medium text-gray-900">{{ req.device }}</div>
+                <div class="text-xs text-gray-400 mb-1">申请物品</div>
+                <div class="text-sm font-medium text-gray-900">{{ req.requestedItem }}</div>
+              </div>
+              <div v-if="req.allocatedItem">
+                <div class="text-xs text-blue-400 mb-1">分配资产</div>
+                <div class="text-sm font-medium text-blue-600">{{ req.allocatedItem }}</div>
               </div>
               <div>
                 <div class="text-xs text-gray-400 mb-1">申请原因</div>
                 <div class="text-sm text-gray-500">{{ req.reason }}</div>
+              </div>
+              <div v-if="req.approvalNote">
+                <div class="text-xs mb-1" :class="req.status === 'rejected' ? 'text-red-400' : 'text-gray-400'">
+                  {{ req.status === 'rejected' ? '拒绝原因' : '审批备注' }}
+                </div>
+                <div class="text-sm" :class="req.status === 'rejected' ? 'text-red-500' : 'text-gray-500'">
+                  {{ req.approvalNote }}
+                </div>
               </div>
             </div>
 
@@ -212,13 +236,36 @@
           </div>
         </div>
       </div>
+
+      <!-- Empty State -->
+      <div v-else class="flex flex-col items-center justify-center py-12 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+          <ArtSvgIcon icon="ri:inbox-2-line" class="text-3xl text-gray-300" />
+        </div>
+        <div class="text-gray-500 font-medium">暂无申请记录</div>
+        <div class="text-xs text-gray-400 mt-1">您还没有提交过任何资产申请</div>
+      </div>
     </div>
+    <!-- Request Modal -->
+    <DeviceRequestModal v-model:visible="showRequestModal" @success="refreshData" />
+    <!-- Repair Modal -->
+    <DeviceRepairModal v-model:visible="showRepairModal" @success="refreshData" />
+    <!-- Return Modal -->
+    <DeviceReturnModal v-model:visible="showReturnModal" @success="refreshData" />
+    <!-- All Requests Modal -->
+    <AllRequestsModal v-model:visible="showAllRequestsModal" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
+  import { ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
+  import { getPersonalStats, getMyRequests, type PersonalStatsVO, type AssetRequestsVO } from '@/api/itam/personal'
+  import DeviceRequestModal from './components/DeviceRequestModal.vue'
+  import DeviceRepairModal from './components/DeviceRepairModal.vue'
+  import AllRequestsModal from './components/AllRequestsModal.vue'
+  import DeviceReturnModal from './components/DeviceReturnModal.vue'
 
   const userStore = useUserStore()
   const username = computed(() => userStore.getUserInfo.userName || '用户')
@@ -232,44 +279,88 @@
     return '晚上好'
   })
 
-  const requestList = ref([
-    {
-      id: 'REQ-015',
-      type: '设备申请',
-      status: 'pending',
-      statusText: '待处理',
-      device: 'MacBook Pro 16"',
-      date: '2026-01-09',
-      reason: '开发工作需要更高性能设备'
-    },
-    {
-      id: 'REQ-012',
-      type: '设备归还',
-      status: 'approved',
-      statusText: '已批准',
-      device: 'iPhone 14 Pro',
-      date: '2026-01-05',
-      reason: '升级至新设备'
-    },
-    {
-      id: 'REQ-008',
-      type: '设备维修',
-      status: 'approved',
-      statusText: '已批准',
-      device: 'MacBook Pro 14',
-      date: '2026-01-02',
-      reason: '键盘故障'
-    },
-    {
-      id: 'REQ-005',
-      type: '设备续借',
-      status: 'rejected',
-      statusText: '已拒绝',
-      device: 'iPad Air',
-      date: '2025-12-28',
-      reason: '使用频率较低'
+  const stats = ref<PersonalStatsVO>({
+    deviceCount: 0,
+    deviceDetail: '加载中...',
+    pendingRequestCount: 0,
+    pendingRequestDetail: '-',
+    daysInUse: 0,
+    daysInUseDetail: '-',
+    expiringCount: 0,
+    expiringDetail: '-'
+  })
+
+  // 映射后的展示对象接口
+  interface ViewRequestItem {
+    id: string
+    type: string
+    status: string
+    statusText: string
+    requestedItem: string
+    allocatedItem?: string
+    date: string
+    reason: string
+    approvalNote?: string
+  }
+
+  const requestList = ref<ViewRequestItem[]>([])
+  const showRequestModal = ref(false)
+  const showRepairModal = ref(false)
+  const showReturnModal = ref(false)
+  const showAllRequestsModal = ref(false)
+
+  const refreshData = async () => {
+    try {
+      const [statsRes, reqRes] = await Promise.all([getPersonalStats(), getMyRequests({ current: 1, size: 5 })])
+      stats.value = statsRes
+
+      requestList.value = (reqRes.records || []).map((req: AssetRequestsVO) => ({
+        id: req.requestNo || `REQ-${req.id}`,
+        type: getTypeLabel(req.itemType),
+        status: req.status,
+        statusText: getStatusLabel(req.status),
+        requestedItem: req.itemName
+          ? `${req.categoryName ? req.categoryName + ' ' : ''}${req.itemName}`
+          : `${req.categoryName || getTypeLabel(req.itemType)} (未分配)`,
+        allocatedItem: req.allocatedItemName,
+        date: req.createTime?.substring(0, 10) || '-',
+        reason: req.reason || '无',
+        approvalNote: req.approvalNote
+      }))
+    } catch (error) {
+      console.error(error)
     }
-  ])
+  }
+
+  const handleCustomerService = () => {
+    ElMessage.info('暂无在线客服，如有问题请联系管理员')
+  }
+
+  onMounted(() => {
+    refreshData()
+  })
+
+  const getTypeLabel = (type: string) => {
+    const map: Record<string, string> = {
+      device: '设备申请',
+      accessory: '配件申请',
+      consumable: '耗材申请',
+      license: '软件申请',
+      service: '服务申请',
+      other: '其他申请'
+    }
+    return map[type] || '资产申请'
+  }
+
+  const getStatusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      pending: '待处理',
+      approved: '已批准',
+      rejected: '已拒绝',
+      canceled: '已取消'
+    }
+    return map[status] || status
+  }
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -278,6 +369,7 @@
       case 'approved':
         return 'bg-green-500/10 border-green-500/20 text-green-500'
       case 'rejected':
+      case 'canceled':
         return 'bg-red-500/10 border-red-500/20 text-red-500'
       default:
         return 'bg-gray-500/10 border-gray-500/20 text-gray-500'
@@ -291,6 +383,7 @@
       case 'approved':
         return 'ri:checkbox-circle-line'
       case 'rejected':
+      case 'canceled':
         return 'ri:close-circle-line'
       default:
         return 'ri:question-fill'

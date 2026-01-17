@@ -73,9 +73,9 @@ public class AllocationsServiceImpl extends ServiceImpl<AllocationsMapper, Alloc
                 .eq(AllocationsEntity::getItemId, itemId)
                 .eq(AllocationsEntity::getStatus, AllocationStatus.ACTIVE);
         // 如果有多个，取第一个（通常一个服务/资产只有一个活动分配，软件会有多个但此方法不适用，软件应通过ID解除）
-        queryWrapper.last("limit 1");
-        AllocationsEntity allocation = this.getOne(queryWrapper);
-        if (allocation != null) {
+        Page<AllocationsEntity> page = this.page(new Page<>(1, 1,false), queryWrapper);
+        if (!page.getRecords().isEmpty()) {
+            AllocationsEntity allocation = page.getRecords().get(0);
             allocation.setStatus(AllocationStatus.RETURNED);
             allocation.setReturnDate(LocalDateTime.now());
             return this.updateById(allocation);

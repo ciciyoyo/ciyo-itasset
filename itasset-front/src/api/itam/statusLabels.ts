@@ -1,17 +1,17 @@
 import request from '@/utils/http'
 
 export interface StatusLabelsEntity extends Api.Common.BaseEntity {
-    id: number
-    name: string
-    type: string
+  id: number
+  name: string
+  type: string
 }
 
 type StatusLabelsList = Api.Common.PaginatedResponse<StatusLabelsEntity>
 
 type StatusLabelsSearchFields = {
-    id: number
-    name: string
-    type: string
+  id: number
+  name: string
+  type: string
 }
 
 type StatusLabelsSearchParams = StatusLabelsSearchFields & Api.Common.CommonSearchParams
@@ -20,10 +20,10 @@ type StatusLabelsSearchParams = StatusLabelsSearchFields & Api.Common.CommonSear
  * 获取状态标签列表
  */
 export function listStatusLabels(params: StatusLabelsSearchParams) {
-    return request.get<StatusLabelsList>({
-        url: '/itam/statusLabels/page',
-        params
-    })
+  return request.get<StatusLabelsList>({
+    url: '/itam/statusLabels/page',
+    params
+  })
 }
 
 /**
@@ -31,9 +31,9 @@ export function listStatusLabels(params: StatusLabelsSearchParams) {
  * @param id
  */
 export function getStatusLabels(id: number): any {
-    return request.get<StatusLabelsEntity>({
-        url: `/itam/statusLabels/${id}`
-    })
+  return request.get<StatusLabelsEntity>({
+    url: `/itam/statusLabels/${id}`
+  })
 }
 
 /**
@@ -41,10 +41,10 @@ export function getStatusLabels(id: number): any {
  * @param data
  */
 export function addStatusLabels(data: StatusLabelsEntity) {
-    return request.post({
-        url: '/itam/statusLabels/add',
-        data
-    })
+  return request.post({
+    url: '/itam/statusLabels/add',
+    data
+  })
 }
 
 /**
@@ -52,10 +52,10 @@ export function addStatusLabels(data: StatusLabelsEntity) {
  * @param data
  */
 export function updateStatusLabels(data: StatusLabelsEntity) {
-    return request.post({
-        url: '/itam/statusLabels/update',
-        data
-    })
+  return request.post({
+    url: '/itam/statusLabels/update',
+    data
+  })
 }
 
 /**
@@ -63,18 +63,18 @@ export function updateStatusLabels(data: StatusLabelsEntity) {
  * @param id
  */
 export function delStatusLabels(id: number | number[]) {
-    return request.post({
-        url: `/itam/statusLabels/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/statusLabels/delete/${id}`
+  })
 }
 
 /**
  * 导出状态标签
  */
 export function exportStatusLabels(query: StatusLabelsSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/statusLabels/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/statusLabels/export',
+    responseType: 'blob',
+    params: query
+  })
 }

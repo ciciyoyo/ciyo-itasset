@@ -15,7 +15,7 @@ import com.ciyocloud.itam.vo.AssetRequestsVO;
  * @author codeck
  * @since 2026-01-10
  */
-public interface IAssetRequestsService extends IService<AssetRequestsEntity> {
+public interface AssetRequestsService extends IService<AssetRequestsEntity> {
 
     /**
      * 分页查询申请
@@ -39,4 +39,9 @@ public interface IAssetRequestsService extends IService<AssetRequestsEntity> {
      * @param req 审批参数
      */
     void approveRequest(AssetRequestsApprovalReq req);
+
+    /**
+     * 管理端分页查询申请
+     */
+    Page<AssetRequestsVO> queryManagePage(PageRequest page, AssetRequestsPageReq req);
 }

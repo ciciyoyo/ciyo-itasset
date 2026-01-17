@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 资产申请提交参数
  *
@@ -41,4 +43,14 @@ public class AssetRequestsSubmitReq {
      * 申请原因
      */
     private String reason;
+
+    /**
+     * 是否长期使用
+     */
+    private Boolean isLongTerm;
+
+    /**
+     * 预计归还时间
+     */
+    private LocalDateTime expectedReturnTime;
 }

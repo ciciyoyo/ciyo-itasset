@@ -18,12 +18,22 @@ import java.util.List;
 public interface ModelsService extends IService<ModelsEntity> {
 
     /**
-     * 分页查询型号VO
+     * 分页查询型号VO（使用Wrapper）
      */
     Page<ModelsVO> selectPageVo(IPage<ModelsVO> page, Wrapper<ModelsEntity> queryWrapper);
 
     /**
-     * 查询型号VO列表
+     * 分页查询型号VO（使用Entity自动构建查询条件）
+     */
+    Page<ModelsVO> selectPageVo(IPage<ModelsVO> page, ModelsEntity models);
+
+    /**
+     * 查询型号VO列表（使用Wrapper）
      */
     List<ModelsVO> selectListVo(Wrapper<ModelsEntity> queryWrapper);
+
+    /**
+     * 查询型号VO列表（使用Entity自动构建查询条件）
+     */
+    List<ModelsVO> selectListVo(ModelsEntity models);
 }
