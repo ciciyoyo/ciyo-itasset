@@ -1,11 +1,16 @@
 package com.ciyocloud.itam.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.itam.entity.AccessoriesEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.mapper.AccessoriesMapper;
+import com.ciyocloud.itam.req.AccessoriesPageReq;
 import com.ciyocloud.itam.service.AccessoriesService;
 import com.ciyocloud.itam.service.AssetsMonthlyStatsService;
 import com.ciyocloud.itam.vo.AccessoriesVO;
@@ -28,6 +33,27 @@ import java.util.Map;
 public class AccessoriesServiceImpl extends ServiceImpl<AccessoriesMapper, AccessoriesEntity> implements AccessoriesService {
 
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
+    private final com.ciyocloud.itam.util.AssetCodeUtils assetCodeUtils;
+
+    @Override
+    public Page<AccessoriesVO> queryPage(PageRequest pageReq, AccessoriesPageReq req) {
+        QueryWrapper<AccessoriesEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("t1.deleted", 0);
+        wrapper.like(StrUtil.isNotBlank(req.getName()), "t1.name", req.getName());
+        wrapper.eq(ObjectUtil.isNotNull(req.getSupplierId()), "t1.supplier_id", req.getSupplierId());
+
+        // 映射 assetTag -> assetNumber
+        wrapper.like(StrUtil.isNotBlank(req.getAssetTag()), "t1.asset_number", req.getAssetTag());
+
+        // 新增常用字段查询
+        wrapper.eq(ObjectUtil.isNotNull(req.getCategoryId()), "t1.category_id", req.getCategoryId());
+        wrapper.eq(ObjectUtil.isNotNull(req.getManufacturerId()), "t1.manufacturer_id", req.getManufacturerId());
+        wrapper.eq(ObjectUtil.isNotNull(req.getLocationId()), "t1.location_id", req.getLocationId());
+
+        wrapper.orderByDesc("t1.create_time");
+
+        return baseMapper.selectPageVo(pageReq.toMpPage(), wrapper);
+    }
 
     @Override
     public Page<AccessoriesVO> queryPageVo(Page<AccessoriesEntity> page, Wrapper<AccessoriesEntity> queryWrapper) {
@@ -50,6 +76,19 @@ public class AccessoriesServiceImpl extends ServiceImpl<AccessoriesMapper, Acces
 
     @Override
     public boolean save(AccessoriesEntity entity) {
+        if (StrUtil.isBlank(entity.getAssetNumber())) {
+            // 自动生成
+            entity.setAssetNumber(assetCodeUtils.generate(entity.getCategoryId()));
+        } else {
+            // 查重
+            long count = count(new QueryWrapper<AccessoriesEntity>()
+                    .eq("asset_number", entity.getAssetNumber())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("资产编号已存在");
+            }
+        }
+
         boolean result = super.save(entity);
         if (result && entity.getId() != null) {
             // 异步同步统计数据
@@ -60,6 +99,16 @@ public class AccessoriesServiceImpl extends ServiceImpl<AccessoriesMapper, Acces
 
     @Override
     public boolean updateById(AccessoriesEntity entity) {
+        if (StrUtil.isNotBlank(entity.getAssetNumber())) {
+            // 查重
+            long count = count(new QueryWrapper<AccessoriesEntity>()
+                    .eq("asset_number", entity.getAssetNumber())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("资产编号已存在");
+            }
+        }
+
         boolean result = super.updateById(entity);
         if (result && entity.getId() != null) {
             // 重新计算当前月份的统计数据

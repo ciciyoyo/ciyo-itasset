@@ -1,15 +1,19 @@
 package com.ciyocloud.itam.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ciyocloud.itam.entity.DeviceEntity;
+import com.ciyocloud.itam.entity.ModelsEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.DeviceStatus;
 import com.ciyocloud.itam.mapper.DeviceMapper;
 import com.ciyocloud.itam.req.DevicePageReq;
 import com.ciyocloud.itam.service.AssetsMonthlyStatsService;
 import com.ciyocloud.itam.service.DeviceService;
+import com.ciyocloud.itam.service.ModelsService;
+import com.ciyocloud.itam.util.AssetCodeUtils;
 import com.ciyocloud.itam.vo.DeviceVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,8 @@ import java.util.Map;
 public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> implements DeviceService {
 
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
+    private final AssetCodeUtils assetCodeUtils;
+    private final ModelsService modelsService;
 
     @Override
     public Page<DeviceVO> queryPageVo(Page<DeviceEntity> page, DevicePageReq req) {
@@ -51,6 +57,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> i
         QueryWrapper<DeviceEntity> queryWrapper = new QueryWrapper<>();
         if (req != null) {
             queryWrapper.eq(req.getModelId() != null, "t1.model_id", req.getModelId())
+                    .eq("t1.deleted", 0)
                     .eq(req.getAssetsStatus() != null, "t1.assets_status", req.getAssetsStatus())
                     .like(StringUtils.hasText(req.getName()), "t1.name", req.getName())
                     .eq(StringUtils.hasText(req.getSerial()), "t1.serial", req.getSerial())
@@ -96,6 +103,23 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> i
 
     @Override
     public boolean save(DeviceEntity entity) {
+        if (StrUtil.isBlank(entity.getDeviceNo())) {
+            // 自动生成
+            ModelsEntity model = modelsService.getById(entity.getModelId());
+            if (model == null) {
+                throw new RuntimeException("关联型号不存在");
+            }
+            entity.setDeviceNo(assetCodeUtils.generate(model.getCategoryId()));
+        } else {
+            // 查重
+            long count = count(new QueryWrapper<DeviceEntity>()
+                    .eq("device_no", entity.getDeviceNo())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("设备编号已存在");
+            }
+        }
+
         boolean result = super.save(entity);
         if (result && entity.getId() != null) {
             // 异步同步统计数据
@@ -106,6 +130,16 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> i
 
     @Override
     public boolean updateById(DeviceEntity entity) {
+        if (StrUtil.isNotBlank(entity.getDeviceNo())) {
+            // 查重
+            long count = count(new QueryWrapper<DeviceEntity>()
+                    .eq("device_no", entity.getDeviceNo())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("设备编号已存在");
+            }
+        }
+
         boolean result = super.updateById(entity);
         if (result && entity.getId() != null) {
             // 重新计算当前月份的统计数据

@@ -33,58 +33,58 @@
  */
 
 declare namespace Api {
-    /** 通用类型 */
-    namespace Common {
-        /** 分页参数 */
-        interface PaginationParams {
-            /** 当前页码 */
-            current: number
-            /** 每页条数 */
-            size: number
-            /** 总条数 */
-            total: number
-        }
-
-        /** 通用搜索参数 */
-        type CommonSearchParams = Pick<PaginationParams, 'current' | 'size'>
-
-        /** 分页响应基础结构 */
-        interface PaginatedResponse<T = any> {
-            records: T[]
-            current: number
-            size: number
-            total: number
-        }
-
-        interface BaseEntity {
-            createTime?: string
-            updateTime?: string
-            isDeleted?: string
-        }
+  /** 通用类型 */
+  namespace Common {
+    /** 分页参数 */
+    interface PaginationParams {
+      /** 当前页码 */
+      current: number
+      /** 每页条数 */
+      size: number
+      /** 总条数 */
+      total: number
     }
 
-    /** 认证类型 */
-    namespace Auth {
-        /** 登录参数 */
-        interface LoginParams {
-            userName: string
-            password: string
-        }
+    /** 通用搜索参数 */
+    type CommonSearchParams = Pick<PaginationParams, 'current' | 'size'>
 
-        /** 登录响应 */
-        interface LoginResponse {
-            token: string
-            refreshToken: string
-        }
-
-        /** 用户信息 */
-        interface UserInfo {
-            buttons: string[]
-            roles: string[]
-            userId: number
-            userName: string
-            email: string
-            avatar?: string
-        }
+    /** 分页响应基础结构 */
+    interface PaginatedResponse<T = any> {
+      records: T[]
+      current: number
+      size: number
+      total: number
     }
+
+    interface BaseEntity {
+      createTime?: string
+      updateTime?: string
+      isDeleted?: string
+    }
+  }
+
+  /** 认证类型 */
+  namespace Auth {
+    /** 登录参数 */
+    interface LoginParams {
+      userName: string
+      password: string
+    }
+
+    /** 登录响应 */
+    interface LoginResponse {
+      token: string
+      refreshToken: string
+    }
+
+    /** 用户信息 */
+    interface UserInfo {
+      buttons: string[]
+      roles: string[]
+      userId: number
+      userName: string
+      email: string
+      avatar?: string
+    }
+  }
 }

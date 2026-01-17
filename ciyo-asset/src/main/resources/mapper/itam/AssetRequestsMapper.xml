@@ -9,15 +9,11 @@
             r.*,
             u_curr.nick_name AS userName,
             u_appr.nick_name AS approverName,
-            c.name AS categoryName,
-            COALESCE(d.name, lic.name, cons.name) AS itemName
+            c.name AS categoryName
         FROM itam_asset_requests r
         LEFT JOIN sys_user u_curr ON r.user_id = u_curr.id
         LEFT JOIN sys_user u_appr ON r.approver_id = u_appr.id
         LEFT JOIN itam_categories c ON r.category_id = c.id
-        LEFT JOIN itam_device d ON r.item_type = 'device' AND r.item_id = d.id
-        LEFT JOIN itam_licenses lic ON r.item_type = 'license' AND r.item_id = lic.id
-        LEFT JOIN itam_consumables cons ON r.item_type = 'consumable' AND r.item_id = cons.id
         ${ew.customSqlSegment}
     </select>
 

@@ -1,8 +1,8 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
-import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
@@ -14,7 +14,6 @@ import com.ciyocloud.itam.vo.ModelsVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,7 @@ public class ModelsController {
     @SaCheckPermission("itam:models:page")
     @GetMapping("/page")
     public Result<PageResultVO<ModelsVO>> queryPage(PageRequest page, ModelsEntity models) {
-        return Result.success(new PageResultVO<>(modelsService.selectPageVo(page.toMpPage(), QueryWrapperUtils.toSimpleQuery(models))));
+        return Result.success(new PageResultVO<>(modelsService.selectPageVo(page.toMpPage(), models)));
     }
 
     /**
@@ -48,7 +47,7 @@ public class ModelsController {
     @SaCheckPermission("itam:models:page")
     @GetMapping("/list")
     public Result<List<ModelsVO>> list(ModelsEntity models) {
-        return Result.success(modelsService.selectListVo(QueryWrapperUtils.toSimpleQuery(models)));
+        return Result.success(modelsService.selectListVo(models));
     }
 
     /**
@@ -58,7 +57,7 @@ public class ModelsController {
     @Log(title = "型号", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(ModelsEntity models) {
-        List<ModelsVO> list = modelsService.selectListVo(QueryWrapperUtils.toSimpleQuery(models));
+        List<ModelsVO> list = modelsService.selectListVo(models);
         ExcelUtils.exportExcel(list, "型号数据", ModelsVO.class);
     }
 

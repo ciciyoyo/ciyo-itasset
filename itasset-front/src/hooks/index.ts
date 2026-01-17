@@ -1,26 +1,29 @@
 // 通用功能集合
-export {useCommon} from './core/useCommon'
+export { useCommon } from './core/useCommon'
 
 // 表格数据管理方案
-export {useTable} from './core/useTable'
+export { useTable } from './core/useTable'
 
 // 表格列配置管理
-export {useTableColumns} from './core/useTableColumns'
+export { useTableColumns } from './core/useTableColumns'
 
 // 主题相关
-export {useTheme} from './core/useTheme'
+export { useTheme } from './core/useTheme'
 
 // 礼花+文字滚动
-export {useCeremony} from './core/useCeremony'
+export { useCeremony } from './core/useCeremony'
 
 // 顶栏快速入口
-export {useFastEnter} from './core/useFastEnter'
+export { useFastEnter } from './core/useFastEnter'
 
 // 顶栏功能管理
-export {useHeaderBar} from './core/useHeaderBar'
+export { useHeaderBar } from './core/useHeaderBar'
 
 // 图表相关
-export {useChart, useChartComponent, useChartOps} from './core/useChart'
+export { useChart, useChartComponent, useChartOps } from './core/useChart'
 
 // 布局高度
-export {useLayoutHeight, useAutoLayoutHeight} from './core/useLayoutHeight'
+export { useLayoutHeight, useAutoLayoutHeight } from './core/useLayoutHeight'
+
+// 字典查询
+export { useDict } from '../components/business/dict-select/useDict'

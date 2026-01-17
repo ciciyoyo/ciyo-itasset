@@ -38,6 +38,7 @@ public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, Consu
 
     private final ConsumableTransactionsService consumableTransactionsService;
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
+    private final com.ciyocloud.itam.util.AssetCodeUtils assetCodeUtils;
 
     @Override
     public Page<ConsumablesVO> queryPageVo(Page<ConsumablesEntity> page, ConsumablesEntity consumables) {
@@ -158,6 +159,19 @@ public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, Consu
 
     @Override
     public boolean save(ConsumablesEntity entity) {
+        if (StringUtils.isBlank(entity.getItemNo())) {
+            // 自动生成
+            entity.setItemNo(assetCodeUtils.generate(entity.getCategoryId()));
+        } else {
+            // 查重
+            long count = count(new QueryWrapper<ConsumablesEntity>()
+                    .eq("item_no", entity.getItemNo())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("物品编号已存在");
+            }
+        }
+
         boolean result = super.save(entity);
         if (result && entity.getId() != null) {
             // 异步同步统计数据
@@ -168,6 +182,16 @@ public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, Consu
 
     @Override
     public boolean updateById(ConsumablesEntity entity) {
+        if (StringUtils.isNotBlank(entity.getItemNo())) {
+            // 查重
+            long count = count(new QueryWrapper<ConsumablesEntity>()
+                    .eq("item_no", entity.getItemNo())
+                    .ne(entity.getId() != null, "id", entity.getId()));
+            if (count > 0) {
+                throw new RuntimeException("物品编号已存在");
+            }
+        }
+
         boolean result = super.updateById(entity);
         if (result && entity.getId() != null) {
             // 重新计算当前月份的统计数据

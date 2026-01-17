@@ -2,70 +2,70 @@ import request from '@/utils/http'
 import {FailuresEntity} from './failures'
 
 export interface OfferingEntity extends Api.Common.BaseEntity {
-    id: number | null
-    name: string
-    supplierId: number | null
-    serviceNumber: string
-    startDate: string
-    endDate: string
-    cost: number
-    notes: string
-    offeringStatus: string
-    targetType?: string
-    targetId?: number
-    deleted?: number
+  id: number | null
+  name: string
+  supplierId: number | null
+  serviceNumber: string
+  startDate: string
+  endDate: string
+  cost: number
+  notes: string
+  offeringStatus: string
+  targetType?: string
+  targetId?: number
+  deleted?: number
 }
 
 export interface OfferingVO extends Api.Common.BaseEntity {
-    id: number
-    name: string
-    supplierId: number
-    serviceNumber: string
-    startDate: string
-    endDate: string
-    cost: number
-    notes: string
-    targetType: string | null
-    targetId: number
-    offeringStatus: string | null
-    supplierName: string
-    targetName: string | null
-    assignDate: string | null
+  id: number
+  name: string
+  supplierId: number
+  serviceNumber: string
+  startDate: string
+  endDate: string
+  cost: number
+  notes: string
+  targetType: string | null
+  targetId: number
+  offeringStatus: string | null
+  supplierName: string
+  targetName: string | null
+  assignDate: string | null
 }
 
 type OfferingList = Api.Common.PaginatedResponse<OfferingVO>
 
 export interface OfferingStatisticsVO {
-    exceptionCount: number
-    normalCount: number
-    totalCount: number
-    totalAmount: number
+  exceptionCount: number
+  normalCount: number
+  totalCount: number
+  totalAmount: number
 }
 
 export interface ServiceValueStatisticVO {
-    statsMonth: string
-    assetsType: string
-    assetsTypeDesc: string
-    totalValue: number
+  statsMonth: string
+  assetsType: string
+  assetsTypeDesc: string
+  totalValue: number
 }
 
 type OfferingSearchFields = {
-    id: number
-    name: string
-    supplierId: number
-    serviceNumber: string
-    startDate: string
-    endDate: string
-    cost: number
-    notes: string
-    offeringStatus: string
-    targetType: string
-    targetId: number
-    deleted: number
-    exceptionStartDate: string
-    exceptionEndDate: string
-    createBy: string
-    updateBy: string
+  id: number
+  name: string
+  supplierId: number
+  serviceNumber: string
+  startDate: string
+  endDate: string
+  cost: number
+  notes: string
+  offeringStatus: string
+  targetType: string
+  targetId: number
+  deleted: number
+  exceptionStartDate: string
+  exceptionEndDate: string
+  createBy: string
+  updateBy: string
 }
 
 type OfferingSearchParams = OfferingSearchFields & Api.Common.CommonSearchParams
@@ -74,10 +74,10 @@ type OfferingSearchParams = OfferingSearchFields & Api.Common.CommonSearchParams
  * 获取服务列表
  */
 export function pageOffering(params: OfferingSearchParams) {
-    return request.get<OfferingList>({
-        url: '/itam/offering/page',
-        params
-    })
+  return request.get<OfferingList>({
+    url: '/itam/offering/page',
+    params
+  })
 }
 
 /**
@@ -85,9 +85,9 @@ export function pageOffering(params: OfferingSearchParams) {
  * @param id
  */
 export function getOffering(id: number) {
-    return request.get<OfferingVO>({
-        url: `/itam/offering/${id}`
-    })
+  return request.get<OfferingVO>({
+    url: `/itam/offering/${id}`
+  })
 }
 
 /**
@@ -95,10 +95,10 @@ export function getOffering(id: number) {
  * @param data
  */
 export function addOffering(data: OfferingEntity) {
-    return request.post({
-        url: '/itam/offering/add',
-        data
-    })
+  return request.post({
+    url: '/itam/offering/add',
+    data
+  })
 }
 
 /**
@@ -106,10 +106,10 @@ export function addOffering(data: OfferingEntity) {
  * @param data
  */
 export function updateOffering(data: OfferingEntity) {
-    return request.post({
-        url: '/itam/offering/update',
-        data
-    })
+  return request.post({
+    url: '/itam/offering/update',
+    data
+  })
 }
 
 /**
@@ -117,20 +117,20 @@ export function updateOffering(data: OfferingEntity) {
  * @param id
  */
 export function delOffering(id: number | number[]) {
-    return request.post({
-        url: `/itam/offering/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/offering/delete/${id}`
+  })
 }
 
 /**
  * 导出服务
  */
 export function exportOffering(query: OfferingSearchFields) {
-    return request.get<Blob>({
-        url: '/itam/offering/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/offering/export',
+    responseType: 'blob',
+    params: query
+  })
 }
 
 /**
@@ -138,10 +138,10 @@ export function exportOffering(query: OfferingSearchFields) {
  * @param data
  */
 export function reportException(data: FailuresEntity) {
-    return request.post({
-        url: '/itam/offering/report-exception',
-        data
-    })
+  return request.post({
+    url: '/itam/offering/report-exception',
+    data
+  })
 }
 
 /**
@@ -149,10 +149,10 @@ export function reportException(data: FailuresEntity) {
  * @param data
  */
 export function bindAsset(data: { id: number; targetId: number }) {
-    return request.post<boolean>({
-        url: '/itam/offering/bind-asset',
-        data
-    })
+  return request.post<boolean>({
+    url: '/itam/offering/bind-asset',
+    data
+  })
 }
 
 /**
@@ -160,10 +160,10 @@ export function bindAsset(data: { id: number; targetId: number }) {
  * @param data
  */
 export function unbindAsset(data: { id: number }) {
-    return request.post<boolean>({
-        url: '/itam/offering/unbind',
-        data
-    })
+  return request.post<boolean>({
+    url: '/itam/offering/unbind',
+    data
+  })
 }
 
 /**
@@ -171,19 +171,19 @@ export function unbindAsset(data: { id: number }) {
  * @param data
  */
 export function resolveException(data: FailuresEntity) {
-    return request.post<boolean>({
-        url: '/itam/offering/resolve-exception',
-        data
-    })
+  return request.post<boolean>({
+    url: '/itam/offering/resolve-exception',
+    data
+  })
 }
 
 /**
  * 获取服务统计信息
  */
 export function getOfferingStatistics() {
-    return request.get<OfferingStatisticsVO>({
-        url: '/itam/offering/statistics'
-    })
+  return request.get<OfferingStatisticsVO>({
+    url: '/itam/offering/statistics'
+  })
 }
 
 /**
@@ -191,23 +191,23 @@ export function getOfferingStatistics() {
  * @param year 年份
  */
 export function getServiceValueStatistics(year?: number) {
-    return request.get<ServiceValueStatisticVO[]>({
-        url: '/itam/offering/statistics/service-value',
-        params: {year}
-    })
+  return request.get<ServiceValueStatisticVO[]>({
+    url: '/itam/offering/statistics/service-value',
+    params: { year }
+  })
 }
 
 export interface SupplierExceptionStatisticsVO {
-    supplierId: number
-    supplierName: string
-    failureCount: number
+  supplierId: number
+  supplierName: string
+  failureCount: number
 }
 
 /**
  * 供应商服务异常
  */
 export function getSupplierExceptionStatistics() {
-    return request.get<SupplierExceptionStatisticsVO[]>({
-        url: '/itam/offering/statistics/supplier-failure-stats'
-    })
+  return request.get<SupplierExceptionStatisticsVO[]>({
+    url: '/itam/offering/statistics/supplier-failure-stats'
+  })
 }
