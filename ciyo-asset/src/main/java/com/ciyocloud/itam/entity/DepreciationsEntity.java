@@ -1,5 +1,7 @@
 package com.ciyocloud.itam.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 import com.ciyocloud.common.entity.SysBaseEntity;
 import com.ciyocloud.common.mybatis.handler.JacksonTypeHandler;
@@ -23,6 +25,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("itam_depreciations")
+@ExcelIgnoreUnannotated
 public class DepreciationsEntity extends SysBaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -31,28 +34,34 @@ public class DepreciationsEntity extends SysBaseEntity {
      *
      */
     @TableId(value = "id")
+    @ExcelProperty(value = "折旧规则ID")
     private Long id;
     /**
      * 折旧规则名称
      */
     @NotBlank(message = "规则名称不能为空")
+    @ExcelProperty(value = "折旧规则名称")
     private String name;
     /**
      * 1启用 0停用
      */
+    @ExcelProperty(value = "状态")
     private Long status;
     /**
      * 总折旧月数（展示/校验/索引）
      */
     @NotNull(message = "折旧周期不能为空")
+    @ExcelProperty(value = "总折旧月数")
     private Long months;
     /**
      * amount / percent
      */
+    @ExcelProperty(value = "最低残值类型")
     private String floorType;
     /**
      * 最低残值
      */
+    @ExcelProperty(value = "最低残值")
     private BigDecimal floorVal;
     /**
      * 分阶段折旧规则（核心）
@@ -63,6 +72,7 @@ public class DepreciationsEntity extends SysBaseEntity {
     /**
      * 描述
      */
+    @ExcelProperty(value = "描述")
     private String remark;
 
 

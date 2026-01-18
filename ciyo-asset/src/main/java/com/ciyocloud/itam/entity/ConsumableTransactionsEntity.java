@@ -1,5 +1,7 @@
 package com.ciyocloud.itam.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.SysBaseEntity;
@@ -18,48 +20,58 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("itam_consumable_transactions")
+@ExcelIgnoreUnannotated
 public class ConsumableTransactionsEntity extends SysBaseEntity {
 
     /**
      * 主键 ID
      */
     @TableId(value = "id")
+    @ExcelProperty(value = "交易ID")
     private Long id;
     /**
      * 关联耗材 ID
      */
     @NotNull(message = "关联耗材 ID不能为空")
+    @ExcelProperty(value = "关联耗材ID")
     private Long consumableId;
     /**
      * 操作人 ID
      */
+    @ExcelProperty(value = "操作人ID")
     private Long operatorId;
     /**
      * 变动类型
      */
     @NotBlank(message = "变动类型不能为空")
+    @ExcelProperty(value = "变动类型")
     private String actionType;
     /**
      * 变动数量
      */
     @NotNull(message = "变动数量不能为空")
+    @ExcelProperty(value = "变动数量")
     private Long quantity;
     /**
      * 变动后结存
      */
     @NotNull(message = "变动后结存不能为空")
+    @ExcelProperty(value = "变动后结存")
     private Long remainingQuantity;
     /**
      * 关联对象类型
      */
+    @ExcelProperty(value = "关联对象类型")
     private String targetType;
     /**
      * 关联对象 ID
      */
+    @ExcelProperty(value = "关联对象ID")
     private Long targetId;
     /**
      * 备注
      */
+    @ExcelProperty(value = "备注")
     private String note;
 
 }
