@@ -3,6 +3,7 @@ import request from '@/utils/http'
 export interface DeviceEntity extends Api.Common.BaseEntity {
   id?: number
   modelId: string
+  categoryId?: number
   serial: string
   name: string
   imageUrl?: string

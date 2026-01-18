@@ -201,6 +201,7 @@ public class AllocationsServiceImpl extends ServiceImpl<AllocationsMapper, Alloc
                     .like(req.getOwnerName() != null, "owner_name", req.getOwnerName())
                     .like(req.getNote() != null, "note", req.getNote());
         }
+        queryWrapper.orderByDesc("create_time");
         return queryWrapper;
     }
 }

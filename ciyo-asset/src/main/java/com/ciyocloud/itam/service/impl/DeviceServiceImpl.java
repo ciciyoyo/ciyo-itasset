@@ -69,6 +69,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> i
                     .eq(req.getSupplierId() != null, "t1.supplier_id", req.getSupplierId())
                     .eq(req.getDepreciationId() != null, "t1.depreciation_id", req.getDepreciationId());
         }
+        queryWrapper.orderByDesc("t1.create_time");
         return queryWrapper;
     }
 

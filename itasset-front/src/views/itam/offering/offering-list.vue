@@ -29,7 +29,14 @@
               <el-button type="primary" icon="ele-Plus" @click="handleAdd" v-ripple v-hasPermi="['itam:offering:add']">
                 {{ $t('common.add') }}
               </el-button>
-              <el-button type="danger" v-ripple icon="ele-Delete" @click="handleDelete" v-hasPermi="['itam:offering:delete']">
+              <el-button
+                :disabled="!selectedRows.length"
+                type="danger"
+                v-ripple
+                icon="ele-Delete"
+                @click="handleDelete"
+                v-hasPermi="['itam:offering:delete']"
+              >
                 {{ $t('common.delete') }}
               </el-button>
 
