@@ -40,6 +40,11 @@ public class DeviceEntity extends SysBaseEntity {
     @ExcelProperty(value = "关联型号ID")
     private Long modelId;
     /**
+     * 分类 ID
+     */
+    @ExcelProperty(value = "分类ID")
+    private Long categoryId;
+    /**
      * 设备状态
      */
     @NotNull(message = "设备状态不能为空")

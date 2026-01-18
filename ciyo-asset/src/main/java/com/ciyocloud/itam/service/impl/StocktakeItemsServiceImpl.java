@@ -54,6 +54,7 @@ public class StocktakeItemsServiceImpl extends ServiceImpl<StocktakeItemsMapper,
                     .like(StringUtils.hasText(req.getStocktakeName()), "t2.name", req.getStocktakeName())
                     .like(StringUtils.hasText(req.getAssetName()), "t3.name", req.getAssetName());
         }
+        queryWrapper.orderByDesc("t1.create_time");
         return queryWrapper;
     }
 

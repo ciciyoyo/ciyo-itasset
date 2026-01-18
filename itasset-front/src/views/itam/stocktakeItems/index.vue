@@ -27,6 +27,7 @@
                 {{ $t('common.add') }}
               </el-button>
               <el-button
+                :disabled="!selectedRows.length"
                 type="danger"
                 v-ripple
                 icon="ele-Delete"

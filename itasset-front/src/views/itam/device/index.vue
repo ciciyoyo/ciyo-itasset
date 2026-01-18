@@ -13,6 +13,9 @@
         <template #list>
           <DeviceList />
         </template>
+        <template #category>
+          <DeviceCategory />
+        </template>
         <template #allocation>
           <AllocationList />
         </template>
@@ -28,20 +31,22 @@
 </template>
 
 <script setup lang="ts">
-import SegmentedTabs from '@/components/business/segmented-tabs/index.vue'
-import DeviceList from './device-list.vue'
-import AllocationList from './allocation-list.vue'
-import DeviceFailure from './device-failure.vue'
-import DeviceStats from './device-stats.vue'
+  import SegmentedTabs from '@/components/business/segmented-tabs/index.vue'
+  import DeviceList from './device-list.vue'
+  import DeviceCategory from './device-category.vue'
+  import AllocationList from './allocation-list.vue'
+  import DeviceFailure from './device-failure.vue'
+  import DeviceStats from './device-stats.vue'
 
-import { ref } from 'vue'
+  import { ref } from 'vue'
 
-const activeTab = ref('list')
+  const activeTab = ref('list')
 
-const tabOptions = [
-  { label: '设备列表', value: 'list', icon: 'ri:list-check' },
-  { label: '分配记录', value: 'allocation', icon: 'ri:history-line' },
-  { label: '异常记录', value: 'failure', icon: 'ri:error-warning-line' },
-  { label: '统计信息', value: 'stats', icon: 'ri:pie-chart-line' }
-]
+  const tabOptions = [
+    { label: '设备列表', value: 'list', icon: 'ri:list-check' },
+    { label: '设备分类', value: 'category', icon: 'ri:folder-line' },
+    { label: '分配记录', value: 'allocation', icon: 'ri:history-line' },
+    { label: '异常记录', value: 'failure', icon: 'ri:error-warning-line' },
+    { label: '统计信息', value: 'stats', icon: 'ri:pie-chart-line' }
+  ]
 </script>
