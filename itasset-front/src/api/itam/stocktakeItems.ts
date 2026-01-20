@@ -2,14 +2,21 @@ import request from '@/utils/http'
 
 export interface StocktakeItemsEntity extends Api.Common.BaseEntity {
     id: number
-    stocktakeId: string
-    assetId: string
+    stocktakeId: number
+    assetId: number
     status: string
-    scannedBy: string
+    statusDesc: string
+    scannedBy: number
     scannedAt: string
-    expectedLocationId: string
-    actualLocationId: string
+    expectedLocationId: number
+    actualLocationId: number
     note: string
+    stocktakeName: string
+    assetName: string
+    assetCode: string
+    expectedLocationName: string
+    actualLocationName: string
+    scannedByName: string
     createBy: string
     updateBy: string
 }
@@ -70,6 +77,17 @@ export function addStocktakeItems(data: StocktakeItemsEntity) {
 export function updateStocktakeItems(data: StocktakeItemsEntity) {
     return request.post({
         url: '/itam/stocktakeItems/update',
+        data
+    })
+}
+
+/**
+ * 处理盘点明细
+ * @param data
+ */
+export function editStocktakeItems(data: { id: number; status: string; note?: string }) {
+    return request.post({
+        url: '/itam/stocktakeItems/edit',
         data
     })
 }
