@@ -5,11 +5,22 @@ export interface StocktakesEntity extends Api.Common.BaseEntity {
     name: string
     locationId: number
     categoryId: number
-    status: number
+    status: string
+    statusDesc: string
     managerId: number
     startDate: string
     endDate: string
     note: string
+    locationName: string
+    categoryName: string
+    managerName: string
+    totalCount: number
+    surplusCount: number
+    deficitCount: number
+    uncheckedCount: number
+    normalCount: number
+    damagedCount: number
+    scrappedCount: number
     createBy: string
     updateBy: string
 }
@@ -20,8 +31,6 @@ type StocktakesSearchFields = {
     name: string
     locationId: number
     categoryId: number
-    status: number
-    managerId: string
     startDate: string
     endDate: string
     note: string
