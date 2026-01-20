@@ -9,7 +9,6 @@
             t1.*,
             t2.name AS stocktakeName,
             t3.name AS assetName,
-            t3.asset_code AS assetCode,
             t4.name AS expectedLocationName,
             t5.name AS actualLocationName
         FROM itam_stocktake_items t1
@@ -25,7 +24,6 @@
         t1.*,
         t2.name AS stocktakeName,
         t3.name AS assetName,
-        t3.asset_code AS assetCode,
         t4.name AS expectedLocationName,
         t5.name AS actualLocationName
         FROM itam_stocktake_items t1
