@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ciyocloud.itam.mapper.StocktakesMapper">
 
- 
+
 
     <select id="selectPageVo" resultType="com.ciyocloud.itam.vo.StocktakesVO">
         SELECT
@@ -15,7 +15,7 @@
         FROM itam_stocktakes t1
         LEFT JOIN itam_locations t2 ON t1.location_id = t2.id
         LEFT JOIN itam_categories t3 ON t1.category_id = t3.id
-        LEFT JOIN sys_user t4 ON t1.manager_id = t4.user_id
+        LEFT JOIN sys_user t4 ON t1.manager_id = t4.id
         ${ew.customSqlSegment}
     </select>
 
@@ -28,7 +28,7 @@
         FROM itam_stocktakes t1
         LEFT JOIN itam_locations t2 ON t1.location_id = t2.id
         LEFT JOIN itam_categories t3 ON t1.category_id = t3.id
-        LEFT JOIN sys_user t4 ON t1.manager_id = t4.user_id
+        LEFT JOIN sys_user t4 ON t1.manager_id = t4.id
         ${ew.customSqlSegment}
     </select>
 </mapper>

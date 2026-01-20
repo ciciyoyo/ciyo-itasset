@@ -2,7 +2,8 @@ package com.ciyocloud.itam.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.SysBaseEntity;
 import com.ciyocloud.excel.convert.DictEnumConvert;
 import com.ciyocloud.itam.enums.StocktakeStatus;
@@ -53,7 +54,6 @@ public class StocktakesEntity extends SysBaseEntity {
     /**
      * 状态
      */
-    @NotNull(message = "状态不能为空")
     @ExcelProperty(value = "状态", converter = DictEnumConvert.class)
     private StocktakeStatus status;
     /**
@@ -78,11 +78,4 @@ public class StocktakesEntity extends SysBaseEntity {
     @ExcelProperty(value = "备注")
     private String note;
 
-
-    /**
-     * 逻辑删除
-     */
-    @TableLogic
-    @TableField(fill = FieldFill.INSERT)
-    private Integer deleted;
 }

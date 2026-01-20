@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ciyocloud.itam.entity.StocktakesEntity;
 import com.ciyocloud.itam.req.StocktakesPageReq;
+import com.ciyocloud.itam.vo.StocktakesDetailVO;
 import com.ciyocloud.itam.vo.StocktakesVO;
 
 import java.util.List;
@@ -34,4 +35,12 @@ public interface StocktakesService extends IService<StocktakesEntity> {
      * @return 结果
      */
     Boolean add(StocktakesEntity stocktakes);
+
+    /**
+     * 获取盘点任务详情
+     *
+     * @param id 主键
+     * @return 结果
+     */
+    StocktakesDetailVO getDetailVo(Long id);
 }

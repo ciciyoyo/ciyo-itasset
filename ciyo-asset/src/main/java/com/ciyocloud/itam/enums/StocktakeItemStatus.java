@@ -39,7 +39,12 @@ public enum StocktakeItemStatus implements IDictEnum<String> {
     /**
      * 报废
      */
-    SCRAPPED("scrapped", "报废");
+    SCRAPPED("scrapped", "报废"),
+
+    /**
+     * 盘盈
+     */
+    SURPLUS("surplus", "盘盈");
 
     @EnumValue
     @JsonValue

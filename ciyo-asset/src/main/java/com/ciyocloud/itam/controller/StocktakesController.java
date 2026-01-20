@@ -1,20 +1,23 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.Result;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
 import com.ciyocloud.common.validator.group.UpdateGroup;
 import com.ciyocloud.excel.util.ExcelUtils;
 import com.ciyocloud.itam.entity.StocktakesEntity;
+import com.ciyocloud.itam.enums.StocktakeStatus;
 import com.ciyocloud.itam.req.StocktakesPageReq;
 import com.ciyocloud.itam.service.StocktakesService;
+import com.ciyocloud.itam.vo.StocktakesDetailVO;
 import com.ciyocloud.itam.vo.StocktakesVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,8 +64,8 @@ public class StocktakesController {
      */
     @SaCheckPermission("itam:stocktakes:query")
     @GetMapping(value = "/{id}")
-    public Result<StocktakesEntity> getInfo(@PathVariable("id") Long id) {
-        return Result.success(stocktakesService.getById(id));
+    public Result<StocktakesDetailVO> getInfo(@PathVariable("id") Long id) {
+        return Result.success(stocktakesService.getDetailVo(id));
     }
 
     /**
@@ -73,6 +76,8 @@ public class StocktakesController {
     @PostMapping("/add")
     public Result<Boolean> add(@Validated(AddGroup.class) @RequestBody StocktakesEntity stocktakes) {
         ValidatorUtils.validateEntity(stocktakes, AddGroup.class);
+        stocktakes.setStatus(StocktakeStatus.PROCESSING);
+        stocktakes.setManagerId(SecurityUtils.getUserId());
         return Result.success(stocktakesService.add(stocktakes));
     }
 

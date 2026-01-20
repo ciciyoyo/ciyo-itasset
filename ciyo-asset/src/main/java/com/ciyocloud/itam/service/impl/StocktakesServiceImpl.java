@@ -1,28 +1,27 @@
 package com.ciyocloud.itam.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ciyocloud.itam.entity.DeviceEntity;
-import com.ciyocloud.itam.entity.ModelsEntity;
-import com.ciyocloud.itam.entity.StocktakeItemsEntity;
-import com.ciyocloud.itam.entity.StocktakesEntity;
+import com.ciyocloud.common.util.SecurityUtils;
+import com.ciyocloud.itam.entity.*;
+import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.StocktakeItemStatus;
 import com.ciyocloud.itam.mapper.StocktakesMapper;
 import com.ciyocloud.itam.req.StocktakesPageReq;
-import com.ciyocloud.itam.service.DeviceService;
-import com.ciyocloud.itam.service.ModelsService;
-import com.ciyocloud.itam.service.StocktakeItemsService;
-import com.ciyocloud.itam.service.StocktakesService;
+import com.ciyocloud.itam.service.*;
+import com.ciyocloud.itam.vo.StocktakesDetailVO;
 import com.ciyocloud.itam.vo.StocktakesVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -38,32 +37,29 @@ public class StocktakesServiceImpl extends ServiceImpl<StocktakesMapper, Stockta
     private final DeviceService deviceService;
     private final ModelsService modelsService;
     private final StocktakeItemsService stocktakeItemsService;
+    private final CategoriesService categoriesService;
+    private final AccessoriesService accessoriesService;
+    private final ConsumablesService consumablesService;
 
     @Override
     public Page<StocktakesVO> queryPageVo(Page<StocktakesEntity> page, StocktakesPageReq req) {
         Page<StocktakesVO> voPage = new Page<>(page.getCurrent(), page.getSize());
-        LambdaQueryWrapper<StocktakesEntity> wrapper = getWrapper(req);
+        QueryWrapper<StocktakesEntity> wrapper = getWrapper(req);
         return baseMapper.selectPageVo(voPage, wrapper);
     }
 
     @Override
     public List<StocktakesVO> queryListVo(StocktakesPageReq req) {
-        LambdaQueryWrapper<StocktakesEntity> wrapper = getWrapper(req);
+        QueryWrapper<StocktakesEntity> wrapper = getWrapper(req);
         return baseMapper.selectListVo(wrapper);
     }
 
-    private LambdaQueryWrapper<StocktakesEntity> getWrapper(StocktakesPageReq req) {
-        LambdaQueryWrapper<StocktakesEntity> wrapper = Wrappers.lambdaQuery();
+    private QueryWrapper<StocktakesEntity> getWrapper(StocktakesPageReq req) {
+        QueryWrapper<StocktakesEntity> wrapper = Wrappers.query();
         if (req != null) {
-            wrapper.like(StringUtils.isNotBlank(req.getName()), StocktakesEntity::getName, req.getName())
-                    .eq(req.getStatus() != null, StocktakesEntity::getStatus, req.getStatus())
-                    .eq(req.getLocationId() != null, StocktakesEntity::getLocationId, req.getLocationId())
-                    .eq(req.getCategoryId() != null, StocktakesEntity::getCategoryId, req.getCategoryId())
-                    .eq(req.getManagerId() != null, StocktakesEntity::getManagerId, req.getManagerId())
-                    .ge(req.getStartDate() != null, StocktakesEntity::getStartDate, req.getStartDate())
-                    .le(req.getEndDate() != null, StocktakesEntity::getEndDate, req.getEndDate());
+            wrapper.like(StringUtils.isNotBlank(req.getName()), "t1.name", req.getName()).eq(req.getStatus() != null, "t1.status", req.getStatus()).eq(req.getLocationId() != null, "t1.location_id", req.getLocationId()).eq(req.getCategoryId() != null, "t1.category_id", req.getCategoryId()).eq(req.getManagerId() != null, "t1.manager_id", req.getManagerId()).ge(req.getStartDate() != null, "t1.start_date", req.getStartDate()).le(req.getEndDate() != null, "t1.end_date", req.getEndDate());
         }
-        wrapper.orderByDesc(StocktakesEntity::getCreateTime);
+        wrapper.orderByDesc("t1.create_time");
         return wrapper;
     }
 
@@ -77,41 +73,96 @@ public class StocktakesServiceImpl extends ServiceImpl<StocktakesMapper, Stockta
         }
 
         // 2. 查询需要盘点的资产
-        LambdaQueryWrapper<DeviceEntity> queryWrapper = Wrappers.lambdaQuery();
-        // 如果指定了位置
-        queryWrapper.eq(stocktakes.getLocationId() != null, DeviceEntity::getLocationId, stocktakes.getLocationId());
+        List<StocktakeItemsEntity> itemsList = new ArrayList<>();
+        Long categoryId = stocktakes.getCategoryId();
+        Long locationId = stocktakes.getLocationId();
 
-        // 如果指定了分类，需要先查询该分类下的型号
-        if (stocktakes.getCategoryId() != null) {
-            List<Long> modelIds = modelsService.list(Wrappers.<ModelsEntity>lambdaQuery()
-                            .eq(ModelsEntity::getCategoryId, stocktakes.getCategoryId()))
-                    .stream().map(ModelsEntity::getId).collect(Collectors.toList());
+        if (categoryId != null) {
+            CategoriesEntity category = categoriesService.getById(categoryId);
+            if (category != null && null != category.getCategoryType()) {
+                if (AssetType.DEVICE.equals(category.getCategoryType())) {
+                    // 查询该分类下的型号
+                    List<DeviceEntity> deviceList = deviceService.list(Wrappers.<DeviceEntity>lambdaQuery().eq(locationId != null, DeviceEntity::getLocationId, locationId).in(DeviceEntity::getCategoryId, categoryId));
+                    for (DeviceEntity device : deviceList) {
+                        itemsList.add(createStocktakeItem(stocktakes.getId(), device.getId(), device.getLocationId()));
+                    }
+                } else if (AssetType.ACCESSORY.equals(category.getCategoryType())) {
+                    List<AccessoriesEntity> accessoriesList = accessoriesService.list(Wrappers.<AccessoriesEntity>lambdaQuery().eq(AccessoriesEntity::getCategoryId, categoryId).eq(locationId != null, AccessoriesEntity::getLocationId, locationId));
 
-            if (modelIds.isEmpty()) {
-                // 该分类下没有型号，也就没有资产，直接返回成功
-                return true;
+                    for (AccessoriesEntity accessory : accessoriesList) {
+                        itemsList.add(createStocktakeItem(stocktakes.getId(), accessory.getId(), accessory.getLocationId()));
+                    }
+                } else if (AssetType.CONSUMABLE.equals(category.getCategoryType())) {
+                    List<ConsumablesEntity> consumablesList = consumablesService.list(Wrappers.<ConsumablesEntity>lambdaQuery().eq(ConsumablesEntity::getCategoryId, categoryId).eq(locationId != null, ConsumablesEntity::getLocationId, locationId));
+
+                    for (ConsumablesEntity consumable : consumablesList) {
+                        itemsList.add(createStocktakeItem(stocktakes.getId(), consumable.getId(), consumable.getLocationId()));
+                    }
+                }
             }
-            queryWrapper.in(DeviceEntity::getModelId, modelIds);
+        } else {
+            // 如果未指定分类，默认盘点设备 (保持原有逻辑)
+            List<DeviceEntity> deviceList = deviceService.list(Wrappers.<DeviceEntity>lambdaQuery().eq(locationId != null, DeviceEntity::getLocationId, locationId));
+
+            for (DeviceEntity device : deviceList) {
+                itemsList.add(createStocktakeItem(stocktakes.getId(), device.getId(), device.getLocationId()));
+            }
         }
 
-        List<DeviceEntity> assetsList = deviceService.list(queryWrapper);
-
-        if (assetsList.isEmpty()) {
+        if (itemsList.isEmpty()) {
             return true;
         }
 
         // 3. 生成盘点明细
-        List<StocktakeItemsEntity> itemsList = new ArrayList<>();
-        for (DeviceEntity asset : assetsList) {
-            StocktakeItemsEntity item = new StocktakeItemsEntity();
-            item.setStocktakeId(stocktakes.getId());
-            item.setAssetId(asset.getId());
-            item.setStatus(StocktakeItemStatus.PENDING);
-            item.setExpectedLocationId(asset.getLocationId());
-            itemsList.add(item);
-        }
-
         return stocktakeItemsService.saveBatch(itemsList);
     }
 
+    private StocktakeItemsEntity createStocktakeItem(Long stocktakeId, Long assetId, Long locationId) {
+        StocktakeItemsEntity item = new StocktakeItemsEntity();
+        item.setStocktakeId(stocktakeId);
+        item.setAssetId(assetId);
+        item.setStatus(StocktakeItemStatus.PENDING);
+        item.setExpectedLocationId(locationId);
+        item.setScannedBy(SecurityUtils.getUserId());
+        item.setScannedAt(LocalDateTime.now());
+        return item;
+    }
+
+    @Override
+    public StocktakesDetailVO getDetailVo(Long id) {
+        QueryWrapper<StocktakesEntity> wrapper = Wrappers.query();
+        wrapper.eq("t1.id", id);
+        List<StocktakesVO> list = baseMapper.selectListVo(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        StocktakesVO vo = list.get(0);
+        StocktakesDetailVO detailVo = new StocktakesDetailVO();
+        org.springframework.beans.BeanUtils.copyProperties(vo, detailVo);
+
+        // 统计数量
+        QueryWrapper<StocktakeItemsEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("status", "count(*) as count")
+                .eq("stocktake_id", id)
+                .groupBy("status");
+
+        List<Map<String, Object>> stats = stocktakeItemsService.listMaps(queryWrapper);
+
+        Map<String, Long> countMap = stats.stream()
+                .filter(m -> m.get("status") != null)
+                .collect(Collectors.toMap(
+                        m -> String.valueOf(m.get("status")),
+                        m -> ((Number) m.get("count")).longValue()
+                ));
+
+        detailVo.setTotalCount(countMap.values().stream().mapToLong(Long::longValue).sum());
+        detailVo.setUncheckedCount(countMap.getOrDefault(StocktakeItemStatus.PENDING.getCode(), 0L));
+        detailVo.setDeficitCount(countMap.getOrDefault(StocktakeItemStatus.LOST.getCode(), 0L));
+        detailVo.setSurplusCount(countMap.getOrDefault(StocktakeItemStatus.SURPLUS.getCode(), 0L));
+        detailVo.setNormalCount(countMap.getOrDefault(StocktakeItemStatus.NORMAL.getCode(), 0L));
+        detailVo.setDamagedCount(countMap.getOrDefault(StocktakeItemStatus.DAMAGED.getCode(), 0L));
+        detailVo.setScrappedCount(countMap.getOrDefault(StocktakeItemStatus.SCRAPPED.getCode(), 0L));
+
+        return detailVo;
+    }
 }
