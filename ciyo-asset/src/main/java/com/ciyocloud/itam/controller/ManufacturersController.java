@@ -1,5 +1,6 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.QueryWrapperUtils;
@@ -13,7 +14,6 @@ import com.ciyocloud.itam.service.ManufacturersService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +45,7 @@ public class ManufacturersController {
     /**
      * 查询制造商列表
      */
-    @SaCheckPermission("itam:manufacturers:list")
+    @SaCheckPermission("itam:manufacturers:page")
     @GetMapping("/list")
     public Result<List<ManufacturersEntity>> list(ManufacturersEntity manufacturers) {
         return Result.success(manufacturersService.list(QueryWrapperUtils.toSimpleQuery(manufacturers)));

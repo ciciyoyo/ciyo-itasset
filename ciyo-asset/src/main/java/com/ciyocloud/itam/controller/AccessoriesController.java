@@ -59,7 +59,7 @@ public class AccessoriesController {
     /**
      * 查询配件列表
      */
-    @SaCheckPermission("itam:accessories:list")
+    @SaCheckPermission("itam:accessories:page")
     @GetMapping("/list")
     public Result<List<AccessoriesVO>> list(AccessoriesPageReq req) {
         return Result.success(accessoriesService.queryListVo(QueryWrapperUtils.toSimpleQuery(req, AccessoriesEntity.class)));
