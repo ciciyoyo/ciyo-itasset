@@ -99,7 +99,7 @@ pnpm dev
 
 ## 交流群
 ![输入图片说明](readmeimg/6f22c1634883fe5b389d5ac9c2ce4a40.jpg)
-![输入图片说明](readmeimg/6f22c1634883fe5b389d5ac9c2ce4a40.jpg)
+
 ## 📄 许可证
 
 本项目遵循 [GPL-3.0 License](LICENSE) 协议。
