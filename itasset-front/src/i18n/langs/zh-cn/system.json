@@ -1037,7 +1037,8 @@
     "exportConfirm": "是否确认导出所有用户数据项？",
     "belongingDept": "所属部门",
     "belongingDeptPlaceholder": "请选择所属部门",
-    "userRoles": "用户角色"
+    "userRoles": "用户角色",
+    "updateUser": "保存成功"
   },
   "userChoose": {
     "chooseUserDialogTitle": "选择用户",

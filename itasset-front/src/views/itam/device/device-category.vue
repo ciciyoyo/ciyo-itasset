@@ -23,10 +23,10 @@
           row-key="id"
         >
           <template #operation="{ row }">
-            <el-button link type="primary" @click="handleEdit(row)" v-hasPermi="['itam:categories:update']">
+            <el-button link type="primary" @click="handleEdit(row)" v-hasPermi="['itam:device:update']">
               {{ $t('system.roleManagement.edit') }}
             </el-button>
-            <el-button link type="danger" @click="handleDelete(row)" v-hasPermi="['itam:categories:delete']">
+            <el-button link type="danger" @click="handleDelete(row)" v-hasPermi="['itam:device:delete']">
               {{ $t('system.roleManagement.delete') }}
             </el-button>
           </template>

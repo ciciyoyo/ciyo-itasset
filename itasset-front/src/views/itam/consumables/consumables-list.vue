@@ -55,12 +55,8 @@
           @pagination:current-change="handleCurrentChange"
         >
           <template #operation="{ row }">
-            <el-button link type="primary" @click="handleCollect(row)" v-hasPermi="['itam:consumables:collect']">
-              领取
-            </el-button>
-            <el-button link type="success" @click="handleStockIn(row)" v-hasPermi="['itam:consumables:stockIn']">
-              入库
-            </el-button>
+            <el-button link type="primary" @click="handleCollect(row)" v-hasPermi="['itam:consumables:update']"> 领取 </el-button>
+            <el-button link type="success" @click="handleStockIn(row)" v-hasPermi="['itam:consumables:update']"> 入库 </el-button>
             <el-button link type="primary" @click="handleUpdate(row)" v-hasPermi="['itam:consumables:update']">
               {{ $t('system.roleManagement.edit') }}
             </el-button>
