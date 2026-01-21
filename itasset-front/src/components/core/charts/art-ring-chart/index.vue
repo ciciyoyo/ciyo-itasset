@@ -77,7 +77,7 @@
             },
             label: {
               show: props.showLabel,
-              formatter: '{b}\n{d}%',
+              formatter: '{b}: {c}\n{d}%',
               position: 'outside',
               color: isDark.value ? '#ccc' : '#999',
               fontSize: 12

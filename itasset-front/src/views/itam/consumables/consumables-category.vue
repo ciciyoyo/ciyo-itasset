@@ -23,10 +23,10 @@
           row-key="id"
         >
           <template #operation="{ row }">
-            <el-button link type="primary" @click="handleEdit(row)" v-hasPermi="['itam:categories:update']">
+            <el-button link type="primary" @click="handleEdit(row)" v-hasPermi="['itam:consumables:update']">
               {{ $t('system.roleManagement.edit') }}
             </el-button>
-            <el-button link type="danger" @click="handleDelete(row)" v-hasPermi="['itam:categories:delete']">
+            <el-button link type="danger" @click="handleDelete(row)" v-hasPermi="['itam:consumables:delete']">
               {{ $t('system.roleManagement.delete') }}
             </el-button>
           </template>
@@ -68,13 +68,7 @@
 
 <script setup lang="ts">
   import { computed, onMounted, ref, useTemplateRef } from 'vue'
-  import {
-    addCategories,
-    CategoriesEntity,
-    delCategories,
-    getCategoriesTree,
-    updateCategories
-  } from '@/api/itam/categories'
+  import { addCategories, CategoriesEntity, delCategories, getCategoriesTree, updateCategories } from '@/api/itam/categories'
   import { ElMessageBox } from 'element-plus'
   import { MessageUtil } from '@/utils/messageUtil'
   import { resetFormRef } from '@/utils/business'

@@ -61,6 +61,7 @@ public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, Consu
         queryWrapper.eq(consumables.getCategoryId() != null, "t1.category_id", consumables.getCategoryId());
         queryWrapper.eq(consumables.getManufacturerId() != null, "t1.manufacturer_id", consumables.getManufacturerId());
         queryWrapper.eq(consumables.getLocationId() != null, "t1.location_id", consumables.getLocationId());
+        queryWrapper.eq("t1.deleted", 0);
         queryWrapper.orderByDesc("t1.create_time");
         return queryWrapper;
     }

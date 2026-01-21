@@ -1,5 +1,6 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.Result;
@@ -37,6 +38,7 @@ public class AssetRequestsController {
      * 管理端分页查询申请
      */
     @GetMapping("/manage/page")
+    @SaCheckPermission("itam:requests:page")
     public Result<PageResultVO<AssetRequestsVO>> managePage(PageRequest page, AssetRequestsPageReq req) {
         return Result.success(new PageResultVO<>(assetRequestsService.queryManagePage(page, req)));
     }
@@ -54,6 +56,7 @@ public class AssetRequestsController {
      * 审批申请
      */
     @PostMapping("/approve")
+    @SaCheckPermission("itam:requests:approve")
     public Result<Void> approve(@RequestBody @Validated AssetRequestsApprovalReq req) {
         assetRequestsService.approveRequest(req);
         return Result.success();

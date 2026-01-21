@@ -473,7 +473,7 @@
 
   const handleDelete = (row?: any) => {
     const idsToDelete = row?.id || selectedRows.value.map((item) => item.id).join(',')
-    ElMessageBox.confirm(t('system.noticeTemplate.isDelete'), t('common.waring'))
+    ElMessageBox.confirm(t('system.noticeTemplate.isDelete'), t('common.warning'))
       .then(() => delMsgTemplate(idsToDelete))
       .then(() => {
         refreshData()
@@ -492,7 +492,7 @@
   }
 
   const handleSyncWxMpTemplate = () => {
-    ElMessageBox.confirm(t('system.noticeTemplate.syncWxMpTemplate'), t('common.waring'))
+    ElMessageBox.confirm(t('system.noticeTemplate.syncWxMpTemplate'), t('common.warning'))
       .then(() => syncWxTemplateMsg({}))
       .then(() => {
         refreshData()
