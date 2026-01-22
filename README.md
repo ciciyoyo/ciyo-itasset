@@ -97,6 +97,9 @@ pnpm dev
 - [Snipe-IT](https://github.com/snipe/snipe-it)：功能强大的开源资产管理系统，本项目业务逻辑参考对象。
 - [Art Design Pro](https://github.com/Daymychen/art-design-pro)：极具视觉美感的 Vue3 管理后台模板，本项目前端脚手架。
 
+## 交流群
+![输入图片说明](readmeimg/6f22c1634883fe5b389d5ac9c2ce4a40.jpg)
+
 ## 📄 许可证
 
 本项目遵循 [GPL-3.0 License](LICENSE) 协议。
