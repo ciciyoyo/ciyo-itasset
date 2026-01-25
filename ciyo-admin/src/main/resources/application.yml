@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ciyo-crm
+    name: ciyo-itasset
   main:
     allow-bean-definition-overriding: true
   profiles:
@@ -34,6 +34,11 @@ server:
   port: 8088
   servlet:
     context-path: /
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml
+    min-response-size: 1024
+
 
 # 日志级别
 logging:
@@ -73,6 +78,12 @@ sa-token:
 platform:
   gen: #代码生成是否启用
     enabled: true
+  # 后端 API 统一前缀
+  # 为什么不使用 server.servlet.context-path？
+  # 因为 context-path 会全局修改所有路径（包括静态资源、Swagger等），导致前端 index.html 也会被挂载到 /api 下，
+  # 使得访问 http://localhost:8088/ 无法直接加载前端页面。
+  # 使用此配置仅给 RestController 添加前缀，实现前端(/)与后端(/api)的完美分离。
+  api-prefix: /api
 
 #验证码配置
 aj:
@@ -109,4 +120,6 @@ xss:
     - /sys/announce
   # 匹配链接
   url-patterns: /system/*,/monitor/*,/tool/*,/form/*,/user/form/*
+
+
 

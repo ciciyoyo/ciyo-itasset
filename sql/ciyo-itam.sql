@@ -1,19 +1,3 @@
-/*
- Navicat Premium Dump SQL
-
- Source Server         : 101.35.25.237
- Source Server Type    : MySQL
- Source Server Version : 80407 (8.4.7)
- Source Host           : 101.35.25.237:3306
- Source Schema         : ciyo-itam
-
- Target Server Type    : MySQL
- Target Server Version : 80407 (8.4.7)
- File Encoding         : 65001
-
- Date: 21/01/2026 20:17:15
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
