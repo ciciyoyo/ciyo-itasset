@@ -13,22 +13,16 @@ import cn.dev33.satoken.stp.StpUtil;
  */
 public class SaAuthInterceptor extends SaInterceptor {
 
-    public SaAuthInterceptor() {
+    public SaAuthInterceptor(String apiPrefix) {
         super(handle -> {
             // 所有路由需要登录认证
             SaRouter
                     // 基础路径
-                    .match("/**")
+                    .match(apiPrefix + "/**")
                     // 排除登录注册接口
-                    .notMatch("/login", "/register")
+                    .notMatch(apiPrefix + "/login", apiPrefix + "/register")
                     // 排除静态资源
                     .notMatch("/", "/*.html", "/**.html", "/**.css", "/**.woff", "/**.js", "/*.ico")
-                    // 排除文件访问
-                    .notMatch("/u/**")
-                    // 排除验证码
-                    .notMatch("/captcha/**")
-                    // 排除个人资料公开访问
-                    .notMatch("/profile/**")
                     // 排除 Swagger 文档
                     .notMatch("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v3/api-docs/**", "/doc.html")
                     // 排除 WebSocket

@@ -73,6 +73,6 @@ public class AssetCodeUtils {
      * @return 资产编号
      */
     public String generate(Long categoryId) {
-        return generate(categoryId, AssetCodeMode.INCREMENT, 6);
+        return generate(categoryId, AssetCodeMode.TIMESTAMP, 6);
     }
 }

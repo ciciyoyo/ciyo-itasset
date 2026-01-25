@@ -12,24 +12,28 @@ import com.ciyocloud.common.util.ExceptionNotifyUtils;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.common.util.SpringContextUtils;
 import com.ciyocloud.idempotent.exception.RepeatSubmitException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 异常处理器
+ * 全局异常处理器
  *
  * @author codeck
  */
@@ -37,45 +41,33 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class BaseExceptionHandler {
 
-
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public Result handlerNoFoundException(NoHandlerFoundException e) {
-        log.error(e.getMessage(), e);
-        return Result.failed(ResponseCodeConstants.NOT_FOUND, "{sys.path.error}");
-    }
-
-
-    @ExceptionHandler(AuthorizationException.class)
-    public Result handlerAuthorizationException(AuthorizationException e) {
-        log.error(e.getMessage(), e);
-        return Result.failed(ResponseCodeConstants.UNAUTHORIZED, "{sys.login.expired}");
-    }
+    // =================================== Sa-Token 认证鉴权异常 ===================================
 
     /**
      * Sa-Token 未登录异常处理
      */
     @ExceptionHandler(NotLoginException.class)
-    public Result handleNotLoginException(NotLoginException e) {
-        log.warn("User not logged in: {}", e.getMessage());
-        String message = "";
+    public Result<?> handleNotLoginException(NotLoginException e) {
+        log.warn("NotLoginException: {}", e.getMessage());
+        String message;
         switch (e.getType()) {
             case NotLoginException.NOT_TOKEN:
-                message = "未提供登录凭证";
+                message = "您尚未登录，请登录后操作";
                 break;
             case NotLoginException.INVALID_TOKEN:
-                message = "登录凭证无效";
+                message = "登录凭证无效，请重新登录";
                 break;
             case NotLoginException.TOKEN_TIMEOUT:
                 message = "登录已过期，请重新登录";
                 break;
             case NotLoginException.BE_REPLACED:
-                message = "账号已在其他地方登录";
+                message = "您的账号已在其他设备登录";
                 break;
             case NotLoginException.KICK_OUT:
-                message = "账号已被踢下线";
+                message = "您已被强制下线，请重新登录";
                 break;
             default:
-                message = "请登录后访问";
+                message = "当前会话未登录，请重新登录";
         }
         return Result.failed(ResponseCodeConstants.UNAUTHORIZED, message);
     }
@@ -84,8 +76,8 @@ public class BaseExceptionHandler {
      * Sa-Token 权限不足异常处理
      */
     @ExceptionHandler(NotPermissionException.class)
-    public Result handleNotPermissionException(NotPermissionException e) {
-        log.warn("Permission denied: {}", e.getMessage());
+    public Result<?> handleNotPermissionException(NotPermissionException e) {
+        log.warn("NotPermissionException: {}", e.getMessage());
         return Result.failed(ResponseCodeConstants.FORBIDDEN, "权限不足，无法访问");
     }
 
@@ -93,73 +85,140 @@ public class BaseExceptionHandler {
      * Sa-Token 角色不足异常处理
      */
     @ExceptionHandler(NotRoleException.class)
-    public Result handleNotRoleException(NotRoleException e) {
-        log.warn("Role denied: {}", e.getMessage());
+    public Result<?> handleNotRoleException(NotRoleException e) {
+        log.warn("NotRoleException: {}", e.getMessage());
         return Result.failed(ResponseCodeConstants.FORBIDDEN, "角色权限不足，无法访问");
     }
 
-
-    @ExceptionHandler(DuplicateKeyException.class)
-    public Result handleDuplicateKeyException(DuplicateKeyException e) {
-        log.error(e.getMessage(), e);
-        return Result.failed("{sys.data.exists}");
-    }
-
-    @ExceptionHandler({ValidateException.class})
-    public Result handleValidateException(ValidateException e) {
-        return Result.failed(e.getMessage());
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = MissingServletRequestParameterException.class)
-    public Object handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        log.error("System Exception", e);
-        return Result.failed(e.getMessage());
-    }
-
-    @ExceptionHandler(value = DataIntegrityViolationException.class)
-    public Object handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        log.error("System Exception", e);
-        return Result.failed("发生异常" + e.getMessage());
-    }
-
     /**
-     * 方法参数未通过校验
-     *
+     * 自定义授权异常
      */
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error("params error", e);
-        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
-        String message = allErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(";"));
-        return Result.failed(message);
+    @ExceptionHandler(AuthorizationException.class)
+    public Result<?> handleAuthorizationException(AuthorizationException e) {
+        log.warn("AuthorizationException: {}", e.getMessage());
+        return Result.failed(ResponseCodeConstants.UNAUTHORIZED, "{sys.login.expired}");
     }
 
-
-    @ExceptionHandler(RepeatSubmitException.class)
-    public Result handleRepeatSubmitException(RepeatSubmitException e) {
-        return Result.success(e.getMessage());
-    }
-
+    // =================================== 业务逻辑异常 ===================================
 
     /**
-     * 基础异常
+     * 基础业务异常 & 提示型异常
      */
     @ExceptionHandler({BaseException.class, PromptException.class})
-    public Result handleBaseException(BaseException e) {
+    public Result<?> handleBaseException(BaseException e) {
+        log.info("BusinessException: code={}, msg={}", e.getCode(), e.getMessage());
         return Result.restResult(null, e.getCode(), e.getMessage());
     }
 
-    @ExceptionHandler(SQLException.class)
-    public Result handleSqlException(SQLException e) {
-        log.error("sql错误", e);
-        return Result.failed("server error");
+    /**
+     * Hutool 验证异常
+     */
+    @ExceptionHandler(ValidateException.class)
+    public Result<?> handleValidateException(ValidateException e) {
+        log.warn("ValidateException: {}", e.getMessage());
+        return Result.failed(e.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    public Result handleException(Exception e) {
-        log.error(e.getMessage(), e);
-        SpringContextUtils.getBean(ExceptionNotifyUtils.class).notify(e);
+    /**
+     * 防重提交异常
+     */
+    @ExceptionHandler(RepeatSubmitException.class)
+    public Result<?> handleRepeatSubmitException(RepeatSubmitException e) {
+        log.warn("RepeatSubmitException: {}", e.getMessage());
         return Result.failed(e.getMessage());
+    }
+
+    // =================================== 参数校验与请求异常 ===================================
+
+    /**
+     * 方法参数校验异常 (Spring Boot Validation)
+     */
+    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+    public Result<?> handleMethodArgumentNotValidException(Exception e) {
+        log.warn("ArgumentValidationException: {}", e.getMessage());
+        BindingResult bindingResult = null;
+        if (e instanceof MethodArgumentNotValidException) {
+            bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
+        } else if (e instanceof BindException) {
+            bindingResult = ((BindException) e).getBindingResult();
+        }
+
+        String message = "";
+        if (bindingResult != null) {
+            message = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining(";"));
+        }
+        return Result.failed(message);
+    }
+
+    /**
+     * 请求参数缺失
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Result<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        log.warn("MissingServletRequestParameterException: {}", e.getMessage());
+        return Result.failed("缺失必要请求参数: " + e.getParameterName());
+    }
+
+    /**
+     * 404 路径不存在
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public Result<?> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        log.warn("NoHandlerFoundException: {}", e.getMessage());
+        return Result.failed(ResponseCodeConstants.NOT_FOUND, "{sys.path.error}");
+    }
+
+    // =================================== 数据层异常 ===================================
+
+    /**
+     * 数据库唯一键冲突
+     */
+    @ExceptionHandler(DuplicateKeyException.class)
+    public Result<?> handleDuplicateKeyException(DuplicateKeyException e) {
+        log.error("DuplicateKeyException: {}", e.getMessage(), e);
+        return Result.failed("{sys.data.exists}");
+    }
+
+    /**
+     * 数据完整性异常 (如外键约束)
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public Result<?> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        log.error("DataIntegrityViolationException: {}", e.getMessage(), e);
+        return Result.failed("数据操作异常，请检查数据完整性");
+    }
+
+    /**
+     * 通用 SQL 异常
+     */
+    @ExceptionHandler(SQLException.class)
+    public Result<?> handleSqlException(SQLException e) {
+        log.error("SQLException: {}", e.getMessage(), e);
+        return Result.failed("系统数据库异常");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 转发到 index.html，保持 URL 不变，支持 SPA 路由
+        request.getRequestDispatcher("/index.html").forward(request, response);
+    }
+
+    // =================================== 全局兜底异常 ===================================
+
+    /**
+     * 全局未知异常
+     */
+    @ExceptionHandler(Exception.class)
+    public Result<?> handleException(Exception e) {
+        log.error("Unhandled Exception: {}", e.getMessage(), e);
+        // 异步发送异常通知
+        try {
+            SpringContextUtils.getBean(ExceptionNotifyUtils.class).notify(e);
+        } catch (Exception notifyEx) {
+            log.warn("Failed to notify exception: {}", notifyEx.getMessage());
+        }
+        return Result.failed("系统繁忙，请稍后重试");
     }
 }

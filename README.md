@@ -74,7 +74,7 @@ ciyo-itasset
 ### 2. 后端部署
 
 1. 克隆项目：`git clone https://gitee.com/your-repo/ciyo-itasset.git`
-2. 创建数据库 `ciyo_itasset` 并执行 SQL 初始化脚本。
+2. 创建数据库 `ciyo_itasset` 并导入 `sql/ciyo-itam.sql` 脚本。
 3. 修改 `ciyo-admin/src/main/resources/application-dev.yml` 中的数据库配置。
 4. 运行 `com.ciyocloud.api.CiyoAssetApiApplication` 即可。
 

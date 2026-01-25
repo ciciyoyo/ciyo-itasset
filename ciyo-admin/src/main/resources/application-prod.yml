@@ -15,7 +15,7 @@ spring:
   data:
     redis:
       database: 0
-      port: 6379
+      port: 6389
       password:
       timeout: 6000ms
       host: localhost
