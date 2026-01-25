@@ -27,9 +27,9 @@ export default ({mode}: { mode: string }) => {
         server: {
             port: Number(VITE_PORT),
             proxy: {
-                '/ciyo-api': {
+                '/api': {
                     target: VITE_API_PROXY_URL,
-                    rewrite: (path) => path.replace(/^\/ciyo-api/, ''),
+                    // rewrite: (path) => path.replace(/^\/ciyo-api/, ''),
                     changeOrigin: true
                 }
             },
