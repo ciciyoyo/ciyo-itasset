@@ -59,5 +59,7 @@ public interface DeviceService extends IService<DeviceEntity> {
     Map<String, Object> getSummaryStats();
 
 
+
+
 }
 

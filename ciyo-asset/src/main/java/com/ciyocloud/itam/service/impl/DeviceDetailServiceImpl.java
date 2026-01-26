@@ -1,8 +1,10 @@
 package com.ciyocloud.itam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ciyocloud.itam.entity.AllocationsEntity;
 import com.ciyocloud.itam.entity.DeviceEntity;
+import com.ciyocloud.itam.entity.StocktakeItemsEntity;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.mapper.DeviceMapper;
@@ -30,6 +32,7 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
     private final AccessoriesService accessoriesService;
     private final LicensesService licensesService;
     private final ConsumablesService consumablesService;
+    private final StocktakeItemsService stocktakeItemsService;
 
     @Override
     public DeviceDetailVO getDeviceDetail(Long id) {
@@ -64,8 +67,7 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
         // 4. 查询分配表，获取关联的资产ID
         // ownerType = ASSET (设备) AND ownerId = id
         QueryWrapper<AllocationsEntity> allocWrapper = new QueryWrapper<>();
-        allocWrapper.eq("owner_type", AllocationOwnerType.ASSET)
-                .eq("owner_id", id);
+        allocWrapper.eq("owner_type", AllocationOwnerType.ASSET).eq("owner_id", id);
         List<AllocationsEntity> allocations = allocationsService.list(allocWrapper);
 
         // 分类收集ID
@@ -121,5 +123,34 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
         }
 
         return detailVO;
+    }
+
+    @Override
+    public DeviceScanVO getDeviceDetailByNo(String deviceNo) {
+        QueryWrapper<DeviceEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("device_no", deviceNo);
+        DeviceEntity deviceEntity = deviceMapper.selectOne(queryWrapper);
+        if (deviceEntity == null) {
+            return null;
+        }
+
+        // 1. 获取基本详情
+        DeviceDetailVO detailVO = getDeviceDetail(deviceEntity.getId());
+        DeviceScanVO scanVO = new DeviceScanVO();
+        BeanUtils.copyProperties(detailVO, scanVO);
+
+        // 2. 查询最近一次盘点信息
+        Page<StocktakeItemsEntity> page = new Page<>(1, 1);
+        QueryWrapper<StocktakeItemsEntity> stockItemsWrapper = new QueryWrapper<>();
+        stockItemsWrapper.eq("asset_id", deviceEntity.getId()).orderByDesc("scanned_at");
+        Page<StocktakeItemsEntity> result = stocktakeItemsService.page(page, stockItemsWrapper);
+        if (!result.getRecords().isEmpty()) {
+            StocktakeItemsEntity stocktakeItem = result.getRecords().get(0);
+            scanVO.setLastAuditDate(stocktakeItem.getScannedAt());
+            scanVO.setLastAuditStatus(stocktakeItem.getStatus());
+            scanVO.setLastAuditNote(stocktakeItem.getNote());
+        }
+
+        return scanVO;
     }
 }

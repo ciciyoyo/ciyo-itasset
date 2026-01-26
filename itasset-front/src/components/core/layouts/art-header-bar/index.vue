@@ -12,7 +12,7 @@
         <!-- 系统信息  -->
         <div class="flex-c c-p" @click="toHome" v-if="isTopMenu">
           <ArtLogo class="pl-4.5" />
-          <p v-if="width >= 1400" class="my-0 mx-2 ml-2 text-lg">{{ AppConfig.systemInfo.name }}</p>
+          <p v-if="width >= 1400" class="my-0 mx-2 ml-2 text-lg">{{ systemStore.systemInfo.name }}</p>
         </div>
 
         <ArtLogo class="!hidden pl-3.5 overflow-hidden align-[-0.15em] fill-current" @click="toHome" />
@@ -157,7 +157,7 @@
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   import { useMenuStore } from '@/store/modules/menu'
-  import AppConfig from '@/config'
+  import { useSystemStore } from '@/store/modules/system'
   import { languageOptions } from '@/i18n'
   import { mittBus } from '@/utils/sys'
   import { themeAnimation } from '@/utils/ui/animation'
@@ -177,6 +177,7 @@
   const settingStore = useSettingStore()
   const userStore = useUserStore()
   const menuStore = useMenuStore()
+  const systemStore = useSystemStore()
 
   // 顶部栏功能配置
   const {
