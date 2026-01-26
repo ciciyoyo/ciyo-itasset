@@ -2,55 +2,55 @@ import request from '@/utils/http'
 
 /** 字典类型实体 */
 export interface DictTypeEntity {
-    /**
-     * 字典ID
-     */
-    dictId?: number
+  /**
+   * 字典ID
+   */
+  dictId?: number
 
-    /**
-     * 字典名称
-     */
-    dictName: string
+  /**
+   * 字典名称
+   */
+  dictName: string
 
-    /**
-     * 字典类型
-     */
-    dictType: string
+  /**
+   * 字典类型
+   */
+  dictType: string
 
-    /**
-     * 状态（0正常 1停用）
-     */
-    status: string
+  /**
+   * 状态（0正常 1停用）
+   */
+  status: string
 
-    /**
-     * 备注
-     */
-    remark: string
+  /**
+   * 备注
+   */
+  remark: string
 
-    /**
-     * 创建时间
-     */
-    createTime?: string
+  /**
+   * 创建时间
+   */
+  createTime?: string
 
-    /**
-     * 更新时间
-     */
-    updateTime?: string
+  /**
+   * 更新时间
+   */
+  updateTime?: string
 }
 
 /** 字典类型分页查询参数 */
 export interface DictTypePageParams {
-    pageNum?: number
-    pageSize?: number
-    dictName?: string
-    dictType?: string
-    status?: string
+  pageNum?: number
+  pageSize?: number
+  dictName?: string
+  dictType?: string
+  status?: string
 }
 
 /** 字典类型分页响应 */
 export interface DictTypePageResponse {
-    records: DictTypeEntity[]
-    total: number
+  records: DictTypeEntity[]
+  total: number
 }
 
 /**
@@ -59,10 +59,10 @@ export interface DictTypePageResponse {
  * @returns 字典类型分页数据
  */
 export function listType(query?: DictTypePageParams) {
-    return request.get<DictTypePageResponse>({
-        url: '/system/dict/type/page',
-        params: query
-    }) as Promise<DictTypePageResponse>
+  return request.get<DictTypePageResponse>({
+    url: '/system/dict/type/page',
+    params: query
+  }) as Promise<DictTypePageResponse>
 }
 
 /**
@@ -71,9 +71,9 @@ export function listType(query?: DictTypePageParams) {
  * @returns 字典类型信息
  */
 export function getType(dictId: string | number) {
-    return request.get<DictTypeEntity>({
-        url: '/system/dict/type/' + dictId
-    }) as Promise<DictTypeEntity>
+  return request.get<DictTypeEntity>({
+    url: '/system/dict/type/' + dictId
+  }) as Promise<DictTypeEntity>
 }
 
 /**
@@ -82,10 +82,10 @@ export function getType(dictId: string | number) {
  * @returns 操作结果
  */
 export function addType(data: DictTypeEntity) {
-    return request.post({
-        url: '/system/dict/type',
-        data
-    })
+  return request.post({
+    url: '/system/dict/type',
+    data
+  })
 }
 
 /**
@@ -94,10 +94,10 @@ export function addType(data: DictTypeEntity) {
  * @returns 操作结果
  */
 export function updateType(data: DictTypeEntity) {
-    return request.put({
-        url: '/system/dict/type',
-        data
-    })
+  return request.put({
+    url: '/system/dict/type',
+    data
+  })
 }
 
 /**
@@ -106,9 +106,9 @@ export function updateType(data: DictTypeEntity) {
  * @returns 操作结果
  */
 export function delType(dictId: number) {
-    return request.del({
-        url: '/system/dict/type/' + dictId
-    })
+  return request.del({
+    url: '/system/dict/type/' + dictId
+  })
 }
 
 /**
@@ -116,9 +116,9 @@ export function delType(dictId: number) {
  * @returns 操作结果
  */
 export function refreshCache() {
-    return request.del({
-        url: '/system/dict/type/refreshCache'
-    })
+  return request.del({
+    url: '/system/dict/type/refreshCache'
+  })
 }
 
 /**
@@ -127,11 +127,11 @@ export function refreshCache() {
  * @returns Blob数据
  */
 export function exportType(query: DictTypePageParams) {
-    return request.get<Blob>({
-        url: '/system/dict/type/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/system/dict/type/export',
+    responseType: 'blob',
+    params: query
+  })
 }
 
 /**
@@ -139,7 +139,7 @@ export function exportType(query: DictTypePageParams) {
  * @returns 字典类型列表
  */
 export function optionselect() {
-    return request.get<DictTypeEntity[]>({
-        url: '/system/dict/type/optionselect'
-    }) as Promise<DictTypeEntity[]>
+  return request.get<DictTypeEntity[]>({
+    url: '/system/dict/type/optionselect'
+  }) as Promise<DictTypeEntity[]>
 }

@@ -15,52 +15,52 @@
  * @author Art Design Pro Team
  */
 
-import {defineAsyncComponent} from 'vue'
+import { defineAsyncComponent } from 'vue'
 
 /**
  * 全局组件配置列表
  */
 export const globalComponentsConfig: GlobalComponentConfig[] = [
-    {
-        name: '设置面板',
-        key: 'settings-panel',
-        component: defineAsyncComponent(() => import('@/components/core/layouts/art-settings-panel/index.vue')),
-        enabled: true
-    },
-    {
-        name: '全局搜索',
-        key: 'global-search',
-        component: defineAsyncComponent(() => import('@/components/core/layouts/art-global-search/index.vue')),
-        enabled: true
-    },
-    {
-        name: '锁屏',
-        key: 'screen-lock',
-        component: defineAsyncComponent(() => import('@/components/core/layouts/art-screen-lock/index.vue')),
-        enabled: true
-    },
-    {
-        name: '水印效果',
-        key: 'watermark',
-        component: defineAsyncComponent(() => import('@/components/core/others/art-watermark/index.vue')),
-        enabled: true
-    }
+  {
+    name: '设置面板',
+    key: 'settings-panel',
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-settings-panel/index.vue')),
+    enabled: true
+  },
+  {
+    name: '全局搜索',
+    key: 'global-search',
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-global-search/index.vue')),
+    enabled: true
+  },
+  {
+    name: '锁屏',
+    key: 'screen-lock',
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-screen-lock/index.vue')),
+    enabled: true
+  },
+  {
+    name: '水印效果',
+    key: 'watermark',
+    component: defineAsyncComponent(() => import('@/components/core/others/art-watermark/index.vue')),
+    enabled: true
+  }
 ]
 
 /**
  * 全局组件配置接口
  */
 export interface GlobalComponentConfig {
-    /** 组件名称 */
-    name: string
-    /** 组件标识 */
-    key: string
-    /** 组件 */
-    component: any
-    /** 是否启用 */
-    enabled?: boolean
-    /** 组件描述 */
-    description?: string
+  /** 组件名称 */
+  name: string
+  /** 组件标识 */
+  key: string
+  /** 组件 */
+  component: any
+  /** 是否启用 */
+  enabled?: boolean
+  /** 组件描述 */
+  description?: string
 }
 
 /**
@@ -68,7 +68,7 @@ export interface GlobalComponentConfig {
  * @returns 已启用的组件配置列表
  */
 export const getEnabledGlobalComponents = () => {
-    return globalComponentsConfig.filter((config) => config.enabled !== false)
+  return globalComponentsConfig.filter((config) => config.enabled !== false)
 }
 
 /**
@@ -77,5 +77,5 @@ export const getEnabledGlobalComponents = () => {
  * @returns 组件配置对象
  */
 export const getGlobalComponentByKey = (key: string) => {
-    return globalComponentsConfig.find((config) => config.key === key)
+  return globalComponentsConfig.find((config) => config.key === key)
 }

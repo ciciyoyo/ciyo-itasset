@@ -1,5 +1,5 @@
-import {ref} from 'vue'
-import {type DictDataEntity, getDicts} from '@/api/system/dict/data'
+import { ref } from 'vue'
+import { type DictDataEntity, getDicts } from '@/api/system/dict/data'
 
 // Global cache to store dictionary data
 // Map<dictType, DictDataEntity[]>

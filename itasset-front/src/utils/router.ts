@@ -5,11 +5,11 @@
  *
  * @module utils/router
  */
-import {RouteLocationNormalized, RouteRecordRaw} from 'vue-router'
-import {useSystemStore} from '@/store/modules/system'
+import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
+import { useSystemStore } from '@/store/modules/system'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import {i18n} from '@/i18n'
+import { i18n } from '@/i18n'
 
 /** 扩展的路由配置类型 */
 export type AppRouteRecordRaw = RouteRecordRaw & {

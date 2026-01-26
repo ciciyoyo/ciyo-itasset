@@ -1,9 +1,9 @@
 /// <reference types="vite/client" />
 
 declare module '*.vue' {
-    import type {DefineComponent} from 'vue'
-    const component: DefineComponent<{}, {}, any>
-    export default component
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent<{}, {}, any>
+  export default component
 }
 
 declare module 'nprogress'
@@ -17,28 +17,28 @@ declare module 'file-saver'
 declare module 'lodash-es'
 
 declare module 'qrcode.vue' {
-    export type Level = 'L' | 'M' | 'Q' | 'H'
-    export type RenderAs = 'canvas' | 'svg'
-    export type GradientType = 'linear' | 'radial'
+  export type Level = 'L' | 'M' | 'Q' | 'H'
+  export type RenderAs = 'canvas' | 'svg'
+  export type GradientType = 'linear' | 'radial'
 
-    export interface ImageSettings {
-        src: string
-        height: number
-        width: number
-        excavate: boolean
-    }
+  export interface ImageSettings {
+    src: string
+    height: number
+    width: number
+    excavate: boolean
+  }
 
-    export interface QRCodeProps {
-        value: string
-        size?: number
-        level?: Level
-        background?: string
-        foreground?: string
-        renderAs?: RenderAs
-    }
+  export interface QRCodeProps {
+    value: string
+    size?: number
+    level?: Level
+    background?: string
+    foreground?: string
+    renderAs?: RenderAs
+  }
 
-    const QrcodeVue: any
-    export default QrcodeVue
+  const QrcodeVue: any
+  export default QrcodeVue
 }
 
 // 全局变量声明

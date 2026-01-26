@@ -1,4 +1,4 @@
-import {AppRouteRecordRaw} from '@/utils/router'
+import { AppRouteRecordRaw } from '@/utils/router'
 
 /**
  * 静态路由配置 所有人都有的路由

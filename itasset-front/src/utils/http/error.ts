@@ -21,75 +21,75 @@
  * @module utils/http/error
  * @author Art Design Pro Team
  */
-import {AxiosError} from 'axios'
-import {ApiStatus} from './status'
-import {i18n} from '@/i18n'
+import { AxiosError } from 'axios'
+import { ApiStatus } from './status'
+import { i18n } from '@/i18n'
 
 // 错误响应接口
 export interface ErrorResponse {
-    /** 错误状态码 */
-    code: number
-    /** 错误消息 */
-    msg: string
-    /** 错误附加数据 */
-    data?: unknown
+  /** 错误状态码 */
+  code: number
+  /** 错误消息 */
+  msg: string
+  /** 错误附加数据 */
+  data?: unknown
 }
 
 // 错误日志数据接口
 export interface ErrorLogData {
-    /** 错误状态码 */
-    code: number
-    /** 错误消息 */
-    message: string
-    /** 错误附加数据 */
-    data?: unknown
-    /** 错误发生时间戳 */
-    timestamp: string
-    /** 请求 URL */
-    url?: string
-    /** 请求方法 */
-    method?: string
-    /** 错误堆栈信息 */
-    stack?: string
+  /** 错误状态码 */
+  code: number
+  /** 错误消息 */
+  message: string
+  /** 错误附加数据 */
+  data?: unknown
+  /** 错误发生时间戳 */
+  timestamp: string
+  /** 请求 URL */
+  url?: string
+  /** 请求方法 */
+  method?: string
+  /** 错误堆栈信息 */
+  stack?: string
 }
 
 // 自定义 HttpError 类
 export class HttpError extends Error {
-    public readonly code: number
-    public readonly data?: unknown
-    public readonly timestamp: string
-    public readonly url?: string
-    public readonly method?: string
+  public readonly code: number
+  public readonly data?: unknown
+  public readonly timestamp: string
+  public readonly url?: string
+  public readonly method?: string
 
-    constructor(
-        message: string,
-        code: number,
-        options?: {
-            data?: unknown
-            url?: string
-            method?: string
-        }
-    ) {
-        super(message)
-        this.name = 'HttpError'
-        this.code = code
-        this.data = options?.data
-        this.timestamp = new Date().toISOString()
-        this.url = options?.url
-        this.method = options?.method
+  constructor(
+    message: string,
+    code: number,
+    options?: {
+      data?: unknown
+      url?: string
+      method?: string
     }
+  ) {
+    super(message)
+    this.name = 'HttpError'
+    this.code = code
+    this.data = options?.data
+    this.timestamp = new Date().toISOString()
+    this.url = options?.url
+    this.method = options?.method
+  }
 
-    public toLogData(): ErrorLogData {
-        return {
-            code: this.code,
-            message: this.message,
-            data: this.data,
-            timestamp: this.timestamp,
-            url: this.url,
-            method: this.method,
-            stack: this.stack
-        }
+  public toLogData(): ErrorLogData {
+    return {
+      code: this.code,
+      message: this.message,
+      data: this.data,
+      timestamp: this.timestamp,
+      url: this.url,
+      method: this.method,
+      stack: this.stack
     }
+  }
 }
 
 /**
@@ -98,19 +98,19 @@ export class HttpError extends Error {
  * @returns 错误消息
  */
 const getErrorMessage = (status: number): string => {
-    const errorMap: Record<number, string> = {
-        [ApiStatus.unauthorized]: 'httpMsg.unauthorized',
-        [ApiStatus.forbidden]: 'httpMsg.forbidden',
-        [ApiStatus.notFound]: 'httpMsg.notFound',
-        [ApiStatus.methodNotAllowed]: 'httpMsg.methodNotAllowed',
-        [ApiStatus.requestTimeout]: 'httpMsg.requestTimeout',
-        [ApiStatus.internalServerError]: 'httpMsg.internalServerError',
-        [ApiStatus.badGateway]: 'httpMsg.badGateway',
-        [ApiStatus.serviceUnavailable]: 'httpMsg.serviceUnavailable',
-        [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout'
-    }
+  const errorMap: Record<number, string> = {
+    [ApiStatus.unauthorized]: 'httpMsg.unauthorized',
+    [ApiStatus.forbidden]: 'httpMsg.forbidden',
+    [ApiStatus.notFound]: 'httpMsg.notFound',
+    [ApiStatus.methodNotAllowed]: 'httpMsg.methodNotAllowed',
+    [ApiStatus.requestTimeout]: 'httpMsg.requestTimeout',
+    [ApiStatus.internalServerError]: 'httpMsg.internalServerError',
+    [ApiStatus.badGateway]: 'httpMsg.badGateway',
+    [ApiStatus.serviceUnavailable]: 'httpMsg.serviceUnavailable',
+    [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout'
+  }
 
-    return i18n.global.t(errorMap[status] || 'httpMsg.internalServerError')
+  return i18n.global.t(errorMap[status] || 'httpMsg.internalServerError')
 }
 
 /**
@@ -119,31 +119,31 @@ const getErrorMessage = (status: number): string => {
  * @returns 错误对象
  */
 export function handleError(error: AxiosError<ErrorResponse>): never {
-    // 处理取消的请求
-    if (error.code === 'ERR_CANCELED') {
-        console.warn('Request cancelled:', error.message)
-        throw new HttpError(i18n.global.t('httpMsg.requestCancelled'), ApiStatus.error)
-    }
+  // 处理取消的请求
+  if (error.code === 'ERR_CANCELED') {
+    console.warn('Request cancelled:', error.message)
+    throw new HttpError(i18n.global.t('httpMsg.requestCancelled'), ApiStatus.error)
+  }
 
-    const statusCode = error.response?.status
-    const errorMessage = error.response?.data?.msg || error.message
-    const requestConfig = error.config
+  const statusCode = error.response?.status
+  const errorMessage = error.response?.data?.msg || error.message
+  const requestConfig = error.config
 
-    // 处理网络错误
-    if (!error.response) {
-        throw new HttpError(i18n.global.t('httpMsg.networkError'), ApiStatus.error, {
-            url: requestConfig?.url,
-            method: requestConfig?.method?.toUpperCase()
-        })
-    }
-
-    // 处理 HTTP 状态码错误
-    const message = statusCode ? getErrorMessage(statusCode) : errorMessage || i18n.global.t('httpMsg.requestFailed')
-    throw new HttpError(message, statusCode || ApiStatus.error, {
-        data: error.response.data,
-        url: requestConfig?.url,
-        method: requestConfig?.method?.toUpperCase()
+  // 处理网络错误
+  if (!error.response) {
+    throw new HttpError(i18n.global.t('httpMsg.networkError'), ApiStatus.error, {
+      url: requestConfig?.url,
+      method: requestConfig?.method?.toUpperCase()
     })
+  }
+
+  // 处理 HTTP 状态码错误
+  const message = statusCode ? getErrorMessage(statusCode) : errorMessage || i18n.global.t('httpMsg.requestFailed')
+  throw new HttpError(message, statusCode || ApiStatus.error, {
+    data: error.response.data,
+    url: requestConfig?.url,
+    method: requestConfig?.method?.toUpperCase()
+  })
 }
 
 /**
@@ -152,11 +152,11 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
  * @param showMessage 是否显示错误消息
  */
 export function showError(error: HttpError, showMessage: boolean = true): void {
-    if (showMessage) {
-        ElMessage.error(error.message)
-    }
-    // 记录错误日志
-    console.error('[HTTP Error]', error.toLogData())
+  if (showMessage) {
+    ElMessage.error(error.message)
+  }
+  // 记录错误日志
+  console.error('[HTTP Error]', error.toLogData())
 }
 
 /**
@@ -165,9 +165,9 @@ export function showError(error: HttpError, showMessage: boolean = true): void {
  * @param showMessage 是否显示消息
  */
 export function showSuccess(message: string, showMessage: boolean = true): void {
-    if (showMessage) {
-        ElMessage.success(message)
-    }
+  if (showMessage) {
+    ElMessage.success(message)
+  }
 }
 
 /**
@@ -176,5 +176,5 @@ export function showSuccess(message: string, showMessage: boolean = true): void 
  * @returns 是否为 HttpError 类型
  */
 export const isHttpError = (error: unknown): error is HttpError => {
-    return error instanceof HttpError
+  return error instanceof HttpError
 }

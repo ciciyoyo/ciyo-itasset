@@ -110,13 +110,7 @@ export function exportAccessories(query: AccessoriesSearchParams) {
 /**
  * 分配配件到设备
  */
-export function allocateAccessory(data: {
-  itemId: number;
-  ownerId: number;
-  ownerType: string;
-  quantity: number;
-  note?: string
-}) {
+export function allocateAccessory(data: { itemId: number; ownerId: number; ownerType: string; quantity: number; note?: string }) {
   return request.post({
     url: '/itam/accessories/allocate',
     data
@@ -190,17 +184,17 @@ export function reportAccessoryFailure(data: {
 
 // 配件统计相关类型
 export interface AccessoryStatsSummary {
-  total: number          // 配件总数
-  expired: number        // 已过保数量
-  lowStock: number       // 低库存数量
-  soonToExpire: number   // 即将过保数量
+  total: number // 配件总数
+  expired: number // 已过保数量
+  lowStock: number // 低库存数量
+  soonToExpire: number // 即将过保数量
 }
 
 export interface MonthlyValueStat {
-  statsMonth: string        // 统计月份
-  assetsType: string        // 资产类型
-  assetsTypeDesc: string    // 资产类型描述
-  totalValue: number        // 总价值
+  statsMonth: string // 统计月份
+  assetsType: string // 资产类型
+  assetsTypeDesc: string // 资产类型描述
+  totalValue: number // 总价值
 }
 
 /**

@@ -14,12 +14,12 @@
  * @author Art Design Pro Team
  */
 
-import axios, {AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
-import {useUserStore} from '@/store/modules/user'
-import {ApiStatus} from './status'
-import {handleError, HttpError, showError, showSuccess} from './error'
-import {BaseResponse} from '@/types'
-import {i18n} from '@/i18n'
+import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { useUserStore } from '@/store/modules/user'
+import { ApiStatus } from './status'
+import { handleError, HttpError, showError, showSuccess } from './error'
+import { BaseResponse } from '@/types'
+import { i18n } from '@/i18n'
 
 /** 请求配置常量 */
 const REQUEST_TIMEOUT = 15000

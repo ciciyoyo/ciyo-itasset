@@ -1,21 +1,21 @@
 import request from '@/utils/http'
 
 export interface SuppliersEntity extends Api.Common.BaseEntity {
-    id?: number
-    name: string
-    contactName?: string
-    phone?: string
-    remark?: string
+  id?: number
+  name: string
+  contactName?: string
+  phone?: string
+  remark?: string
 }
 
 type SuppliersList = Api.Common.PaginatedResponse<SuppliersEntity>
 
 type SuppliersSearchFields = {
-    id?: number
-    name?: string
-    contactName?: string
-    phone?: string
-    remark?: string
+  id?: number
+  name?: string
+  contactName?: string
+  phone?: string
+  remark?: string
 }
 
 type SuppliersSearchParams = SuppliersSearchFields & Api.Common.CommonSearchParams
@@ -24,20 +24,20 @@ type SuppliersSearchParams = SuppliersSearchFields & Api.Common.CommonSearchPara
  * 获取供应商列表
  */
 export function pageSuppliers(params: SuppliersSearchParams) {
-    return request.get<SuppliersList>({
-        url: '/itam/suppliers/page',
-        params
-    })
+  return request.get<SuppliersList>({
+    url: '/itam/suppliers/page',
+    params
+  })
 }
 
 /**
  * 获取供应商列表（不分页）
  */
 export function listSuppliers(params?: SuppliersSearchFields) {
-    return request.get<SuppliersEntity[]>({
-        url: '/itam/suppliers/list',
-        params
-    })
+  return request.get<SuppliersEntity[]>({
+    url: '/itam/suppliers/list',
+    params
+  })
 }
 
 /**
@@ -45,9 +45,9 @@ export function listSuppliers(params?: SuppliersSearchFields) {
  * @param id
  */
 export function getSuppliers(id: number): any {
-    return request.get<SuppliersEntity>({
-        url: `/itam/suppliers/${id}`
-    })
+  return request.get<SuppliersEntity>({
+    url: `/itam/suppliers/${id}`
+  })
 }
 
 /**
@@ -55,10 +55,10 @@ export function getSuppliers(id: number): any {
  * @param data
  */
 export function addSuppliers(data: SuppliersEntity) {
-    return request.post({
-        url: '/itam/suppliers/add',
-        data
-    })
+  return request.post({
+    url: '/itam/suppliers/add',
+    data
+  })
 }
 
 /**
@@ -66,10 +66,10 @@ export function addSuppliers(data: SuppliersEntity) {
  * @param data
  */
 export function updateSuppliers(data: SuppliersEntity) {
-    return request.post({
-        url: '/itam/suppliers/update',
-        data
-    })
+  return request.post({
+    url: '/itam/suppliers/update',
+    data
+  })
 }
 
 /**
@@ -77,18 +77,18 @@ export function updateSuppliers(data: SuppliersEntity) {
  * @param id
  */
 export function delSuppliers(id: number | number[]) {
-    return request.post({
-        url: `/itam/suppliers/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/suppliers/delete/${id}`
+  })
 }
 
 /**
  * 导出供应商
  */
 export function exportSuppliers(query: SuppliersSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/suppliers/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/suppliers/export',
+    responseType: 'blob',
+    params: query
+  })
 }

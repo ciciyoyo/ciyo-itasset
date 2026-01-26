@@ -2,59 +2,59 @@ import request from '@/utils/http'
 
 /** 菜单实体 */
 export interface MenuEntity {
-    id?: number
-    createTime?: string
-    updateTime?: string | null
-    searchValue?: any
-    createBy?: string
-    updateBy?: string
-    params?: Record<string, any>
-    menuName?: string
-    langKey?: string | null
-    parentName?: string | null
-    parentId: number
-    orderNum?: number
-    path?: string
-    component?: string
-    isFrame: number // 是否为外链 (0: 否, 1: 是)
-    isCache: number // 是否缓存 (0: 缓存, 1: 不缓存)
-    menuType: 'M' | 'C' | 'F' // M: 目录, C: 菜单, F: 按钮
-    visible: string // 显示状态 ("0": 显示, "1": 隐藏)
-    status: string // 菜单状态 ("0": 正常, "1": 停用)
-    location?: string | null
-    perms?: string
-    icon?: string
-    children?: MenuEntity[]
+  id?: number
+  createTime?: string
+  updateTime?: string | null
+  searchValue?: any
+  createBy?: string
+  updateBy?: string
+  params?: Record<string, any>
+  menuName?: string
+  langKey?: string | null
+  parentName?: string | null
+  parentId: number
+  orderNum?: number
+  path?: string
+  component?: string
+  isFrame: number // 是否为外链 (0: 否, 1: 是)
+  isCache: number // 是否缓存 (0: 缓存, 1: 不缓存)
+  menuType: 'M' | 'C' | 'F' // M: 目录, C: 菜单, F: 按钮
+  visible: string // 显示状态 ("0": 显示, "1": 隐藏)
+  status: string // 菜单状态 ("0": 正常, "1": 停用)
+  location?: string | null
+  perms?: string
+  icon?: string
+  children?: MenuEntity[]
 }
 
 /** 菜单查询参数 */
 export interface MenuQueryParams {
-    menuName?: string
-    visible?: string
-    status?: string
+  menuName?: string
+  visible?: string
+  status?: string
 }
 
 /** 菜单列表响应 */
 export interface MenuListResponse {
-    data: MenuEntity[]
+  data: MenuEntity[]
 }
 
 /** 菜单树选择响应 */
 export interface MenuTreeResponse {
-    data: MenuEntity[]
+  data: MenuEntity[]
 }
 
 /** 角色菜单树响应 */
 export interface RoleMenuTreeResponse {
-    checkedKeys: number[]
-    menus: MenuEntity[]
+  checkedKeys: number[]
+  menus: MenuEntity[]
 }
 
 /** 通用响应 */
 export interface CommonResponse {
-    code: number
-    msg: string
-    data?: any
+  code: number
+  msg: string
+  data?: any
 }
 
 /**
@@ -63,10 +63,10 @@ export interface CommonResponse {
  * @returns 菜单列表
  */
 export function listMenu(query?: MenuQueryParams) {
-    return request.get<MenuEntity[]>({
-        url: '/system/menu/list',
-        params: query
-    })
+  return request.get<MenuEntity[]>({
+    url: '/system/menu/list',
+    params: query
+  })
 }
 
 /**
@@ -75,9 +75,9 @@ export function listMenu(query?: MenuQueryParams) {
  * @returns 菜单详情
  */
 export function getMenu(menuId: number) {
-    return request.get<MenuEntity>({
-        url: `/system/menu/${menuId}`
-    })
+  return request.get<MenuEntity>({
+    url: `/system/menu/${menuId}`
+  })
 }
 
 /**
@@ -85,9 +85,9 @@ export function getMenu(menuId: number) {
  * @returns 菜单树
  */
 export function treeselect() {
-    return request.get<MenuTreeResponse>({
-        url: '/system/menu/treeselect'
-    })
+  return request.get<MenuTreeResponse>({
+    url: '/system/menu/treeselect'
+  })
 }
 
 /**
@@ -96,9 +96,9 @@ export function treeselect() {
  * @returns 角色菜单树
  */
 export function roleMenuTreeselect(roleId: number) {
-    return request.get<RoleMenuTreeResponse>({
-        url: `/system/menu/roleMenuTreeselect/${roleId}`
-    })
+  return request.get<RoleMenuTreeResponse>({
+    url: `/system/menu/roleMenuTreeselect/${roleId}`
+  })
 }
 
 /**
@@ -107,10 +107,10 @@ export function roleMenuTreeselect(roleId: number) {
  * @returns 操作结果
  */
 export function addMenu(data: Omit<MenuEntity, 'id'>) {
-    return request.post<CommonResponse>({
-        url: '/system/menu',
-        data
-    })
+  return request.post<CommonResponse>({
+    url: '/system/menu',
+    data
+  })
 }
 
 /**
@@ -119,10 +119,10 @@ export function addMenu(data: Omit<MenuEntity, 'id'>) {
  * @returns 操作结果
  */
 export function updateMenu(data: MenuEntity) {
-    return request.put<CommonResponse>({
-        url: '/system/menu',
-        data
-    })
+  return request.put<CommonResponse>({
+    url: '/system/menu',
+    data
+  })
 }
 
 /**
@@ -131,7 +131,7 @@ export function updateMenu(data: MenuEntity) {
  * @returns 操作结果
  */
 export function delMenu(menuId: number) {
-    return request.del<CommonResponse>({
-        url: `/system/menu/${menuId}`
-    })
+  return request.del<CommonResponse>({
+    url: `/system/menu/${menuId}`
+  })
 }

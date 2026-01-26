@@ -43,21 +43,21 @@ export type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
  * 断点配置映射
  */
 interface BreakpointConfig {
-    /** 最小 span 阈值 */
-    threshold: number
-    /** 降级后的 span 值 */
-    fallback: number
+  /** 最小 span 阈值 */
+  threshold: number
+  /** 降级后的 span 值 */
+  fallback: number
 }
 
 /**
  * 响应式断点配置
  */
 const BREAKPOINT_CONFIG: Record<ResponsiveBreakpoint, BreakpointConfig | null> = {
-    xs: {threshold: 12, fallback: 24}, // 手机：小于 12 时使用满宽
-    sm: {threshold: 12, fallback: 12}, // 平板：小于 12 时使用半宽
-    md: {threshold: 8, fallback: 8}, // 中等屏幕：小于 8 时使用三分之一宽
-    lg: null, // 大屏幕：直接使用设置的 span
-    xl: null // 超大屏幕：直接使用设置的 span
+  xs: { threshold: 12, fallback: 24 }, // 手机：小于 12 时使用满宽
+  sm: { threshold: 12, fallback: 12 }, // 平板：小于 12 时使用半宽
+  md: { threshold: 8, fallback: 8 }, // 中等屏幕：小于 8 时使用三分之一宽
+  lg: null, // 大屏幕：直接使用设置的 span
+  xl: null // 超大屏幕：直接使用设置的 span
 }
 
 /**
@@ -83,20 +83,20 @@ const BREAKPOINT_CONFIG: Record<ResponsiveBreakpoint, BreakpointConfig | null> =
  * ```
  */
 export function calculateResponsiveSpan(
-    itemSpan: number | undefined,
-    defaultSpan: number,
-    breakpoint: ResponsiveBreakpoint
+  itemSpan: number | undefined,
+  defaultSpan: number,
+  breakpoint: ResponsiveBreakpoint
 ): number {
-    const finalSpan = itemSpan ?? defaultSpan
-    const config = BREAKPOINT_CONFIG[breakpoint]
+  const finalSpan = itemSpan ?? defaultSpan
+  const config = BREAKPOINT_CONFIG[breakpoint]
 
-    // 如果没有配置（lg/xl），直接返回原始 span
-    if (!config) {
-        return finalSpan
-    }
+  // 如果没有配置（lg/xl），直接返回原始 span
+  if (!config) {
+    return finalSpan
+  }
 
-    // 如果 span 小于阈值，使用降级值
-    return finalSpan >= config.threshold ? finalSpan : config.fallback
+  // 如果 span 小于阈值，使用降级值
+  return finalSpan >= config.threshold ? finalSpan : config.fallback
 }
 
 /**
@@ -116,7 +116,7 @@ export function calculateResponsiveSpan(
  * ```
  */
 export function createResponsiveSpanCalculator(defaultSpan: number) {
-    return (itemSpan: number | undefined, breakpoint: ResponsiveBreakpoint): number => {
-        return calculateResponsiveSpan(itemSpan, defaultSpan, breakpoint)
-    }
+  return (itemSpan: number | undefined, breakpoint: ResponsiveBreakpoint): number => {
+    return calculateResponsiveSpan(itemSpan, defaultSpan, breakpoint)
+  }
 }

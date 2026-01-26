@@ -32,43 +32,43 @@
  * @author Art Design Pro Team
  */
 
-import {useUserStore} from '@/store/modules/user'
-import {App, Directive, DirectiveBinding} from 'vue'
+import { useUserStore } from '@/store/modules/user'
+import { App, Directive, DirectiveBinding } from 'vue'
 
 interface AuthBinding extends DirectiveBinding {
-    value: string
+  value: string
 }
 
 function checkAuthPermission(el: HTMLElement, binding: AuthBinding): void {
-    // 获取当前路由的权限列表
-    const {getUserInfo} = storeToRefs(useUserStore())
-    // 检查是否有对应的权限标识
-    const all_permission = '*:*:*'
-    const value = binding.value as any
-    let hasPermission = true
-    if (value && value instanceof Array && value.length > 0) {
-        const permissionFlag = value
-        hasPermission = getUserInfo.value.buttons!.some((permission) => {
-            return all_permission === permission || permissionFlag.includes(permission)
-        })
-    }
-    // 如果没有权限，移除元素
-    if (!hasPermission) {
-        removeElement(el)
-    }
+  // 获取当前路由的权限列表
+  const { getUserInfo } = storeToRefs(useUserStore())
+  // 检查是否有对应的权限标识
+  const all_permission = '*:*:*'
+  const value = binding.value as any
+  let hasPermission = true
+  if (value && value instanceof Array && value.length > 0) {
+    const permissionFlag = value
+    hasPermission = getUserInfo.value.buttons!.some((permission) => {
+      return all_permission === permission || permissionFlag.includes(permission)
+    })
+  }
+  // 如果没有权限，移除元素
+  if (!hasPermission) {
+    removeElement(el)
+  }
 }
 
 function removeElement(el: HTMLElement): void {
-    if (el.parentNode) {
-        el.parentNode.removeChild(el)
-    }
+  if (el.parentNode) {
+    el.parentNode.removeChild(el)
+  }
 }
 
 const authDirective: Directive = {
-    mounted: checkAuthPermission,
-    updated: checkAuthPermission
+  mounted: checkAuthPermission,
+  updated: checkAuthPermission
 }
 
 export function setupAuthDirective(app: App): void {
-    app.directive('hasPermi', authDirective)
+  app.directive('hasPermi', authDirective)
 }

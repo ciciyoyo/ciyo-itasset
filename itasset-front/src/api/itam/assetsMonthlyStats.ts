@@ -1,29 +1,29 @@
 import request from '@/utils/http'
 
 export interface AssetsMonthlyStatsEntity extends Api.Common.BaseEntity {
-    id: number
-    assetsType: string
-    assetsId: string
-    categoryId: string
-    initialValue: string
-    currentValue: string
-    accumulatedDepreciation: string
-    statsMonth: string
-    statsDate: string
+  id: number
+  assetsType: string
+  assetsId: string
+  categoryId: string
+  initialValue: string
+  currentValue: string
+  accumulatedDepreciation: string
+  statsMonth: string
+  statsDate: string
 }
 
 type AssetsMonthlyStatsList = Api.Common.PaginatedResponse<AssetsMonthlyStatsEntity>
 
 type AssetsMonthlyStatsSearchFields = {
-    id: number
-    assetsType: string
-    assetsId: string
-    categoryId: string
-    initialValue: string
-    currentValue: string
-    accumulatedDepreciation: string
-    statsMonth: string
-    statsDate: string
+  id: number
+  assetsType: string
+  assetsId: string
+  categoryId: string
+  initialValue: string
+  currentValue: string
+  accumulatedDepreciation: string
+  statsMonth: string
+  statsDate: string
 }
 
 type AssetsMonthlyStatsSearchParams = AssetsMonthlyStatsSearchFields & Api.Common.CommonSearchParams
@@ -32,10 +32,10 @@ type AssetsMonthlyStatsSearchParams = AssetsMonthlyStatsSearchFields & Api.Commo
  * 获取资产月度价值统计列表
  */
 export function pageAssetsMonthlyStats(params: AssetsMonthlyStatsSearchParams) {
-    return request.get<AssetsMonthlyStatsList>({
-        url: '/itam/assetsMonthlyStats/page',
-        params
-    })
+  return request.get<AssetsMonthlyStatsList>({
+    url: '/itam/assetsMonthlyStats/page',
+    params
+  })
 }
 
 /**
@@ -43,9 +43,9 @@ export function pageAssetsMonthlyStats(params: AssetsMonthlyStatsSearchParams) {
  * @param id
  */
 export function getAssetsMonthlyStats(id: number): any {
-    return request.get<AssetsMonthlyStatsEntity>({
-        url: `/itam/assetsMonthlyStats/${id}`
-    })
+  return request.get<AssetsMonthlyStatsEntity>({
+    url: `/itam/assetsMonthlyStats/${id}`
+  })
 }
 
 /**
@@ -53,10 +53,10 @@ export function getAssetsMonthlyStats(id: number): any {
  * @param data
  */
 export function addAssetsMonthlyStats(data: AssetsMonthlyStatsEntity) {
-    return request.post({
-        url: '/itam/assetsMonthlyStats/add',
-        data
-    })
+  return request.post({
+    url: '/itam/assetsMonthlyStats/add',
+    data
+  })
 }
 
 /**
@@ -64,10 +64,10 @@ export function addAssetsMonthlyStats(data: AssetsMonthlyStatsEntity) {
  * @param data
  */
 export function updateAssetsMonthlyStats(data: AssetsMonthlyStatsEntity) {
-    return request.post({
-        url: '/itam/assetsMonthlyStats/update',
-        data
-    })
+  return request.post({
+    url: '/itam/assetsMonthlyStats/update',
+    data
+  })
 }
 
 /**
@@ -75,18 +75,18 @@ export function updateAssetsMonthlyStats(data: AssetsMonthlyStatsEntity) {
  * @param id
  */
 export function delAssetsMonthlyStats(id: number | number[]) {
-    return request.post({
-        url: `/itam/assetsMonthlyStats/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/assetsMonthlyStats/delete/${id}`
+  })
 }
 
 /**
  * 导出资产月度价值统计
  */
 export function exportAssetsMonthlyStats(query: AssetsMonthlyStatsSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/assetsMonthlyStats/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/assetsMonthlyStats/export',
+    responseType: 'blob',
+    params: query
+  })
 }

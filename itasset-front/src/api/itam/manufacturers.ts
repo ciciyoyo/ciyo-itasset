@@ -1,29 +1,29 @@
 import request from '@/utils/http'
 
 export interface ManufacturersEntity extends Api.Common.BaseEntity {
-    id?: number
-    name: string
-    officialUrl?: string
-    supportUrl?: string
-    warrantyUrl?: string
-    supportPhone?: string
-    supportEmail?: string
-    logoUrl?: string
-    remark?: string
+  id?: number
+  name: string
+  officialUrl?: string
+  supportUrl?: string
+  warrantyUrl?: string
+  supportPhone?: string
+  supportEmail?: string
+  logoUrl?: string
+  remark?: string
 }
 
 type ManufacturersList = Api.Common.PaginatedResponse<ManufacturersEntity>
 
 type ManufacturersSearchFields = {
-    id?: number
-    name?: string
-    officialUrl?: string
-    supportUrl?: string
-    warrantyUrl?: string
-    supportPhone?: string
-    supportEmail?: string
-    logoUrl?: string
-    remark?: string
+  id?: number
+  name?: string
+  officialUrl?: string
+  supportUrl?: string
+  warrantyUrl?: string
+  supportPhone?: string
+  supportEmail?: string
+  logoUrl?: string
+  remark?: string
 }
 
 type ManufacturersSearchParams = ManufacturersSearchFields & Api.Common.CommonSearchParams
@@ -32,20 +32,20 @@ type ManufacturersSearchParams = ManufacturersSearchFields & Api.Common.CommonSe
  * 获取制造商列表（分页）
  */
 export function pageManufacturers(params: ManufacturersSearchParams) {
-    return request.get<ManufacturersList>({
-        url: '/itam/manufacturers/page',
-        params
-    })
+  return request.get<ManufacturersList>({
+    url: '/itam/manufacturers/page',
+    params
+  })
 }
 
 /**
  * 获取制造商列表（不分页）
  */
 export function listManufacturers(params?: ManufacturersSearchFields) {
-    return request.get<ManufacturersEntity[]>({
-        url: '/itam/manufacturers/list',
-        params
-    })
+  return request.get<ManufacturersEntity[]>({
+    url: '/itam/manufacturers/list',
+    params
+  })
 }
 
 /**
@@ -53,9 +53,9 @@ export function listManufacturers(params?: ManufacturersSearchFields) {
  * @param id
  */
 export function getManufacturers(id: number): any {
-    return request.get<ManufacturersEntity>({
-        url: `/itam/manufacturers/${id}`
-    })
+  return request.get<ManufacturersEntity>({
+    url: `/itam/manufacturers/${id}`
+  })
 }
 
 /**
@@ -63,10 +63,10 @@ export function getManufacturers(id: number): any {
  * @param data
  */
 export function addManufacturers(data: ManufacturersEntity) {
-    return request.post({
-        url: '/itam/manufacturers/add',
-        data
-    })
+  return request.post({
+    url: '/itam/manufacturers/add',
+    data
+  })
 }
 
 /**
@@ -74,10 +74,10 @@ export function addManufacturers(data: ManufacturersEntity) {
  * @param data
  */
 export function updateManufacturers(data: ManufacturersEntity) {
-    return request.post({
-        url: '/itam/manufacturers/update',
-        data
-    })
+  return request.post({
+    url: '/itam/manufacturers/update',
+    data
+  })
 }
 
 /**
@@ -85,18 +85,18 @@ export function updateManufacturers(data: ManufacturersEntity) {
  * @param id
  */
 export function delManufacturers(id: number | number[]) {
-    return request.post({
-        url: `/itam/manufacturers/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/manufacturers/delete/${id}`
+  })
 }
 
 /**
  * 导出制造商
  */
 export function exportManufacturers(query: ManufacturersSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/manufacturers/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/manufacturers/export',
+    responseType: 'blob',
+    params: query
+  })
 }

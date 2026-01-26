@@ -47,36 +47,36 @@ export type Recordable<T = any> = Record<string, T>
 
 // 键值对类型
 export type KeyValue<T = any> = {
-    key: string
-    value: T
-    label?: string
+  key: string
+  value: T
+  label?: string
 }
 
 // 时间范围类型
 export interface TimeRange {
-    startTime: string
-    endTime: string
+  startTime: string
+  endTime: string
 }
 
 // 文件类型
 export interface FileInfo {
-    name: string
-    url: string
-    size: number
-    type: string
-    lastModified?: number
+  name: string
+  url: string
+  size: number
+  type: string
+  lastModified?: number
 }
 
 // 坐标类型
 export interface Position {
-    x: number
-    y: number
+  x: number
+  y: number
 }
 
 // 尺寸类型
 export interface Size {
-    width: number
-    height: number
+  width: number
+  height: number
 }
 
 // 响应式断点类型
