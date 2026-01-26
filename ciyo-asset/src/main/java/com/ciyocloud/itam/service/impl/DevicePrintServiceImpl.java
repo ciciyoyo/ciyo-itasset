@@ -85,8 +85,8 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 Barcode qrCode = new Barcode(page);
                 qrCode.setCodeType(BarcodeType.QR_CODE);
                 qrCode.setContent(device.getDeviceNo());
-                qrCode.setWidth(90);
-                qrCode.setHeight(90);
+                qrCode.setWidth(85);
+                qrCode.setHeight(85);
 
                 qrCodeCell.addComponents(qrCode);
 
