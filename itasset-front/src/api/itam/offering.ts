@@ -1,5 +1,5 @@
 import request from '@/utils/http'
-import {FailuresEntity} from './failures'
+import { FailuresEntity } from './failures'
 
 export interface OfferingEntity extends Api.Common.BaseEntity {
   id: number | null

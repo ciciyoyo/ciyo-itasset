@@ -1,7 +1,7 @@
-import {defineStore} from 'pinia'
-import {ref} from 'vue'
-import {getSystemInfoConfig} from '@/api/system/config'
-import {SystemBasicConfig} from '@/types/config'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { getSystemInfoConfig } from '@/api/system/config'
+import { SystemBasicConfig } from '@/types/config'
 
 export const useSystemStore = defineStore(
   'systemStore',

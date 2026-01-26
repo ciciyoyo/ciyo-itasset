@@ -77,12 +77,7 @@
   import { useI18n } from 'vue-i18n'
   import { ElMessageBox } from 'element-plus'
   import { useTable } from '@/hooks/core/useTable'
-  import {
-    getMyAnnouncementSend,
-    Message,
-    readAllAnnouncementSend,
-    readAnnouncementSend
-  } from '@/api/system/announcement'
+  import { getMyAnnouncementSend, Message, readAllAnnouncementSend, readAnnouncementSend } from '@/api/system/announcement'
   import { addBaseUrl, getTokenUrl } from '@/utils/auth'
   import mittBus from '@/utils/sys/mittBus'
   import { parseTime } from '@/utils/business'

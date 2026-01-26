@@ -1,31 +1,31 @@
 import request from '@/utils/http'
 
 export interface ModelsEntity extends Api.Common.BaseEntity {
-    id?: number
-    createTime?: string
-    updateTime?: string
-    createBy?: number
-    updateBy?: number
-    name: string
-    imageUrl?: string | null
-    manufacturerId?: number
-    categoryId?: number
-    depreciationId?: number
-    modelNumber: string
-    eol?: number  // 报废年限(月)
-    deleted?: number
-    // 以下字段为API返回的关联名称字段，用于列表显示
-    manufacturerName?: string
-    depreciationName?: string
+  id?: number
+  createTime?: string
+  updateTime?: string
+  createBy?: number
+  updateBy?: number
+  name: string
+  imageUrl?: string | null
+  manufacturerId?: number
+  categoryId?: number
+  depreciationId?: number
+  modelNumber: string
+  eol?: number // 报废年限(月)
+  deleted?: number
+  // 以下字段为API返回的关联名称字段，用于列表显示
+  manufacturerName?: string
+  depreciationName?: string
 }
 
 type ModelsList = Api.Common.PaginatedResponse<ModelsEntity>
 
 type ModelsSearchFields = {
-    name?: string
-    modelNumber?: string
-    manufacturerId?: number
-    depreciationId?: number
+  name?: string
+  modelNumber?: string
+  manufacturerId?: number
+  depreciationId?: number
 }
 
 type ModelsSearchParams = ModelsSearchFields & Api.Common.CommonSearchParams
@@ -34,20 +34,20 @@ type ModelsSearchParams = ModelsSearchFields & Api.Common.CommonSearchParams
  * 获取型号列表
  */
 export function pageModels(params: ModelsSearchParams) {
-    return request.get<ModelsList>({
-        url: '/itam/models/page',
-        params
-    })
+  return request.get<ModelsList>({
+    url: '/itam/models/page',
+    params
+  })
 }
 
 /**
  * 获取型号列表（不分页）
  */
 export function listModels(params?: ModelsSearchFields) {
-    return request.get<ModelsEntity[]>({
-        url: '/itam/models/list',
-        params
-    })
+  return request.get<ModelsEntity[]>({
+    url: '/itam/models/list',
+    params
+  })
 }
 
 /**
@@ -55,9 +55,9 @@ export function listModels(params?: ModelsSearchFields) {
  * @param id
  */
 export function getModels(id: number): any {
-    return request.get<ModelsEntity>({
-        url: `/itam/models/${id}`
-    })
+  return request.get<ModelsEntity>({
+    url: `/itam/models/${id}`
+  })
 }
 
 /**
@@ -65,10 +65,10 @@ export function getModels(id: number): any {
  * @param data
  */
 export function addModels(data: Partial<ModelsEntity>) {
-    return request.post({
-        url: '/itam/models/add',
-        data
-    })
+  return request.post({
+    url: '/itam/models/add',
+    data
+  })
 }
 
 /**
@@ -76,10 +76,10 @@ export function addModels(data: Partial<ModelsEntity>) {
  * @param data
  */
 export function updateModels(data: Partial<ModelsEntity>) {
-    return request.post({
-        url: '/itam/models/update',
-        data
-    })
+  return request.post({
+    url: '/itam/models/update',
+    data
+  })
 }
 
 /**
@@ -87,18 +87,18 @@ export function updateModels(data: Partial<ModelsEntity>) {
  * @param id
  */
 export function delModels(id: number | number[]) {
-    return request.post({
-        url: `/itam/models/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/models/delete/${id}`
+  })
 }
 
 /**
  * 导出型号
  */
 export function exportModels(query: ModelsSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/models/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/models/export',
+    responseType: 'blob',
+    params: query
+  })
 }

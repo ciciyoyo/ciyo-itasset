@@ -2,145 +2,145 @@ import request from '@/utils/http'
 
 // 部门实体类型
 export interface DeptEntity {
-    /**
-     * 部门ID
-     */
-    id?: number
+  /**
+   * 部门ID
+   */
+  id?: number
 
-    /**
-     * 父部门ID
-     */
-    parentId?: number
+  /**
+   * 父部门ID
+   */
+  parentId?: number
 
-    /**
-     * 部门名称
-     */
-    deptName: string
+  /**
+   * 部门名称
+   */
+  deptName: string
 
-    /**
-     * 显示顺序
-     */
-    orderNum: number
+  /**
+   * 显示顺序
+   */
+  orderNum: number
 
-    /**
-     * 负责人
-     */
-    leader?: string
+  /**
+   * 负责人
+   */
+  leader?: string
 
-    /**
-     * 联系电话
-     */
-    phone?: string
+  /**
+   * 联系电话
+   */
+  phone?: string
 
-    /**
-     * 邮箱
-     */
-    email?: string
+  /**
+   * 邮箱
+   */
+  email?: string
 
-    /**
-     * 部门状态（0正常 1停用）
-     */
-    status: string
+  /**
+   * 部门状态（0正常 1停用）
+   */
+  status: string
 
-    /**
-     * 删除标志（0代表存在 2代表删除）
-     */
-    delFlag?: string
+  /**
+   * 删除标志（0代表存在 2代表删除）
+   */
+  delFlag?: string
 
-    /**
-     * 父部门名称
-     */
-    parentName?: string
+  /**
+   * 父部门名称
+   */
+  parentName?: string
 
-    /**
-     * 创建时间
-     */
-    createTime?: string
+  /**
+   * 创建时间
+   */
+  createTime?: string
 
-    /**
-     * 更新时间
-     */
-    updateTime?: string
+  /**
+   * 更新时间
+   */
+  updateTime?: string
 }
 
 // 部门岗位实体类型
 export interface DeptPostEntity {
-    /**
-     * 部门岗位ID
-     */
-    id?: number
+  /**
+   * 部门岗位ID
+   */
+  id?: number
 
-    /**
-     * 部门ID
-     */
-    deptId?: number
+  /**
+   * 部门ID
+   */
+  deptId?: number
 
-    /**
-     * 岗位ID
-     */
-    postId?: number
+  /**
+   * 岗位ID
+   */
+  postId?: number
 
-    /**
-     * 岗位编码
-     */
-    postCode?: string
+  /**
+   * 岗位编码
+   */
+  postCode?: string
 
-    /**
-     * 岗位名称
-     */
-    postName?: string
+  /**
+   * 岗位名称
+   */
+  postName?: string
 
-    /**
-     * 岗位排序
-     */
-    postSort?: number
+  /**
+   * 岗位排序
+   */
+  postSort?: number
 
-    /**
-     * 状态（0正常 1停用）
-     */
-    status?: string
+  /**
+   * 状态（0正常 1停用）
+   */
+  status?: string
 
-    /**
-     * 是否是领导岗位（0否 1是）
-     */
-    leaderPost?: number
+  /**
+   * 是否是领导岗位（0否 1是）
+   */
+  leaderPost?: number
 
-    /**
-     * 创建时间
-     */
-    createTime?: string
+  /**
+   * 创建时间
+   */
+  createTime?: string
 
-    /**
-     * 更新时间
-     */
-    updateTime?: string
+  /**
+   * 更新时间
+   */
+  updateTime?: string
 }
 
 // 部门分页查询参数
 export interface DeptPageParams {
-    current?: number
-    size?: number
-    deptName?: string
-    status?: string
+  current?: number
+  size?: number
+  deptName?: string
+  status?: string
 }
 
 // 部门岗位分页查询参数
 export interface DeptPostPageParams {
-    current?: number
-    size?: number
-    deptId?: number
+  current?: number
+  size?: number
+  deptId?: number
 }
 
 // 部门分页响应
 export interface DeptPageResponse {
-    records: DeptEntity[]
-    total: number
+  records: DeptEntity[]
+  total: number
 }
 
 // 部门岗位分页响应
 export interface DeptPostPageResponse {
-    records: DeptPostEntity[]
-    total: number
+  records: DeptPostEntity[]
+  total: number
 }
 
 /**
@@ -149,10 +149,10 @@ export interface DeptPostPageResponse {
  * @returns 部门列表数据
  */
 export function pageDept(query?: DeptPageParams) {
-    return request.get<DeptEntity[]>({
-        url: '/system/dept/page',
-        params: query
-    })
+  return request.get<DeptEntity[]>({
+    url: '/system/dept/page',
+    params: query
+  })
 }
 
 /**
@@ -161,10 +161,10 @@ export function pageDept(query?: DeptPageParams) {
  * @returns 部门列表数据
  */
 export function listDept(query: any) {
-    return request.get<DeptEntity[]>({
-        url: '/system/dept/list',
-        params: query
-    })
+  return request.get<DeptEntity[]>({
+    url: '/system/dept/list',
+    params: query
+  })
 }
 
 /**
@@ -173,9 +173,9 @@ export function listDept(query: any) {
  * @returns 部门列表数据
  */
 export function listDeptExcludeChild(deptId: number) {
-    return request.get<DeptEntity[]>({
-        url: '/system/dept/list/exclude/' + deptId
-    })
+  return request.get<DeptEntity[]>({
+    url: '/system/dept/list/exclude/' + deptId
+  })
 }
 
 /**
@@ -184,9 +184,9 @@ export function listDeptExcludeChild(deptId: number) {
  * @returns 部门信息
  */
 export function getDept(deptId: number) {
-    return request.get<DeptEntity>({
-        url: '/system/dept/' + deptId
-    })
+  return request.get<DeptEntity>({
+    url: '/system/dept/' + deptId
+  })
 }
 
 /**
@@ -195,12 +195,12 @@ export function getDept(deptId: number) {
  * @returns 部门树结构数据
  */
 export function treeselect(silent?: boolean) {
-    return request.get<DeptEntity[]>({
-        url: '/system/dept/treeselect',
-        headers: {
-            silent: silent
-        }
-    })
+  return request.get<DeptEntity[]>({
+    url: '/system/dept/treeselect',
+    headers: {
+      silent: silent
+    }
+  })
 }
 
 /**
@@ -209,9 +209,9 @@ export function treeselect(silent?: boolean) {
  * @returns 部门树结构数据
  */
 export function roleDeptTreeselect(roleId: number) {
-    return request.get<any>({
-        url: '/system/dept/roleDeptTreeselect/' + roleId
-    })
+  return request.get<any>({
+    url: '/system/dept/roleDeptTreeselect/' + roleId
+  })
 }
 
 /**
@@ -220,10 +220,10 @@ export function roleDeptTreeselect(roleId: number) {
  * @returns 结果
  */
 export function addDept(data: DeptEntity) {
-    return request.post<any>({
-        url: '/system/dept',
-        data
-    })
+  return request.post<any>({
+    url: '/system/dept',
+    data
+  })
 }
 
 /**
@@ -232,10 +232,10 @@ export function addDept(data: DeptEntity) {
  * @returns 结果
  */
 export function updateDept(data: DeptEntity) {
-    return request.put<any>({
-        url: '/system/dept',
-        data
-    })
+  return request.put<any>({
+    url: '/system/dept',
+    data
+  })
 }
 
 /**
@@ -244,9 +244,9 @@ export function updateDept(data: DeptEntity) {
  * @returns 结果
  */
 export function delDept(deptId: number) {
-    return request.del<any>({
-        url: '/system/dept/' + deptId
-    })
+  return request.del<any>({
+    url: '/system/dept/' + deptId
+  })
 }
 
 /**
@@ -255,10 +255,10 @@ export function delDept(deptId: number) {
  * @returns 部门岗位分页数据
  */
 export function pageDeptPost(query: DeptPostPageParams) {
-    return request.get<DeptPostPageResponse>({
-        url: '/system/dept/post/page',
-        params: query
-    })
+  return request.get<DeptPostPageResponse>({
+    url: '/system/dept/post/page',
+    params: query
+  })
 }
 
 /**
@@ -267,10 +267,10 @@ export function pageDeptPost(query: DeptPostPageParams) {
  * @returns 岗位列表数据
  */
 export function queryDeptNotInPost(query: any) {
-    return request.get<any>({
-        url: '/system/dept/post/queryDeptNotInPost',
-        params: query
-    })
+  return request.get<any>({
+    url: '/system/dept/post/queryDeptNotInPost',
+    params: query
+  })
 }
 
 /**
@@ -279,10 +279,10 @@ export function queryDeptNotInPost(query: any) {
  * @returns 岗位列表数据
  */
 export function queryDeptInPost(query: any) {
-    return request.get<any>({
-        url: '/system/dept/post/queryDeptInPost',
-        params: query
-    })
+  return request.get<any>({
+    url: '/system/dept/post/queryDeptInPost',
+    params: query
+  })
 }
 
 /**
@@ -291,10 +291,10 @@ export function queryDeptInPost(query: any) {
  * @returns 结果
  */
 export function settingDeptPost(data: any) {
-    return request.post<any>({
-        url: '/system/dept/post/settingDeptPost',
-        data
-    })
+  return request.post<any>({
+    url: '/system/dept/post/settingDeptPost',
+    data
+  })
 }
 
 /**
@@ -303,10 +303,10 @@ export function settingDeptPost(data: any) {
  * @returns 结果
  */
 export function updateDeptPost(data: any) {
-    return request.post<any>({
-        url: '/system/dept/post/update',
-        data
-    })
+  return request.post<any>({
+    url: '/system/dept/post/update',
+    data
+  })
 }
 
 /**
@@ -315,7 +315,7 @@ export function updateDeptPost(data: any) {
  * @returns 结果
  */
 export function delDeptPost(deptPostId: number) {
-    return request.del<any>({
-        url: '/system/dept/post/' + deptPostId
-    })
+  return request.del<any>({
+    url: '/system/dept/post/' + deptPostId
+  })
 }

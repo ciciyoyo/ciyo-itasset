@@ -1,5 +1,5 @@
 import request from '@/utils/http'
-import {AssetType, FailureStatus} from './enums'
+import { AssetType, FailureStatus } from './enums'
 
 export interface FailuresEntity extends Api.Common.BaseEntity {
   id?: number

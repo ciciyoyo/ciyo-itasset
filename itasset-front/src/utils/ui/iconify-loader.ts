@@ -13,7 +13,7 @@
  * @author Art Design Pro Team
  */
 
-import {addCollection} from '@iconify/vue/offline'
+import { addCollection } from '@iconify/vue/offline'
 
 // 使用 @iconify/vue/offline 模块，完全禁用 API 请求
 // 只有通过 addCollection 注册的图标才会生效，不会发起任何网络请求

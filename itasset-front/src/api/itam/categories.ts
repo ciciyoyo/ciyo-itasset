@@ -1,27 +1,27 @@
 import request from '@/utils/http'
 
 export interface CategoriesEntity extends Api.Common.BaseEntity {
-    id: number
-    name: string
-    code: string
-    parentId: string
-    categoryType: string
-    deleted: string
-    createBy: string
-    updateBy: string
+  id: number
+  name: string
+  code: string
+  parentId: string
+  categoryType: string
+  deleted: string
+  createBy: string
+  updateBy: string
 }
 
 type CategoriesList = Api.Common.PaginatedResponse<CategoriesEntity>
 
 type CategoriesSearchFields = {
-    id: number
-    name: string
-    code: string
-    parentId: string
-    categoryType: string
-    deleted: string
-    createBy: string
-    updateBy: string
+  id: number
+  name: string
+  code: string
+  parentId: string
+  categoryType: string
+  deleted: string
+  createBy: string
+  updateBy: string
 }
 
 type CategoriesSearchParams = CategoriesSearchFields & Api.Common.CommonSearchParams
@@ -30,10 +30,10 @@ type CategoriesSearchParams = CategoriesSearchFields & Api.Common.CommonSearchPa
  * 获取分类列表
  */
 export function pageCategories(params: CategoriesSearchParams) {
-    return request.get<CategoriesList>({
-        url: '/itam/categories/page',
-        params
-    })
+  return request.get<CategoriesList>({
+    url: '/itam/categories/page',
+    params
+  })
 }
 
 /**
@@ -41,9 +41,9 @@ export function pageCategories(params: CategoriesSearchParams) {
  * @param id
  */
 export function getCategories(id: number): any {
-    return request.get<CategoriesEntity>({
-        url: `/itam/categories/${id}`
-    })
+  return request.get<CategoriesEntity>({
+    url: `/itam/categories/${id}`
+  })
 }
 
 /**
@@ -51,10 +51,10 @@ export function getCategories(id: number): any {
  * @param data
  */
 export function addCategories(data: CategoriesEntity) {
-    return request.post({
-        url: '/itam/categories/add',
-        data
-    })
+  return request.post({
+    url: '/itam/categories/add',
+    data
+  })
 }
 
 /**
@@ -62,10 +62,10 @@ export function addCategories(data: CategoriesEntity) {
  * @param data
  */
 export function updateCategories(data: CategoriesEntity) {
-    return request.post({
-        url: '/itam/categories/update',
-        data
-    })
+  return request.post({
+    url: '/itam/categories/update',
+    data
+  })
 }
 
 /**
@@ -73,20 +73,20 @@ export function updateCategories(data: CategoriesEntity) {
  * @param id
  */
 export function delCategories(id: number | number[]) {
-    return request.post({
-        url: `/itam/categories/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/categories/delete/${id}`
+  })
 }
 
 /**
  * 导出分类
  */
 export function exportCategories(query: CategoriesSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/categories/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/categories/export',
+    responseType: 'blob',
+    params: query
+  })
 }
 
 /**
@@ -94,8 +94,8 @@ export function exportCategories(query: CategoriesSearchParams) {
  * @param categoryType 分类类型
  */
 export function getCategoriesTree(categoryType: string) {
-    return request.get<CategoriesEntity[]>({
-        url: '/itam/categories/tree',
-        params: {categoryType}
-    })
+  return request.get<CategoriesEntity[]>({
+    url: '/itam/categories/tree',
+    params: { categoryType }
+  })
 }

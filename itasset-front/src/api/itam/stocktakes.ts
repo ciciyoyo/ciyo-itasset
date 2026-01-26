@@ -1,41 +1,41 @@
 import request from '@/utils/http'
 
 export interface StocktakesEntity extends Api.Common.BaseEntity {
-    id: number
-    name: string
-    locationId: number
-    categoryId: number
-    status: string
-    statusDesc: string
-    managerId: number
-    startDate: string
-    endDate: string
-    note: string
-    locationName: string
-    categoryName: string
-    managerName: string
-    totalCount: number
-    surplusCount: number
-    deficitCount: number
-    uncheckedCount: number
-    normalCount: number
-    damagedCount: number
-    scrappedCount: number
-    createBy: string
-    updateBy: string
+  id: number
+  name: string
+  locationId: number
+  categoryId: number
+  status: string
+  statusDesc: string
+  managerId: number
+  startDate: string
+  endDate: string
+  note: string
+  locationName: string
+  categoryName: string
+  managerName: string
+  totalCount: number
+  surplusCount: number
+  deficitCount: number
+  uncheckedCount: number
+  normalCount: number
+  damagedCount: number
+  scrappedCount: number
+  createBy: string
+  updateBy: string
 }
 
 type StocktakesList = Api.Common.PaginatedResponse<StocktakesEntity>
 
 type StocktakesSearchFields = {
-    name: string
-    locationId: number
-    categoryId: number
-    startDate: string
-    endDate: string
-    note: string
-    createBy: string
-    updateBy: string
+  name: string
+  locationId: number
+  categoryId: number
+  startDate: string
+  endDate: string
+  note: string
+  createBy: string
+  updateBy: string
 }
 
 type StocktakesSearchParams = StocktakesSearchFields & Api.Common.CommonSearchParams
@@ -44,10 +44,10 @@ type StocktakesSearchParams = StocktakesSearchFields & Api.Common.CommonSearchPa
  * 获取盘点任务列表
  */
 export function pageStocktakes(params: StocktakesSearchParams) {
-    return request.get<StocktakesList>({
-        url: '/itam/stocktakes/page',
-        params
-    })
+  return request.get<StocktakesList>({
+    url: '/itam/stocktakes/page',
+    params
+  })
 }
 
 /**
@@ -55,9 +55,9 @@ export function pageStocktakes(params: StocktakesSearchParams) {
  * @param id
  */
 export function getStocktakes(id: number): any {
-    return request.get<StocktakesEntity>({
-        url: `/itam/stocktakes/${id}`
-    })
+  return request.get<StocktakesEntity>({
+    url: `/itam/stocktakes/${id}`
+  })
 }
 
 /**
@@ -65,10 +65,10 @@ export function getStocktakes(id: number): any {
  * @param data
  */
 export function addStocktakes(data: StocktakesEntity) {
-    return request.post({
-        url: '/itam/stocktakes/add',
-        data
-    })
+  return request.post({
+    url: '/itam/stocktakes/add',
+    data
+  })
 }
 
 /**
@@ -76,10 +76,10 @@ export function addStocktakes(data: StocktakesEntity) {
  * @param data
  */
 export function updateStocktakes(data: StocktakesEntity) {
-    return request.post({
-        url: '/itam/stocktakes/update',
-        data
-    })
+  return request.post({
+    url: '/itam/stocktakes/update',
+    data
+  })
 }
 
 /**
@@ -87,18 +87,18 @@ export function updateStocktakes(data: StocktakesEntity) {
  * @param id
  */
 export function delStocktakes(id: number | number[]) {
-    return request.post({
-        url: `/itam/stocktakes/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/stocktakes/delete/${id}`
+  })
 }
 
 /**
  * 导出盘点任务
  */
 export function exportStocktakes(query: StocktakesSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/stocktakes/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/stocktakes/export',
+    responseType: 'blob',
+    params: query
+  })
 }

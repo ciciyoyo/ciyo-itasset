@@ -27,41 +27,41 @@
  * @module utils/theme/animation
  * @author Art Design Pro Team
  */
-import {useCommon} from '@/hooks/core/useCommon'
-import {useTheme} from '@/hooks/core/useTheme'
-import {SystemThemeEnum} from '@/enums/appEnum'
-import {useSettingStore} from '@/store/modules/setting'
+import { useCommon } from '@/hooks/core/useCommon'
+import { useTheme } from '@/hooks/core/useTheme'
+import { SystemThemeEnum } from '@/enums/appEnum'
+import { useSettingStore } from '@/store/modules/setting'
 
-const {LIGHT, DARK} = SystemThemeEnum
+const { LIGHT, DARK } = SystemThemeEnum
 
 /**
  * 主题切换动画
  * @param e 鼠标点击事件
  */
 export const themeAnimation = (e: any) => {
-    const x = e.clientX
-    const y = e.clientY
-    // 计算鼠标点击位置距离视窗的最大圆半径
-    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+  const x = e.clientX
+  const y = e.clientY
+  // 计算鼠标点击位置距离视窗的最大圆半径
+  const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
 
-    // 设置CSS变量
-    document.documentElement.style.setProperty('--x', x + 'px')
-    document.documentElement.style.setProperty('--y', y + 'px')
-    document.documentElement.style.setProperty('--r', endRadius + 'px')
+  // 设置CSS变量
+  document.documentElement.style.setProperty('--x', x + 'px')
+  document.documentElement.style.setProperty('--y', y + 'px')
+  document.documentElement.style.setProperty('--r', endRadius + 'px')
 
-    if (document.startViewTransition) {
-        document.startViewTransition(() => toggleTheme())
-    } else {
-        toggleTheme()
-    }
+  if (document.startViewTransition) {
+    document.startViewTransition(() => toggleTheme())
+  } else {
+    toggleTheme()
+  }
 }
 
 /**
  * 切换主题
  */
 const toggleTheme = () => {
-    useTheme().switchThemeStyles(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
-    useCommon().refresh()
+  useTheme().switchThemeStyles(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
+  useCommon().refresh()
 }
 
 /**
@@ -69,13 +69,13 @@ const toggleTheme = () => {
  * @param enable 是否启用过渡效果
  */
 export const toggleTransition = (enable: boolean) => {
-    const body = document.body
+  const body = document.body
 
-    if (enable) {
-        body.classList.add('theme-change')
-    } else {
-        setTimeout(() => {
-            body.classList.remove('theme-change')
-        }, 300)
-    }
+  if (enable) {
+    body.classList.add('theme-change')
+  } else {
+    setTimeout(() => {
+      body.classList.remove('theme-change')
+    }, 300)
+  }
 }

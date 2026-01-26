@@ -29,33 +29,33 @@ import lightStyle from '@imgs/settings/menu_styles/light.png'
  * 配置中心图片资源对象
  */
 export const configImages = {
-    /** 系统主题预览图 */
-    themeStyles: {
-        /** 亮色主题 */
-        light: lightTheme,
-        /** 暗色主题 */
-        dark: darkTheme,
-        /** 自动主题（跟随系统） */
-        system: systemTheme
-    },
-    /** 菜单布局预览图 */
-    menuLayouts: {
-        /** 左侧菜单 */
-        vertical: verticalLayout,
-        /** 顶部菜单 */
-        horizontal: horizontalLayout,
-        /** 混合菜单 */
-        mixed: mixedLayout,
-        /** 双栏菜单 */
-        dualColumn: dualColumnLayout
-    },
-    /** 菜单风格预览图 */
-    menuStyles: {
-        /** 设计风格 */
-        design: designStyle,
-        /** 暗色风格 */
-        dark: darkStyle,
-        /** 亮色风格 */
-        light: lightStyle
-    }
+  /** 系统主题预览图 */
+  themeStyles: {
+    /** 亮色主题 */
+    light: lightTheme,
+    /** 暗色主题 */
+    dark: darkTheme,
+    /** 自动主题（跟随系统） */
+    system: systemTheme
+  },
+  /** 菜单布局预览图 */
+  menuLayouts: {
+    /** 左侧菜单 */
+    vertical: verticalLayout,
+    /** 顶部菜单 */
+    horizontal: horizontalLayout,
+    /** 混合菜单 */
+    mixed: mixedLayout,
+    /** 双栏菜单 */
+    dualColumn: dualColumnLayout
+  },
+  /** 菜单风格预览图 */
+  menuStyles: {
+    /** 设计风格 */
+    design: designStyle,
+    /** 暗色风格 */
+    dark: darkStyle,
+    /** 亮色风格 */
+    light: lightStyle
+  }
 }

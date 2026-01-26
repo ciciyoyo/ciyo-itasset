@@ -1,4 +1,4 @@
-import {MessageUtil} from '@/utils/messageUtil'
+import { MessageUtil } from '@/utils/messageUtil'
 
 // 日期格式化
 export function parseTime(time: any, pattern?: string): any {

@@ -16,62 +16,62 @@
  * @author Art Design Pro Team
  */
 
-import {ref, computed, watch, onMounted} from 'vue'
-import {useElementSize} from '@vueuse/core'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
 
 /**
  * 页面容器高度配置
  */
 interface LayoutHeightOptions {
-    /** 额外的间距（默认 15px） */
-    extraSpacing?: number
-    /** 是否自动更新 CSS 变量（默认 true） */
-    updateCssVar?: boolean
-    /** CSS 变量名称（默认 '--art-full-height'） */
-    cssVarName?: string
+  /** 额外的间距（默认 15px） */
+  extraSpacing?: number
+  /** 是否自动更新 CSS 变量（默认 true） */
+  updateCssVar?: boolean
+  /** CSS 变量名称（默认 '--art-full-height'） */
+  cssVarName?: string
 }
 
 export function useLayoutHeight(options: LayoutHeightOptions = {}) {
-    const {extraSpacing = 15, updateCssVar = true, cssVarName = '--art-full-height'} = options
+  const { extraSpacing = 15, updateCssVar = true, cssVarName = '--art-full-height' } = options
 
-    // 元素引用
-    const headerRef = ref<HTMLElement>()
-    const contentHeaderRef = ref<HTMLElement>()
+  // 元素引用
+  const headerRef = ref<HTMLElement>()
+  const contentHeaderRef = ref<HTMLElement>()
 
-    // 使用 VueUse 自动监听元素尺寸变化
-    const {height: headerHeight} = useElementSize(headerRef)
-    const {height: contentHeaderHeight} = useElementSize(contentHeaderRef)
+  // 使用 VueUse 自动监听元素尺寸变化
+  const { height: headerHeight } = useElementSize(headerRef)
+  const { height: contentHeaderHeight } = useElementSize(contentHeaderRef)
 
-    // 计算容器最小高度（响应式）
-    const containerMinHeight = computed(() => {
-        const totalHeight = headerHeight.value + contentHeaderHeight.value + extraSpacing
-        return `calc(100vh - ${totalHeight}px)`
-    })
+  // 计算容器最小高度（响应式）
+  const containerMinHeight = computed(() => {
+    const totalHeight = headerHeight.value + contentHeaderHeight.value + extraSpacing
+    return `calc(100vh - ${totalHeight}px)`
+  })
 
-    if (updateCssVar) {
-        watch(
-            containerMinHeight,
-            (newHeight) => {
-                requestAnimationFrame(() => {
-                    document.documentElement.style.setProperty(cssVarName, newHeight)
-                })
-            },
-            {immediate: true}
-        )
-    }
+  if (updateCssVar) {
+    watch(
+      containerMinHeight,
+      (newHeight) => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.setProperty(cssVarName, newHeight)
+        })
+      },
+      { immediate: true }
+    )
+  }
 
-    return {
-        /** 容器最小高度（响应式） */
-        containerMinHeight,
-        /** 头部元素引用 */
-        headerRef,
-        /** 内容头部元素引用 */
-        contentHeaderRef,
-        /** 头部高度（响应式） */
-        headerHeight,
-        /** 内容头部高度（响应式） */
-        contentHeaderHeight
-    }
+  return {
+    /** 容器最小高度（响应式） */
+    containerMinHeight,
+    /** 头部元素引用 */
+    headerRef,
+    /** 内容头部元素引用 */
+    contentHeaderRef,
+    /** 头部高度（响应式） */
+    headerHeight,
+    /** 内容头部高度（响应式） */
+    contentHeaderHeight
+  }
 }
 
 /**
@@ -84,65 +84,65 @@ export function useLayoutHeight(options: LayoutHeightOptions = {}) {
  * ```
  */
 export function useAutoLayoutHeight(
-    headerIds: string[] = ['app-header', 'app-content-header'],
-    options: LayoutHeightOptions = {}
+  headerIds: string[] = ['app-header', 'app-content-header'],
+  options: LayoutHeightOptions = {}
 ) {
-    const {extraSpacing = 15, updateCssVar = true, cssVarName = '--art-full-height'} = options
+  const { extraSpacing = 15, updateCssVar = true, cssVarName = '--art-full-height' } = options
 
-    // 创建元素引用
-    const headerRef = ref<HTMLElement>()
-    const contentHeaderRef = ref<HTMLElement>()
+  // 创建元素引用
+  const headerRef = ref<HTMLElement>()
+  const contentHeaderRef = ref<HTMLElement>()
 
-    // 使用 VueUse 自动监听元素尺寸变化
-    const {height: headerHeight} = useElementSize(headerRef)
-    const {height: contentHeaderHeight} = useElementSize(contentHeaderRef)
+  // 使用 VueUse 自动监听元素尺寸变化
+  const { height: headerHeight } = useElementSize(headerRef)
+  const { height: contentHeaderHeight } = useElementSize(contentHeaderRef)
 
-    // 计算容器最小高度（响应式）
-    const containerMinHeight = computed(() => {
-        const totalHeight = headerHeight.value + contentHeaderHeight.value + extraSpacing
-        return `calc(100vh - ${totalHeight}px)`
-    })
+  // 计算容器最小高度（响应式）
+  const containerMinHeight = computed(() => {
+    const totalHeight = headerHeight.value + contentHeaderHeight.value + extraSpacing
+    return `calc(100vh - ${totalHeight}px)`
+  })
 
-    if (updateCssVar) {
-        watch(
-            containerMinHeight,
-            (newHeight) => {
-                requestAnimationFrame(() => {
-                    document.documentElement.style.setProperty(cssVarName, newHeight)
-                })
-            },
-            {immediate: true}
-        )
-    }
+  if (updateCssVar) {
+    watch(
+      containerMinHeight,
+      (newHeight) => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.setProperty(cssVarName, newHeight)
+        })
+      },
+      { immediate: true }
+    )
+  }
 
-    // 在 DOM 挂载后查找元素
-    onMounted(() => {
-        if (typeof document !== 'undefined') {
-            // 使用 nextTick 确保 DOM 完全渲染
-            requestAnimationFrame(() => {
-                const header = document.getElementById(headerIds[0])
-                const contentHeader = document.getElementById(headerIds[1])
+  // 在 DOM 挂载后查找元素
+  onMounted(() => {
+    if (typeof document !== 'undefined') {
+      // 使用 nextTick 确保 DOM 完全渲染
+      requestAnimationFrame(() => {
+        const header = document.getElementById(headerIds[0])
+        const contentHeader = document.getElementById(headerIds[1])
 
-                if (header) {
-                    headerRef.value = header
-                }
-                if (contentHeader) {
-                    contentHeaderRef.value = contentHeader
-                }
-            })
+        if (header) {
+          headerRef.value = header
         }
-    })
-
-    return {
-        /** 容器最小高度（响应式） */
-        containerMinHeight,
-        /** 头部元素引用 */
-        headerRef,
-        /** 内容头部元素引用 */
-        contentHeaderRef,
-        /** 头部高度（响应式） */
-        headerHeight,
-        /** 内容头部高度（响应式） */
-        contentHeaderHeight
+        if (contentHeader) {
+          contentHeaderRef.value = contentHeader
+        }
+      })
     }
+  })
+
+  return {
+    /** 容器最小高度（响应式） */
+    containerMinHeight,
+    /** 头部元素引用 */
+    headerRef,
+    /** 内容头部元素引用 */
+    contentHeaderRef,
+    /** 头部高度（响应式） */
+    headerHeight,
+    /** 内容头部高度（响应式） */
+    contentHeaderHeight
+  }
 }

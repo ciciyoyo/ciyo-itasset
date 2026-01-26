@@ -1,40 +1,40 @@
 import request from '@/utils/http'
 
 export interface StocktakeItemsEntity extends Api.Common.BaseEntity {
-    id: number
-    stocktakeId: number
-    assetId: number
-    status: string
-    statusDesc: string
-    scannedBy: number
-    scannedAt: string
-    expectedLocationId: number
-    actualLocationId: number
-    note: string
-    stocktakeName: string
-    assetName: string
-    assetCode: string
-    expectedLocationName: string
-    actualLocationName: string
-    scannedByName: string
-    createBy: string
-    updateBy: string
+  id: number
+  stocktakeId: number
+  assetId: number
+  status: string
+  statusDesc: string
+  scannedBy: number
+  scannedAt: string
+  expectedLocationId: number
+  actualLocationId: number
+  note: string
+  stocktakeName: string
+  assetName: string
+  assetCode: string
+  expectedLocationName: string
+  actualLocationName: string
+  scannedByName: string
+  createBy: string
+  updateBy: string
 }
 
 type StocktakeItemsList = Api.Common.PaginatedResponse<StocktakeItemsEntity>
 
 type StocktakeItemsSearchFields = {
-    id: number
-    stocktakeId: string
-    assetId: string
-    status: string
-    scannedBy: string
-    scannedAt: string
-    expectedLocationId: string
-    actualLocationId: string
-    note: string
-    createBy: string
-    updateBy: string
+  id: number
+  stocktakeId: string
+  assetId: string
+  status: string
+  scannedBy: string
+  scannedAt: string
+  expectedLocationId: string
+  actualLocationId: string
+  note: string
+  createBy: string
+  updateBy: string
 }
 
 type StocktakeItemsSearchParams = StocktakeItemsSearchFields & Api.Common.CommonSearchParams
@@ -43,10 +43,10 @@ type StocktakeItemsSearchParams = StocktakeItemsSearchFields & Api.Common.Common
  * 获取盘点明细列表
  */
 export function pageStocktakeItems(params: StocktakeItemsSearchParams) {
-    return request.get<StocktakeItemsList>({
-        url: '/itam/stocktakeItems/page',
-        params
-    })
+  return request.get<StocktakeItemsList>({
+    url: '/itam/stocktakeItems/page',
+    params
+  })
 }
 
 /**
@@ -54,9 +54,9 @@ export function pageStocktakeItems(params: StocktakeItemsSearchParams) {
  * @param id
  */
 export function getStocktakeItems(id: number): any {
-    return request.get<StocktakeItemsEntity>({
-        url: `/itam/stocktakeItems/${id}`
-    })
+  return request.get<StocktakeItemsEntity>({
+    url: `/itam/stocktakeItems/${id}`
+  })
 }
 
 /**
@@ -64,10 +64,10 @@ export function getStocktakeItems(id: number): any {
  * @param data
  */
 export function addStocktakeItems(data: StocktakeItemsEntity) {
-    return request.post({
-        url: '/itam/stocktakeItems/add',
-        data
-    })
+  return request.post({
+    url: '/itam/stocktakeItems/add',
+    data
+  })
 }
 
 /**
@@ -75,10 +75,10 @@ export function addStocktakeItems(data: StocktakeItemsEntity) {
  * @param data
  */
 export function updateStocktakeItems(data: StocktakeItemsEntity) {
-    return request.post({
-        url: '/itam/stocktakeItems/update',
-        data
-    })
+  return request.post({
+    url: '/itam/stocktakeItems/update',
+    data
+  })
 }
 
 /**
@@ -86,10 +86,10 @@ export function updateStocktakeItems(data: StocktakeItemsEntity) {
  * @param data
  */
 export function editStocktakeItems(data: { id: number; status: string; note?: string }) {
-    return request.post({
-        url: '/itam/stocktakeItems/edit',
-        data
-    })
+  return request.post({
+    url: '/itam/stocktakeItems/edit',
+    data
+  })
 }
 
 /**
@@ -97,18 +97,18 @@ export function editStocktakeItems(data: { id: number; status: string; note?: st
  * @param id
  */
 export function delStocktakeItems(id: number | number[]) {
-    return request.post({
-        url: `/itam/stocktakeItems/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/stocktakeItems/delete/${id}`
+  })
 }
 
 /**
  * 导出盘点明细
  */
 export function exportStocktakeItems(query: StocktakeItemsSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/stocktakeItems/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/stocktakeItems/export',
+    responseType: 'blob',
+    params: query
+  })
 }

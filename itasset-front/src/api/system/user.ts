@@ -1,6 +1,6 @@
 import request from '@/utils/http'
-import {SysRoleEntity} from '@/api/system/role'
-import {DeptEntity} from '@/api/system/dept'
+import { SysRoleEntity } from '@/api/system/role'
+import { DeptEntity } from '@/api/system/dept'
 
 /** 用户实体 */
 export interface UserEntity {

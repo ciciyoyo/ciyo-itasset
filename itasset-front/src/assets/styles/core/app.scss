@@ -6,8 +6,9 @@
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px var(--theme-color),
-  0 0 5px var(--theme-color) !important;
+  box-shadow:
+    0 0 10px var(--theme-color),
+    0 0 5px var(--theme-color) !important;
 }
 
 #nprogress .spinner-icon {
