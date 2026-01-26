@@ -1,20 +1,20 @@
 import request from '@/utils/http'
 
 export interface LocationsEntity extends Api.Common.BaseEntity {
-    id?: number
-    name: string
-    parentId?: number | null
-    managerId?: number
-    children?: LocationsEntity[]
+  id?: number
+  name: string
+  parentId?: number | null
+  managerId?: number
+  children?: LocationsEntity[]
 }
 
 type LocationsList = Api.Common.PaginatedResponse<LocationsEntity>
 
 type LocationsSearchFields = {
-    id?: number
-    name?: string
-    parentId?: number
-    managerId?: number
+  id?: number
+  name?: string
+  parentId?: number
+  managerId?: number
 }
 
 type LocationsSearchParams = LocationsSearchFields & Api.Common.CommonSearchParams
@@ -23,10 +23,10 @@ type LocationsSearchParams = LocationsSearchFields & Api.Common.CommonSearchPara
  * 获取物理位置树形列表
  */
 export function listLocations(params?: LocationsSearchFields) {
-    return request.get<LocationsEntity[]>({
-        url: '/itam/locations/tree',
-        params
-    })
+  return request.get<LocationsEntity[]>({
+    url: '/itam/locations/tree',
+    params
+  })
 }
 
 /**
@@ -34,9 +34,9 @@ export function listLocations(params?: LocationsSearchFields) {
  * @param id
  */
 export function getLocations(id: number): any {
-    return request.get<LocationsEntity>({
-        url: `/itam/locations/${id}`
-    })
+  return request.get<LocationsEntity>({
+    url: `/itam/locations/${id}`
+  })
 }
 
 /**
@@ -44,10 +44,10 @@ export function getLocations(id: number): any {
  * @param data
  */
 export function addLocations(data: LocationsEntity) {
-    return request.post({
-        url: '/itam/locations/add',
-        data
-    })
+  return request.post({
+    url: '/itam/locations/add',
+    data
+  })
 }
 
 /**
@@ -55,10 +55,10 @@ export function addLocations(data: LocationsEntity) {
  * @param data
  */
 export function updateLocations(data: LocationsEntity) {
-    return request.post({
-        url: '/itam/locations/update',
-        data
-    })
+  return request.post({
+    url: '/itam/locations/update',
+    data
+  })
 }
 
 /**
@@ -66,18 +66,18 @@ export function updateLocations(data: LocationsEntity) {
  * @param id
  */
 export function delLocations(id: number | number[]) {
-    return request.post({
-        url: `/itam/locations/delete/${id}`
-    })
+  return request.post({
+    url: `/itam/locations/delete/${id}`
+  })
 }
 
 /**
  * 导出物理位置
  */
 export function exportLocations(query: LocationsSearchParams) {
-    return request.get<Blob>({
-        url: '/itam/locations/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/itam/locations/export',
+    responseType: 'blob',
+    params: query
+  })
 }
