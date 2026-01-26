@@ -2,7 +2,7 @@
 <template>
   <div v-if="watermarkVisible" class="fixed left-0 top-0 h-screen w-screen pointer-events-none" :style="{ zIndex: zIndex }">
     <ElWatermark
-      :content="content"
+      :content="displayContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -14,12 +14,13 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+  import { useSystemStore } from '@/store/modules/system'
 
   defineOptions({ name: 'ArtWatermark' })
 
   const settingStore = useSettingStore()
+  const systemStore = useSystemStore()
   const { watermarkVisible } = storeToRefs(settingStore)
 
   interface WatermarkProps {
@@ -45,8 +46,7 @@
     zIndex?: number
   }
 
-  withDefaults(defineProps<WatermarkProps>(), {
-    content: AppConfig.systemInfo.name,
+  const props = withDefaults(defineProps<WatermarkProps>(), {
     visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
@@ -57,4 +57,7 @@
     offsetY: 50,
     zIndex: 3100
   })
+
+  // 如果没有传递 content，则使用系统配置的名称
+  const displayContent = computed(() => props.content || systemStore.systemInfo.name)
 </script>

@@ -6,24 +6,24 @@
  * @module utils/router
  */
 import {RouteLocationNormalized, RouteRecordRaw} from 'vue-router'
-import AppConfig from '@/config'
+import {useSystemStore} from '@/store/modules/system'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import {i18n} from '@/i18n'
 
 /** 扩展的路由配置类型 */
 export type AppRouteRecordRaw = RouteRecordRaw & {
-    hidden?: boolean
+  hidden?: boolean
 }
 
 /** 顶部进度条配置 */
 export const configureNProgress = () => {
-    NProgress.configure({
-        easing: 'ease',
-        speed: 600,
-        showSpinner: false,
-        parent: 'body'
-    })
+  NProgress.configure({
+    easing: 'ease',
+    speed: 600,
+    showSpinner: false,
+    parent: 'body'
+  })
 }
 
 /**
@@ -31,12 +31,13 @@ export const configureNProgress = () => {
  * @param to 当前路由对象
  */
 export const setPageTitle = (to: RouteLocationNormalized): void => {
-    const {title} = to.meta
-    if (title) {
-        setTimeout(() => {
-            document.title = `${formatMenuTitle(String(title))} - ${AppConfig.systemInfo.name}`
-        }, 150)
-    }
+  const { title } = to.meta
+  if (title) {
+    const systemStore = useSystemStore()
+    setTimeout(() => {
+      document.title = `${formatMenuTitle(String(title))} - ${systemStore.systemInfo.name}`
+    }, 150)
+  }
 }
 
 /**
@@ -45,18 +46,18 @@ export const setPageTitle = (to: RouteLocationNormalized): void => {
  * @returns 格式化后的菜单标题
  */
 export const formatMenuTitle = (title: string): string => {
-    if (title) {
-        if (title.startsWith('menu.')) {
-            // 使用 te() 方法检查翻译键值是否存在，避免控制台警告
-            const globalI18n = i18n.global as any
-            if (globalI18n.te(title)) {
-                return String(globalI18n.t(title))
-            } else {
-                // 如果翻译不存在，返回键值的最后部分作为fallback
-                return title.split('.').pop() || title
-            }
-        }
-        return title
+  if (title) {
+    if (title.startsWith('menu.')) {
+      // 使用 te() 方法检查翻译键值是否存在，避免控制台警告
+      const globalI18n = i18n.global as any
+      if (globalI18n.te(title)) {
+        return String(globalI18n.t(title))
+      } else {
+        // 如果翻译不存在，返回键值的最后部分作为fallback
+        return title.split('.').pop() || title
+      }
     }
-    return ''
+    return title
+  }
+  return ''
 }

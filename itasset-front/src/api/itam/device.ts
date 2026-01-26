@@ -331,3 +331,14 @@ export function getDeviceMonthlyValue(year?: number) {
     params: { year }
   })
 }
+
+/**
+ * 批量打印设备标签
+ */
+export function batchPrintDeviceLabels(ids: number[]) {
+  return request.post<Blob>({
+    url: '/itam/device/label/batch',
+    responseType: 'blob',
+    data: ids
+  })
+}

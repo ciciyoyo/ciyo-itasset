@@ -48,6 +48,16 @@
                 批量报废
               </el-button>
 
+              <el-button
+                v-hasPermi="['itam:device:query']"
+                :disabled="!selectedRows.length"
+                icon="ele-Printer"
+                @click="handleBatchPrint"
+                v-ripple
+              >
+                打印标签
+              </el-button>
+
               <el-button v-hasPermi="['itam:device:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -105,6 +115,9 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item v-if="hasPermi(['itam:device:query'])" @click="handlePrintLabel(row)">
+                    <span class="text-primary">打印标签</span>
+                  </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermi(['itam:device:update'])" @click="handleReportException(row)">
                     <span class="text-warning">报告异常</span>
                   </el-dropdown-item>
@@ -272,7 +285,8 @@
     getDevice,
     pageDevice,
     updateDevice,
-    scrappedDevice
+    scrappedDevice,
+    batchPrintDeviceLabels
   } from '@/api/itam/device'
   import { listSuppliers } from '@/api/itam/suppliers'
   import { listLocations } from '@/api/itam/locations'
@@ -283,7 +297,7 @@
   import { ElMessageBox } from 'element-plus'
   import { useTable } from '@/hooks/core/useTable'
   import { MessageUtil } from '@/utils/messageUtil'
-  import { download, resetFormRef } from '@/utils/business'
+  import { download, downloadPdf, resetFormRef } from '@/utils/business'
   import { useI18n } from 'vue-i18n'
   import ImageUpload from '@/components/business/image-upload/index.vue'
   import AllocateModal from './components/AllocateModal.vue'
@@ -658,6 +672,28 @@
         }
       })
       .catch(() => {})
+  }
+
+  // 打印标签
+  const handlePrintLabel = async (row: DeviceEntity) => {
+    try {
+      const data = await batchPrintDeviceLabels([row.id!])
+      downloadPdf(data, `label-${row.deviceNo}.pdf`)
+    } catch (error) {
+      console.error('打印失败:', error)
+    }
+  }
+
+  // 批量打印标签
+  const handleBatchPrint = async () => {
+    if (selectedRows.value.length === 0) return
+    const ids = selectedRows.value.map((item) => item.id!)
+    try {
+      const data = await batchPrintDeviceLabels(ids)
+      downloadPdf(data, `device-labels.pdf`)
+    } catch (error) {
+      console.error('批量打印失败:', error)
+    }
   }
 
   // 组件挂载时加载选项数据

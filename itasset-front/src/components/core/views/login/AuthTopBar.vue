@@ -3,7 +3,7 @@
   <div class="absolute w-full flex-cb top-4.5 z-10 flex-c !justify-between">
     <div class="flex-cc ml-10 max-sm:ml-6">
       <ArtLogo class="icon" size="46" />
-      <h1 class="text-xl font-medium ml-2">{{ AppConfig.systemInfo.name }}</h1>
+      <h1 class="text-xl font-medium ml-2">{{ systemStore.systemInfo.name }}</h1>
     </div>
 
     <div class="flex-cc gap-1.5 mr-2 max-sm:mr-5">
@@ -50,6 +50,7 @@
   import { useI18n } from 'vue-i18n'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
+  import { useSystemStore } from '@/store/modules/system'
   import { useHeaderBar } from '@/hooks/core/useHeaderBar'
   import { themeAnimation } from '@/utils/ui/animation'
   import { languageOptions } from '@/i18n'
@@ -60,6 +61,7 @@
 
   const settingStore = useSettingStore()
   const userStore = useUserStore()
+  const systemStore = useSystemStore()
   const { isDark, systemThemeColor } = storeToRefs(settingStore)
   const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar()
   const { locale } = useI18n()

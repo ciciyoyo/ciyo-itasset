@@ -4,58 +4,58 @@ import {DeptEntity} from '@/api/system/dept'
 
 /** 用户实体 */
 export interface UserEntity {
-    id: number
-    deptId: string
-    userName: string
-    nickName?: string
-    email?: string
-    phonenumber?: string
-    sex?: string
-    avatar?: string
-    password?: string
-    salt?: string
-    status?: string
-    delFlag?: string
-    loginIp?: string
-    loginDate?: string
-    roleIds?: string[]
-    postIds?: string[]
-    remark?: string
-    createTime?: string
-    /** 所属部门 */
-    dept?: DeptEntity
+  id: number
+  deptId: string
+  userName: string
+  nickName?: string
+  email?: string
+  phonenumber?: string
+  sex?: string
+  avatar?: string
+  password?: string
+  salt?: string
+  status?: string
+  delFlag?: string
+  loginIp?: string
+  loginDate?: string
+  roleIds?: string[]
+  postIds?: string[]
+  remark?: string
+  createTime?: string
+  /** 所属部门 */
+  dept?: DeptEntity
 }
 
 /** 用户分页查询参数 */
 export type UserPageParams = {
-    userName?: string
-    phonenumber?: string
-    status?: string
-    deptId?: string
+  userName?: string
+  phonenumber?: string
+  status?: string
+  deptId?: string
 } & Api.Common.CommonSearchParams
 
 /** 重置密码参数 */
 export interface ResetPwdParams {
-    id: number
-    password: string
+  id: number
+  password: string
 }
 
 /** 修改用户状态参数 */
 export interface ChangeStatusParams {
-    id: number
-    status: string | number
+  id: number
+  status: string | number
 }
 
 /** 更新密码参数 */
 export interface UpdatePwdParams {
-    oldPassword: string
-    newPassword: string
+  oldPassword: string
+  newPassword: string
 }
 
 /** 授权角色参数 */
 export interface AuthRoleParams {
-    userId: number
-    roleIds: string[]
+  userId: number
+  roleIds: string[]
 }
 
 /** 用户列表 */
@@ -68,20 +68,20 @@ type UserList = Api.Common.PaginatedResponse<UserEntity>
  * @returns 用户分页数据
  */
 export function pageUser(query: UserPageParams, silent?: boolean) {
-    return request.get<UserList>({
-        url: '/system/user/page',
-        params: query,
-        headers: {
-            silent: silent
-        }
-    })
+  return request.get<UserList>({
+    url: '/system/user/page',
+    params: query,
+    headers: {
+      silent: silent
+    }
+  })
 }
 
 export interface UserInfo {
-    roles: SysRoleEntity[]
-    user: UserEntity
-    postIds: number[]
-    roleIds: number[]
+  roles: SysRoleEntity[]
+  user: UserEntity
+  postIds: number[]
+  roleIds: number[]
 }
 
 /**
@@ -90,9 +90,9 @@ export interface UserInfo {
  * @returns 用户信息
  */
 export function getUser(userId?: number | string) {
-    return request.get<UserInfo>({
-        url: '/system/user/' + userId
-    })
+  return request.get<UserInfo>({
+    url: '/system/user/' + userId
+  })
 }
 
 /**
@@ -101,10 +101,10 @@ export function getUser(userId?: number | string) {
  * @returns 操作结果
  */
 export function addUser(data: UserEntity) {
-    return request.post({
-        url: '/system/user',
-        data
-    })
+  return request.post({
+    url: '/system/user',
+    data
+  })
 }
 
 /**
@@ -113,10 +113,10 @@ export function addUser(data: UserEntity) {
  * @returns 操作结果
  */
 export function updateUser(data: UserEntity) {
-    return request.put({
-        url: '/system/user',
-        data
-    })
+  return request.put({
+    url: '/system/user',
+    data
+  })
 }
 
 /**
@@ -125,9 +125,9 @@ export function updateUser(data: UserEntity) {
  * @returns 操作结果
  */
 export function delUser(userId: number) {
-    return request.del({
-        url: '/system/user/' + userId
-    })
+  return request.del({
+    url: '/system/user/' + userId
+  })
 }
 
 /**
@@ -136,11 +136,11 @@ export function delUser(userId: number) {
  * @returns Blob数据
  */
 export function exportUser(query: UserPageParams) {
-    return request.get<Blob>({
-        url: '/system/user/export',
-        responseType: 'blob',
-        params: query
-    })
+  return request.get<Blob>({
+    url: '/system/user/export',
+    responseType: 'blob',
+    params: query
+  })
 }
 
 /**
@@ -150,14 +150,14 @@ export function exportUser(query: UserPageParams) {
  * @returns 操作结果
  */
 export function resetUserPwd(id: number, password: string) {
-    const data: ResetPwdParams = {
-        id,
-        password
-    }
-    return request.put({
-        url: '/system/user/resetPwd',
-        data
-    })
+  const data: ResetPwdParams = {
+    id,
+    password
+  }
+  return request.put({
+    url: '/system/user/resetPwd',
+    data
+  })
 }
 
 /**
@@ -167,23 +167,23 @@ export function resetUserPwd(id: number, password: string) {
  * @returns 操作结果
  */
 export function changeUserStatus(id: number, status: string | number) {
-    const data: ChangeStatusParams = {
-        id,
-        status
-    }
-    return request.put({
-        url: '/system/user/changeStatus',
-        data
-    })
+  const data: ChangeStatusParams = {
+    id,
+    status
+  }
+  return request.put({
+    url: '/system/user/changeStatus',
+    data
+  })
 }
 
 /** 用户个人资料响应 */
 export interface UserProfileResponse {
-    user: UserEntity & {
-        roles?: SysRoleEntity[]
-        dept?: DeptEntity
-    }
-    postGroup: string
+  user: UserEntity & {
+    roles?: SysRoleEntity[]
+    dept?: DeptEntity
+  }
+  postGroup: string
 }
 
 /**
@@ -191,9 +191,9 @@ export interface UserProfileResponse {
  * @returns 用户信息
  */
 export function getUserProfile() {
-    return request.get<UserProfileResponse>({
-        url: '/system/user/profile'
-    })
+  return request.get<UserProfileResponse>({
+    url: '/system/user/profile'
+  })
 }
 
 /**
@@ -202,10 +202,10 @@ export function getUserProfile() {
  * @returns 操作结果
  */
 export function updateUserProfile(data: Partial<UserEntity>) {
-    return request.put({
-        url: '/system/user/profile',
-        data
-    })
+  return request.put({
+    url: '/system/user/profile',
+    data
+  })
 }
 
 /**
@@ -216,18 +216,18 @@ export function updateUserProfile(data: Partial<UserEntity>) {
  * @returns 操作结果
  */
 export function updateUserPwd(oldPassword: string, newPassword: string, token?: string) {
-    const data: UpdatePwdParams = {
-        oldPassword,
-        newPassword
-    }
-    let url = '/system/user/profile/updatePwd'
-    if (token) {
-        url = url + '?Authorization=' + token
-    }
-    return request.post({
-        url,
-        data
-    })
+  const data: UpdatePwdParams = {
+    oldPassword,
+    newPassword
+  }
+  let url = '/system/user/profile/updatePwd'
+  if (token) {
+    url = url + '?Authorization=' + token
+  }
+  return request.post({
+    url,
+    data
+  })
 }
 
 /**
@@ -236,13 +236,13 @@ export function updateUserPwd(oldPassword: string, newPassword: string, token?: 
  * @returns 操作结果
  */
 export function uploadAvatar(data: FormData) {
-    return request.post({
-        url: '/system/user/profile/avatar',
-        data,
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
+  return request.post({
+    url: '/system/user/profile/avatar',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 /**
@@ -250,10 +250,10 @@ export function uploadAvatar(data: FormData) {
  * @returns Blob数据
  */
 export function importTemplate() {
-    return request.get<Blob>({
-        url: '/system/user/importTemplate',
-        responseType: 'blob'
-    })
+  return request.get<Blob>({
+    url: '/system/user/importTemplate',
+    responseType: 'blob'
+  })
 }
 
 /**
@@ -262,9 +262,9 @@ export function importTemplate() {
  * @returns 授权角色信息
  */
 export function getAuthRole(userId: number) {
-    return request.get({
-        url: '/system/user/authRole/' + userId
-    })
+  return request.get({
+    url: '/system/user/authRole/' + userId
+  })
 }
 
 /**
@@ -273,32 +273,32 @@ export function getAuthRole(userId: number) {
  * @returns 操作结果
  */
 export function updateAuthRole(data: AuthRoleParams) {
-    return request.put({
-        url: '/system/user/authRole',
-        params: data
-    })
+  return request.put({
+    url: '/system/user/authRole',
+    params: data
+  })
 }
 
 /** 重置密码参数 */
 export interface ResetPwdParams {
-    id: number
-    password: string
+  id: number
+  password: string
 }
 
 /** 修改用户状态参数 */
 export interface ChangeStatusParams {
-    id: number
-    status: string | number
+  id: number
+  status: string | number
 }
 
 /** 更新密码参数 */
 export interface UpdatePwdParams {
-    oldPassword: string
-    newPassword: string
+  oldPassword: string
+  newPassword: string
 }
 
 /** 授权角色参数 */
 export interface AuthRoleParams {
-    userId: number
-    roleIds: string[]
+  userId: number
+  roleIds: string[]
 }

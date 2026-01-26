@@ -1,5 +1,6 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -19,14 +20,10 @@ import com.ciyocloud.itam.enums.DeviceStatus;
 import com.ciyocloud.itam.req.AllocationsPageReq;
 import com.ciyocloud.itam.req.DevicePageReq;
 import com.ciyocloud.itam.service.*;
-import com.ciyocloud.itam.vo.AllocationsVO;
-import com.ciyocloud.itam.vo.AssetsReportVO;
-import com.ciyocloud.itam.vo.DeviceDetailVO;
-import com.ciyocloud.itam.vo.DeviceVO;
+import com.ciyocloud.itam.vo.*;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +46,7 @@ public class DeviceController {
     private final FailuresService failuresService;
     private final AllocationsService allocationsService;
     private final AssetsReportService assetsReportService;
+    private final DevicePrintService devicePrintService;
 
     /**
      * 查询设备列表
@@ -211,6 +209,17 @@ public class DeviceController {
         return Result.success(deviceService.getSummaryStats());
     }
 
+
+
+    /**
+     * 批量打印设备标签
+     */
+    @SaCheckPermission("itam:device:query")
+    @PostMapping(value = "/label/batch")
+    public void printLabels(@RequestBody List<Long> ids, jakarta.servlet.http.HttpServletResponse response) {
+        devicePrintService.printLabels(ids, response);
+    }
+
     /**
      * 获取设备详情（包含关联资产）
      *
@@ -220,6 +229,16 @@ public class DeviceController {
     @GetMapping(value = "/detail/{id:\\d+}")
     public Result<DeviceDetailVO> getDetail(@PathVariable Long id) {
         return Result.success(deviceDetailService.getDeviceDetail(id));
+    }
+
+    /**
+     * 根据设备编号查询设备详情
+     *
+     * @param deviceNo 设备编号
+     */
+    @GetMapping(value = "/detail/no/{deviceNo}")
+    public Result<DeviceScanVO> getDetailByNo(@PathVariable String deviceNo) {
+        return Result.success(deviceDetailService.getDeviceDetailByNo(deviceNo));
     }
 
 
