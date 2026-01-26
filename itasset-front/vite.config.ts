@@ -7,7 +7,7 @@ import viteCompression from 'vite-plugin-compression'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver, VantResolver } from 'unplugin-vue-components/resolvers'
 import UnoCSS from 'unocss/vite'
 // import { visualizer } from 'rollup-plugin-visualizer'
 
@@ -83,7 +83,7 @@ export default ({ mode }: { mode: string }) => {
       // 自动按需导入组件
       Components({
         dts: 'src/types/import/components.d.ts',
-        resolvers: [ElementPlusResolver()]
+        resolvers: [ElementPlusResolver(), VantResolver()]
       }),
       // 按需定制主题配置
       ElementPlus({

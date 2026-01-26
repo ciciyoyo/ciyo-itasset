@@ -194,6 +194,16 @@ export function getDeviceDetail(id: number) {
 }
 
 /**
+ * 根据设备编号获取设备详情（包含关联信息）
+ * @param deviceNo
+ */
+export function getDeviceDetailByNo(deviceNo: string) {
+  return request.get<DeviceDetailVO>({
+    url: `/itam/device/detail/no/${deviceNo}`
+  })
+}
+
+/**
  * 创建设备
  * @param data
  */

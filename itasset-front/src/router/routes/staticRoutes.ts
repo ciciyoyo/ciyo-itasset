@@ -47,6 +47,16 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     }
   },
   {
+    path: '/a/:number',
+    name: 'DeviceMobileDetail',
+    component: () => import('@views/itam/device/mobile-detail.vue'),
+    meta: {
+      title: '设备详情',
+      ignoreAuth: true,
+      isHideTab: true
+    }
+  },
+  {
     path: '/',
     component: () => import('@views/index/index.vue'),
     redirect: '/home',
