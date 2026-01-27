@@ -993,8 +993,10 @@
     "dept": "所属部门",
     "personalInfo": "个人信息",
     "phoneNumber": "手机号码",
+    "post": "岗位",
     "resetPassword": "修改密码",
     "role": "所属角色",
+    "updateInfo": "修改资料",
     "userEmail": "用户邮箱",
     "userName": "用户名称"
   },

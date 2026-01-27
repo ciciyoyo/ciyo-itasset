@@ -178,7 +178,7 @@
   }
 
   /** 实时预览 */
-  function realTime(data) {
+  function realTime() {
     // 使用 getCropData 获取裁剪后的图片作为预览
     proxy.$refs.cropper.getCropData((data) => {
       previewImg.value = data
@@ -198,32 +198,57 @@
     display: inline-block;
     width: 100px;
     height: 100px;
-  }
-
-  .user-info-head img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .user-info-head:hover:after {
-    content: '+';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    color: #eee;
-    background: rgba(0, 0, 0, 0.5);
-    font-size: 24px;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     cursor: pointer;
-    line-height: 100px;
+    transition: all 0.3s ease;
     border-radius: 50%;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    &::after {
+      content: '\eb71'; // Remix Icon upload
+      font-family: 'remixicon' !important;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -20%);
+      color: #fff;
+      font-size: 24px;
+      opacity: 0;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      &::before {
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      &::after {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+
+      img {
+        transform: scale(1.1);
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
   }
 
   .preview-container {
@@ -237,8 +262,8 @@
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    border: 1px solid #d9d9d9;
-    box-shadow: 0 0 4px #ccc;
+    border: 2px solid var(--el-color-primary-light-8);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     display: flex;
     align-items: center;
