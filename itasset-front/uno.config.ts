@@ -1,7 +1,7 @@
-import {defineConfig, presetAttributify, presetIcons} from 'unocss'
+import { defineConfig, presetAttributify, presetIcons } from 'unocss'
 import presetWind4 from '@unocss/preset-wind4'
 import transformerDirectives from '@unocss/transformer-directives'
-import {allIcons} from './src/utils/ui/icons'
+import { allIcons } from './src/utils/ui/icons'
 
 export default defineConfig({
   safelist: allIcons.map((i) => `i-${i.replace(':', '-')}`),
@@ -83,7 +83,20 @@ export default defineConfig({
     'art-card-title-p': 'mt-1 text-sm text-g-600',
     'art-card-title-span': 'ml-2 font-medium'
   },
-  rules: [
-    // Custom rules can be added here if needed
+  rules: [],
+  extractors: [
+    {
+      name: 'art-icon-extractor',
+      extract({ code }) {
+        // 匹配各种复杂提取场景：
+        // 1. 常规属性: icon="ri:user-line"
+        // 2. 对象属性: icon: 'ri:user-line'
+        // 3. 数组元素: ['ri:user-line']
+        // 4. 动态绑定: :icon="'ri:user-line'"
+        // 5. 模板字符串: `ri:user-line`
+        const matches = Array.from(code.matchAll(/[`'"]([a-z0-9-]+:[a-z0-9-]+)[`'"]/g))
+        return matches.map((m) => `i-${m[1].replace(':', '-')}`)
+      }
+    }
   ]
 })

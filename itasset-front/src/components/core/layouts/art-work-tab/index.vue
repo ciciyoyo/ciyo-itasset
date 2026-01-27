@@ -69,7 +69,7 @@
         }"
         @click="(e: MouseEvent) => showMenu(e, activeTab)"
       >
-        <ArtSvgIcon icon="iconamoon:arrow-down-2-thin" class="text-2xl text-g-700" />
+        <ArtSvgIcon icon="ri:arrow-down-line" class="text-2xl text-g-700" />
       </div>
     </div>
 

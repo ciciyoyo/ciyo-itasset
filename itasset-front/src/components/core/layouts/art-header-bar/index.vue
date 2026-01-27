@@ -66,7 +66,6 @@
             <span class="ml-0.5 text-xs">k</span>
           </div>
         </div>
-
         <!-- 全屏按钮 -->
         <ArtIconButton
           v-if="shouldShowFullscreen"
@@ -75,7 +74,6 @@
           class="max-md:!hidden"
           @click="toggleFullScreen"
         />
-
         <!-- 国际化按钮 -->
         <ElDropdown @command="changeLanguage" popper-class="langDropDownStyle" v-if="shouldShowLanguage">
           <ArtIconButton icon="ri:translate-2" class="language-btn text-[19px]" />
