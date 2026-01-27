@@ -193,7 +193,7 @@
 <script setup lang="ts">
   import { computed, nextTick, onMounted, ref } from 'vue'
   import { addMenu, delMenu, getMenu, listMenu, MenuEntity, updateMenu } from '@/api/system/menu'
-  import IconSelect from './IconfontSelect.vue'
+  import IconSelect from '@/components/business/icon-select/index.vue'
   import MenuSearch from './modules/menu-search.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import type { FormInstance } from 'element-plus'

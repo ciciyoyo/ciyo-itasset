@@ -1,14 +1,16 @@
-import { defineConfig, presetAttributify, presetIcons } from 'unocss'
+import {defineConfig, presetAttributify, presetIcons} from 'unocss'
 import presetWind4 from '@unocss/preset-wind4'
 import transformerDirectives from '@unocss/transformer-directives'
+import {allIcons} from './src/utils/ui/icons'
 
 export default defineConfig({
+  safelist: allIcons.map((i) => `i-${i.replace(':', '-')}`),
   transformers: [transformerDirectives()],
   presets: [
     presetAttributify(),
     presetWind4(),
     presetIcons({
-      scale: 1.2,
+      scale: 1,
       warn: true
     })
   ],
