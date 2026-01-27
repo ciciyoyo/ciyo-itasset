@@ -199,7 +199,17 @@ export function getDeviceDetail(id: number) {
  */
 export function getDeviceDetailByNo(deviceNo: string) {
   return request.get<DeviceDetailVO>({
-    url: `/itam/device/detail/no/${deviceNo}`
+    url: `/itam/device/scan/detail/${deviceNo}`
+  })
+}
+
+/**
+ * 根据设备编号获取该设备处于正在盘点中的任务
+ * @param deviceNo
+ */
+export function getProcessingStocktakesByNo(deviceNo: string) {
+  return request.get<any[]>({
+    url: `/itam/device/scan/processing-stocktakes/${deviceNo}`
   })
 }
 

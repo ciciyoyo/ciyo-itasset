@@ -1,5 +1,6 @@
 package com.ciyocloud.itam.service.impl;
 
+import com.ciyocloud.common.util.UrlUtils;
 import com.ciyocloud.envconfig.service.SysEnvConfigService;
 import com.ciyocloud.itam.entity.DeviceEntity;
 import com.ciyocloud.itam.service.DevicePrintService;
@@ -47,7 +48,7 @@ public class DevicePrintServiceImpl implements DevicePrintService {
         try {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"device-labels.pdf\"");
-
+            String webBaseUrl = configService.getSystemEnvConfig().getWebBaseUrl();
             // 创建文档
             Document document = PdfHandler.getDocumentHandler().create();
             document.setMargin(0F);
@@ -84,13 +85,14 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 // 生成二维码
                 Barcode qrCode = new Barcode(page);
                 qrCode.setCodeType(BarcodeType.QR_CODE);
-                qrCode.setContent(device.getDeviceNo());
-                qrCode.setWidth(85);
-                qrCode.setHeight(85);
-
+                qrCode.setContent(UrlUtils.joinUrl(webBaseUrl, "/a/" + device.getDeviceNo()));
+                qrCode.setWidth(65);
+                qrCode.setHeight(65);
+                qrCode.setMargin(1);
+                qrCode.setCodeMargin(1);
                 qrCodeCell.addComponents(qrCode);
 
-                // === 右侧单元格：设备信息表格 ===
+                // === 右侧单元格：设备信息表格 ===l
                 TableCell infoCell = new TableCell(mainRow);
                 infoCell.setIsBorder(true);
                 infoCell.setBorderColor(Color.BLACK);
@@ -129,7 +131,7 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 Textarea nameValueText = new Textarea(page);
                 String rawName = device.getName() != null ? device.getName() : "";
                 // Manual splice every 8 characters for wrapping
-                nameValueText.setText(splitString(rawName,16));
+                nameValueText.setText(splitString(rawName, 16));
                 nameValueText.setFontSize(7F);
                 nameValueText.setMarginLeft(2F);
                 nameValueText.setIsWrap(true);
@@ -244,7 +246,7 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 warrantyLabel.setBorderLineWidth(0.5F);
                 warrantyLabel.setIsBorderBottom(false);
                 Textarea warrantyLabelText = new Textarea(page);
-                warrantyLabelText.setText("维保日期");
+                warrantyLabelText.setText("过保日期");
                 warrantyLabelText.setFontSize(7F);
                 warrantyLabelText.setMarginLeft(2F);
                 warrantyLabel.addComponents(warrantyLabelText);
@@ -286,7 +288,6 @@ public class DevicePrintServiceImpl implements DevicePrintService {
             throw new RuntimeException("生成标签失败", e);
         }
     }
-
 
 
     /**

@@ -9,6 +9,7 @@ import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.StocktakeItemStatus;
+import com.ciyocloud.itam.enums.StocktakeStatus;
 import com.ciyocloud.itam.mapper.StocktakesMapper;
 import com.ciyocloud.itam.req.StocktakesPageReq;
 import com.ciyocloud.itam.service.*;
@@ -126,6 +127,23 @@ public class StocktakesServiceImpl extends ServiceImpl<StocktakesMapper, Stockta
         item.setScannedBy(SecurityUtils.getUserId());
         item.setScannedAt(LocalDateTime.now());
         return item;
+    }
+
+    @Override
+    public List<StocktakesVO> getProcessingStocktakesByAssetId(Long assetId) {
+        // 先查询该资产参与的所有盘点明细
+        List<StocktakeItemsEntity> items = stocktakeItemsService.list(Wrappers.<StocktakeItemsEntity>lambdaQuery()
+                .eq(StocktakeItemsEntity::getAssetId, assetId));
+        if (items.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Long> stocktakeIds = items.stream().map(StocktakeItemsEntity::getStocktakeId).collect(Collectors.toList());
+
+        // 再查询状态为“盘点中”的任务
+        QueryWrapper<StocktakesEntity> wrapper = Wrappers.query();
+        wrapper.in("t1.id", stocktakeIds)
+                .eq("t1.status", StocktakeStatus.PROCESSING.getCode());
+        return baseMapper.selectListVo(wrapper);
     }
 
     @Override
