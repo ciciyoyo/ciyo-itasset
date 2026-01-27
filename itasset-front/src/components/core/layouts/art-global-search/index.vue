@@ -20,7 +20,7 @@
       >
         <template #suffix>
           <div class="h-4.5 flex-cc rounded border border-g-300 dark:!bg-g-200/50 !bg-box px-1.5 text-g-500">
-            <ArtSvgIcon icon="fluent:arrow-enter-left-20-filled" />
+            <ArtSvgIcon icon="ri:arrow-go-back-fill" />
           </div>
         </template>
       </ElInput>
@@ -34,7 +34,7 @@
               @mouseenter="highlightOnHover(index)"
             >
               {{ formatMenuTitle(item.meta.title) }}
-              <ArtSvgIcon v-show="isHighlighted(index)" icon="fluent:arrow-enter-left-20-filled" />
+              <ArtSvgIcon v-show="isHighlighted(index)" icon="ri:arrow-go-back-fill" />
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
       <template #footer>
         <div class="dialog-footer box-border flex-c border-t-d pt-4.5 pb-1">
           <div class="flex-cc">
-            <ArtSvgIcon icon="fluent:arrow-enter-left-20-filled" class="keyboard" />
+            <ArtSvgIcon icon="ri:arrow-go-back-fill" class="keyboard" />
             <span class="mr-3.5 text-xs text-g-700">{{ $t('search.selectKeydown') }}</span>
           </div>
           <div class="flex-c">

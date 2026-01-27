@@ -403,10 +403,9 @@ export const remixIcons = [
   'ri:checkbox-multiple-line',
   'ri:cpu-line',
   'ri:clipboard-line',
-  'ri:dashboard-3-line'
+  'ri:dashboard-3-line',
+  'ri:home-3-line',
+  'ri:list-check'
 ]
 
-export const allIcons = [
-  ...remixIcons
-  // 可以根据需要添加其他图标集，如 'iconamoon:...'
-]
+export const allIcons = [...remixIcons]
