@@ -44,7 +44,7 @@
         LEFT JOIN sys_user t2 ON t1.owner_type = 'user' AND t1.owner_id = t2.id
         LEFT JOIN itam_device t3 ON t1.owner_type = 'asset' AND t1.owner_id = t3.id
         LEFT JOIN itam_locations t4 ON t1.owner_type = 'location' AND t1.owner_id = t4.id
-        WHERE t1.item_type = 'license' AND t1.item_id = #{licenseId}
+        WHERE t1.item_type = 'license' AND t1.item_id = #{licenseId} AND t1.deleted = 0
     </select>
 
     <select id="selectCategoryStats" resultType="java.util.Map">

@@ -50,6 +50,7 @@ public class LicensesServiceImpl extends ServiceImpl<LicensesMapper, LicensesEnt
 
     private QueryWrapper<LicensesEntity> buildQueryWrapper(LicensePageReq req) {
         QueryWrapper<LicensesEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("t1.deleted", 0);
         if (req == null) {
             return queryWrapper;
         }
