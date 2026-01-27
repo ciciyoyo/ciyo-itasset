@@ -3,17 +3,23 @@ package com.ciyocloud.itam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.StocktakeItemsEntity;
+import com.ciyocloud.itam.entity.StocktakesEntity;
 import com.ciyocloud.itam.enums.StocktakeItemStatus;
+import com.ciyocloud.itam.enums.StocktakeStatus;
 import com.ciyocloud.itam.mapper.StocktakeItemsMapper;
+import com.ciyocloud.itam.mapper.StocktakesMapper;
 import com.ciyocloud.itam.req.StocktakeItemsPageReq;
 import com.ciyocloud.itam.service.DeviceService;
 import com.ciyocloud.itam.service.StocktakeItemsService;
 import com.ciyocloud.itam.vo.StocktakeItemsVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +34,7 @@ import java.util.List;
 public class StocktakeItemsServiceImpl extends ServiceImpl<StocktakeItemsMapper, StocktakeItemsEntity> implements StocktakeItemsService {
 
     private final DeviceService deviceService;
+    private final StocktakesMapper stocktakesMapper;
 
     @Override
     public Page<StocktakeItemsVO> queryPageVo(Page<StocktakeItemsEntity> page, StocktakeItemsPageReq req) {
@@ -59,14 +66,35 @@ public class StocktakeItemsServiceImpl extends ServiceImpl<StocktakeItemsMapper,
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public Boolean updateStocktakeItem(StocktakeItemsEntity stocktakeItems) {
+        stocktakeItems.setScannedBy(SecurityUtils.getUserId());
+        stocktakeItems.setScannedAt(LocalDateTime.now());
         boolean updated = this.updateById(stocktakeItems);
         if (updated) {
             StocktakeItemsEntity item = this.getById(stocktakeItems.getId());
-            if (item != null && StocktakeItemStatus.SCRAPPED.equals(item.getStatus())) {
-                if (item.getAssetId() != null) {
-                    deviceService.scrap(Collections.singletonList(item.getAssetId()));
+            if (item != null) {
+                // 如果是报废，同步更新资产状态
+                if (StocktakeItemStatus.SCRAPPED.equals(item.getStatus())) {
+                    if (item.getAssetId() != null) {
+                        deviceService.scrap(Collections.singletonList(item.getAssetId()));
+                    }
+                }
+
+                // 检查是否所有明细都已完成
+                Long stocktakeId = item.getStocktakeId();
+                QueryWrapper<StocktakeItemsEntity> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("stocktake_id", stocktakeId)
+                        .eq("status", StocktakeItemStatus.PENDING.getCode());
+                long pendingCount = this.count(queryWrapper);
+
+                if (pendingCount == 0) {
+                    // 更新盘点任务状态为已完成
+                    StocktakesEntity stocktake = new StocktakesEntity();
+                    stocktake.setId(stocktakeId);
+                    stocktake.setStatus(StocktakeStatus.FINISHED);
+                    stocktake.setEndDate(LocalDateTime.now());
+                    stocktakesMapper.updateById(stocktake);
                 }
             }
         }

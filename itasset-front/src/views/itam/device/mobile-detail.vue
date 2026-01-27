@@ -78,7 +78,7 @@
           <div class="relation-list">
             <div class="relation-item" v-for="item in device.accessories" :key="item.id">
               <div class="rel-name">{{ item.name }}</div>
-              <div class="rel-desc">数量: {{ item.quantity }} | {{ item.categoryName }}</div>
+              <div class="rel-desc"> {{ item.categoryName }}</div>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
           <div class="relation-list">
             <div class="relation-item" v-for="item in device.licenses" :key="item.id">
               <div class="rel-name">{{ item.name }}</div>
-              <div class="rel-desc">授权数: {{ item.totalSeats }} | {{ item.manufacturerName }}</div>
+              <div class="rel-desc"> 过期：{{ item.expirationDate }}</div>
             </div>
           </div>
         </div>
@@ -108,8 +108,18 @@
 
       <!-- Fixed Footer for Actions -->
       <div v-if="device" class="footer-actions">
-        <el-button type="warning" class="footer-btn" icon="ele-Warning" @click="handleException"> 报告异常 </el-button>
-        <el-button type="primary" class="footer-btn" icon="ele-Check" @click="handleStocktake"> 处理盘点 </el-button>
+        <el-button type="warning" class="footer-btn action-warning" @click="handleException">
+          <template #icon
+            ><el-icon><ele-Warning /></el-icon
+          ></template>
+          报告异常
+        </el-button>
+        <el-button type="primary" class="footer-btn action-primary" @click="handleStocktake">
+          <template #icon
+            ><el-icon><ele-Check /></el-icon
+          ></template>
+          任务盘点
+        </el-button>
       </div>
     </div>
 
@@ -182,41 +192,48 @@
           <div v-for="item in stocktakeList" :key="item.id" class="stocktake-card">
             <div class="st-card-header">
               <div class="st-header-left">
-                <el-icon class="st-icon" :size="20"><ele-List /></el-icon>
+                <div class="st-icon-container">
+                  <el-icon><ele-Memo /></el-icon>
+                </div>
                 <div class="st-title-group">
-                  <span class="st-name">任务名称：{{ item.stocktakeName }}</span>
-                  <span class="st-date" v-if="item.scannedAt">盘点时间: {{ item.scannedAt }}</span>
+                  <div class="st-name">{{ item.stocktakeName || '未命名任务' }}</div>
+                  <div class="st-date" v-if="item.scannedAt">
+                    <el-icon><ele-Clock /></el-icon>
+                    <span>{{ item.scannedAt }}</span>
+                  </div>
                 </div>
               </div>
               <van-tag
                 :type="item.status === 'pending' ? 'primary' : item.status === 'normal' ? 'success' : 'danger'"
-                size="medium"
+                size="large"
+                round
+                class="st-status-tag"
               >
                 {{ item.statusDesc }}
               </van-tag>
             </div>
 
             <div class="st-card-body">
-              <div class="info-grid-item">
-                <div class="label">预期位置</div>
-                <div class="value">{{ item.expectedLocationName || '-' }}</div>
+              <div class="st-info-item">
+                <span class="st-label">预期位置</span>
+                <span class="st-value">{{ item.expectedLocationName || '-' }}</span>
               </div>
-              <div class="info-grid-item" v-if="item.scannedByName">
-                <div class="label">盘点人</div>
-                <div class="value">{{ item.scannedByName }}</div>
+              <div class="st-info-item" v-if="item.scannedByName">
+                <span class="st-label">盘点人</span>
+                <span class="st-value">{{ item.scannedByName }}</span>
               </div>
-              <div class="info-grid-item full-width" v-if="item.note">
-                <div class="label">备注</div>
-                <div class="value">{{ item.note }}</div>
+              <div class="st-info-item full" v-if="item.note">
+                <span class="st-label">备注说明</span>
+                <span class="st-value highlight">{{ item.note }}</span>
               </div>
             </div>
 
             <div class="st-card-footer">
-              <van-button class="action-btn" type="primary" plain block @click="openProcessStocktake(item)">
+              <van-button class="process-btn" type="primary" block round @click="openProcessStocktake(item)">
                 <template #icon>
                   <el-icon><ele-Edit /></el-icon>
                 </template>
-                处理盘点
+                立即处理盘点
               </van-button>
             </div>
           </div>
@@ -437,12 +454,7 @@
 
       // 简单过滤：只显示未完成的，或者属于“进行中”任务的
       // 由于API限制，假设返回的都是相关的
-      stocktakeList.value = res.records.sort((a, b) => {
-        // pending items first
-        if (a.status === 'pending' && b.status !== 'pending') return -1
-        if (a.status !== 'pending' && b.status === 'pending') return 1
-        return 0
-      })
+      stocktakeList.value = res.records.filter((item: any) => item.status === 'pending')
     } catch (e) {
       console.error(e)
     } finally {
@@ -657,18 +669,47 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 60px;
-      background: #fff;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+      height: 72px; /* Increased height */
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
-      padding: 0 16px;
+      padding: 0 20px;
       gap: 12px;
       z-index: 99;
+      padding-bottom: env(safe-area-inset-bottom); /* Support for notched phones */
 
       .footer-btn {
         flex: 1;
-        height: 40px;
+        height: 46px;
+        border-radius: 23px;
+        font-weight: 600;
+        font-size: 15px;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
+        &.action-warning {
+          background: linear-gradient(135deg, #ff9800 0%, #f44336 100%);
+          color: white;
+          box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+        }
+
+        &.action-primary {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          color: #fff;
+          background: linear-gradient(135deg, #409eff 0%, #3a8ee6 100%);
+          box-shadow: 0 4px 10px rgba(64, 158, 255, 0.3);
+        }
+
+        &:active {
+          transform: scale(0.95);
+          box-shadow: none;
+        }
+
+        .el-icon {
+          margin-right: 4px;
+        }
       }
     }
 
@@ -701,30 +742,42 @@
 
       .stocktake-card {
         background: #fff;
-        border-radius: 12px;
-        margin-bottom: 16px;
+        border-radius: 16px;
+        margin-bottom: 20px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(0, 0, 0, 0.02);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        position: relative;
+        transition: transform 0.2s ease;
+
+        &:active {
+          transform: scale(0.98);
+        }
 
         .st-card-header {
-          padding: 12px 16px;
+          padding: 16px;
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          border-bottom: 1px solid #f5f7fa;
+          background: linear-gradient(to right, #ffffff, #fcfdff);
+          border-bottom: 1px dashed #f0f3f7;
 
           .st-header-left {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
 
-            .st-icon {
-              color: #409eff;
-              background: #ecf5ff;
-              padding: 6px;
-              border-radius: 8px;
-              box-sizing: content-box;
+            .st-icon-container {
+              width: 38px;
+              height: 38px;
+              background: linear-gradient(135deg, #409eff 0%, #348ef1 100%);
+              color: #fff;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 10px;
+              font-size: 20px;
+              box-shadow: 0 4px 10px rgba(64, 158, 255, 0.3);
             }
 
             .st-title-group {
@@ -732,17 +785,32 @@
               flex-direction: column;
 
               .st-name {
-                font-size: 15px;
-                font-weight: 600;
-                color: #303133;
+                font-size: 16px;
+                font-weight: 700;
+                color: #2c3e50;
                 margin-bottom: 4px;
+                line-height: 1.2;
               }
 
               .st-date {
-                font-size: 11px;
-                color: #909399;
+                font-size: 12px;
+                color: #94a3b8;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                .el-icon {
+                  font-size: 13px;
+                }
               }
             }
+          }
+
+          .st-status-tag {
+            font-weight: 600;
+            padding: 0 12px;
+            height: 24px;
+            line-height: 22px;
           }
         }
 
@@ -750,38 +818,76 @@
           padding: 16px;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 12px;
 
-          .info-grid-item {
-            .label {
-              font-size: 12px;
-              color: #909399;
-              margin-bottom: 4px;
-            }
-            .value {
-              font-size: 14px;
-              color: #303133;
+          .st-info-item {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .st-label {
+              font-size: 11px;
+              color: #64748b;
               font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .st-value {
+              font-size: 14px;
+              color: #334155;
+              font-weight: 600;
               word-break: break-all;
             }
 
-            &.full-width {
+            &.full {
               grid-column: span 2;
+            }
+
+            .highlight {
+              color: #409eff;
             }
           }
         }
 
         .st-card-footer {
-          padding: 12px 16px;
-          background: #fcfcfc;
-          border-top: 1px solid #f5f7fa;
-          display: flex;
-          gap: 12px;
+          padding: 12px 16px 16px;
+          background: #fff;
 
-          .action-btn {
-            flex: 1;
-            height: 36px;
-            font-weight: 500;
+          .process-btn {
+            height: 44px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(64, 158, 255, 0.25);
+            transition: all 0.2s;
+
+            /* Ensure icon and text are perfectly aligned */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            :deep(.van-button__content) {
+              display: flex;
+              align-items: center;
+              line-height: 1;
+            }
+
+            :deep(.van-button__icon) {
+              font-size: 18px;
+              margin-right: 6px;
+              display: flex;
+              align-items: center;
+              height: 100%;
+            }
+
+            &:active {
+              box-shadow: 0 2px 6px rgba(64, 158, 255, 0.2);
+              transform: translateY(1px);
+            }
           }
         }
       }
@@ -847,48 +953,54 @@
       .status-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 16px;
+        padding: 4px;
 
         .status-item {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 16px;
-          background: #f5f7fa;
-          border: 1px solid #ebedf0;
-          border-radius: 8px;
+          padding: 20px 12px;
+          background: #fff;
+          border: 2px solid #f1f5f9;
+          border-radius: 16px;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
 
           .icon-wrapper {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background: #fff;
-            margin-bottom: 8px;
-            font-size: 20px;
-            color: #909399;
+            border-radius: 12px;
+            background: #f8fafc;
+            margin-bottom: 12px;
+            font-size: 24px;
+            color: #94a3b8;
+            transition: all 0.3s;
           }
 
           .status-label {
-            font-size: 14px;
-            color: #606266;
-            font-weight: 500;
+            font-size: 15px;
+            color: #475569;
+            font-weight: 600;
           }
 
           &.active {
-            border-color: transparent;
-            background: #ecf5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 
             &.is-normal {
+              border-color: #67c23a;
               background: #f0f9eb;
               .icon-wrapper {
-                color: #67c23a;
-                background: #fff;
+                color: #fff;
+                background: #67c23a;
+                box-shadow: 0 4px 12px rgba(103, 194, 58, 0.4);
               }
               .status-label {
                 color: #67c23a;
@@ -896,10 +1008,12 @@
             }
 
             &.is-warning {
-              background: #fffbe6;
+              border-color: #e6a23c;
+              background: #fdf6ec;
               .icon-wrapper {
-                color: #e6a23c;
-                background: #fff;
+                color: #fff;
+                background: #e6a23c;
+                box-shadow: 0 4px 12px rgba(230, 162, 60, 0.4);
               }
               .status-label {
                 color: #e6a23c;
@@ -907,41 +1021,52 @@
             }
 
             &.is-orange {
-              background: #fdf6ec;
+              border-color: #ff9800;
+              background: #fff7ed;
               .icon-wrapper {
-                color: #e6a23c;
-                background: #fff;
+                color: #fff;
+                background: #ff9800;
+                box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
               }
               .status-label {
-                color: #e6a23c;
+                color: #ff9800;
               }
             }
 
             &.is-danger {
+              border-color: #f56c6c;
               background: #fef0f0;
               .icon-wrapper {
-                color: #f56c6c;
-                background: #fff;
+                color: #fff;
+                background: #f56c6c;
+                box-shadow: 0 4px 12px rgba(245, 108, 108, 0.4);
               }
               .status-label {
                 color: #f56c6c;
               }
             }
           }
+
+          &:not(.active):active {
+            background: #f1f5f9;
+          }
         }
       }
 
       .custom-field {
         padding: 0;
+        margin-top: 8px;
         :deep(.van-field__label) {
-          font-weight: 600;
-          color: #303133;
-          margin-bottom: 8px;
+          font-weight: 700;
+          color: #334155;
+          margin-bottom: 10px;
+          display: block;
         }
         :deep(.van-field__value) {
-          background: #f5f7fa;
-          padding: 8px;
-          border-radius: 4px;
+          background: #f8fafc;
+          padding: 12px;
+          border-radius: 12px;
+          border: 1px solid #e2e8f0;
         }
       }
 

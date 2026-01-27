@@ -20,7 +20,10 @@ import com.ciyocloud.itam.enums.DeviceStatus;
 import com.ciyocloud.itam.req.AllocationsPageReq;
 import com.ciyocloud.itam.req.DevicePageReq;
 import com.ciyocloud.itam.service.*;
-import com.ciyocloud.itam.vo.*;
+import com.ciyocloud.itam.vo.AllocationsVO;
+import com.ciyocloud.itam.vo.AssetsReportVO;
+import com.ciyocloud.itam.vo.DeviceDetailVO;
+import com.ciyocloud.itam.vo.DeviceVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
@@ -230,16 +233,5 @@ public class DeviceController {
     public Result<DeviceDetailVO> getDetail(@PathVariable Long id) {
         return Result.success(deviceDetailService.getDeviceDetail(id));
     }
-
-    /**
-     * 根据设备编号查询设备详情
-     *
-     * @param deviceNo 设备编号
-     */
-    @GetMapping(value = "/detail/no/{deviceNo}")
-    public Result<DeviceScanVO> getDetailByNo(@PathVariable String deviceNo) {
-        return Result.success(deviceDetailService.getDeviceDetailByNo(deviceNo));
-    }
-
 
 }

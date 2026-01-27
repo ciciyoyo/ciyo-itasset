@@ -37,6 +37,14 @@ public interface StocktakesService extends IService<StocktakesEntity> {
     Boolean add(StocktakesEntity stocktakes);
 
     /**
+     * 获取资产处于正在盘点中的任务
+     *
+     * @param assetId 资产ID
+     * @return 盘点任务列表
+     */
+    List<StocktakesVO> getProcessingStocktakesByAssetId(Long assetId);
+
+    /**
      * 获取盘点任务详情
      *
      * @param id 主键
