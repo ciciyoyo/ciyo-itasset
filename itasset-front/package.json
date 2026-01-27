@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --open",
     "build": "vite build",
+    "report": "vite build --mode report",
     "serve": "vite preview",
     "lint": "eslint",
     "fix": "eslint --fix",

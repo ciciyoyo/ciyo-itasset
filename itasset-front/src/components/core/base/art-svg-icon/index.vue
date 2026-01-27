@@ -1,24 +1,14 @@
-<!-- 图标组件 -->
 <template>
-  <Icon v-if="icon" :icon="icon" v-bind="bindAttrs" class="art-svg-icon inline" />
+  <!-- 直接利用 UnoCSS 的图标类名，格式如: i-ri-home-line -->
+  <i v-if="icon" :class="['art-svg-icon inline-block', unoIconClass]" v-bind="$attrs" />
 </template>
 
 <script setup lang="ts">
-  import { Icon } from '@iconify/vue/offline'
+  const props = defineProps<{ icon?: string }>()
 
-  defineOptions({ name: 'ArtSvgIcon', inheritAttrs: false })
-
-  interface Props {
-    /** Iconify icon name */
-    icon?: string
-  }
-
-  defineProps<Props>()
-
-  const attrs = useAttrs()
-
-  const bindAttrs = computed<{ class: string; style: string }>(() => ({
-    class: (attrs.class as string) || '',
-    style: (attrs.style as string) || ''
-  }))
+  const unoIconClass = computed(() => {
+    if (!props.icon) return ''
+    // 将 "ri:home-line" 转换为 "i-ri-home-line"
+    return `i-${props.icon.replace(':', '-')}`
+  })
 </script>

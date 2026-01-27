@@ -7,10 +7,8 @@ import 'virtual:uno.css'
 import '@styles/core/unocss.css' // unocss
 import '@styles/index.scss' // 样式
 import '@utils/sys/console.ts' // 控制台输出内容
-import '@utils/ui/iconify-loader' // 离线图标加载
 import {setupGlobDirectives} from './directives'
 import {setupErrorHandle} from '@utils/sys/error-handle'
-
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {useSystemStore} from '@/store/modules/system'
 
@@ -27,7 +25,7 @@ async function bootstrap() {
     const app = createApp(App)
     await setupI18n(app)
     initStore(app)
-// 初始化系统配置
+   // 初始化系统配置
     const systemStore = useSystemStore()
     await systemStore.initSystemConfig()
 
