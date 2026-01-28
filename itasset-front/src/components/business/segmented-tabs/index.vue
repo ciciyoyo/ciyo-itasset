@@ -152,4 +152,56 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
+  /* 移动端适配 */
+  @media (max-width: 768px) {
+    .art-segmented-tabs {
+      padding: 2px;
+
+      .tab-item {
+        padding: 10px 12px !important;
+        font-size: 0 !important; /* 隐藏文字 */
+        flex: 1; /* 平分空间 */
+        justify-content: center;
+
+        .el-icon {
+          margin-right: 0 !important;
+          font-size: 20px !important;
+        }
+      }
+    }
+
+    .art-segmented-content {
+      margin-top: 12px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .art-segmented-tabs {
+      .tab-item {
+        padding: 8px 10px !important;
+
+        .el-icon {
+          font-size: 18px !important;
+        }
+      }
+    }
+
+    .art-segmented-content {
+      margin-top: 10px;
+    }
+  }
+
+  /* 超小屏幕优化 */
+  @media (max-width: 480px) {
+    .art-segmented-tabs {
+      .tab-item {
+        padding: 8px 8px !important;
+
+        .el-icon {
+          font-size: 16px !important;
+        }
+      }
+    }
+  }
 </style>
