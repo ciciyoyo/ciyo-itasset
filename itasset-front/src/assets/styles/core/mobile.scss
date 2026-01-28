@@ -57,7 +57,7 @@
     width: 95% !important;
     max-width: 95vw !important;
     margin: 0 auto !important;
-    max-height: 90vh !important;
+    max-height: 85vh !important;  /* 从90vh降到85vh，留出更多空间 */
 
     &__header {
       padding: 15px !important;
@@ -70,7 +70,7 @@
 
     &__body {
       padding: 15px !important;
-      max-height: calc(90vh - 120px) !important;
+      max-height: calc(85vh - 130px) !important;  /* 减去header和footer的高度 */
       overflow-y: auto !important;
 
       // 对话框内的表单 - 强制垂直布局
@@ -165,12 +165,30 @@
     }
 
     &__footer {
-      padding: 12px 15px !important;
+      padding: 12px 15px 12px 15px !important;
+      margin: 0 !important;
+      display: flex !important;
+      gap: 8px !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
 
+      /* 所有按钮统一样式 */
+      .el-button {
+        flex: 1;
+        max-width: 48%;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 8px 15px !important;
+      }
+
+      /* 兼容dialog-footer类 */
       .dialog-footer {
         display: flex;
         gap: 8px;
         width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
 
         .el-button {
           flex: 1;
@@ -178,21 +196,13 @@
           margin: 0 !important;
         }
       }
-
-      // 如果没有 dialog-footer 类
-      > * {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-
-        .el-button {
-          flex: 1;
-          min-width: 80px;
-          margin: 0 !important;
-        }
-      }
     }
+  }
+
+  /* 额外的独立选择器确保生效 */
+  .el-dialog__footer {
+    padding: 12px 15px !important;
+    box-sizing: border-box !important;
   }
 
   // 抽屉式组件

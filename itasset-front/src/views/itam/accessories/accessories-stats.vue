@@ -1,71 +1,11 @@
 <template>
   <div class="stats-page p-4">
-    <el-row :gutter="16">
-      <!-- 统计卡片 -->
-      <el-col :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="stats-card">
-          <div class="stats-content">
-            <div class="stats-icon primary">
-              <el-icon :size="24">
-                <Grid />
-              </el-icon>
-            </div>
-            <div class="stats-info">
-              <div class="stats-label">配件总数</div>
-              <div class="stats-value">{{ summary.total }}</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="stats-card">
-          <div class="stats-content">
-            <div class="stats-icon danger">
-              <el-icon :size="24">
-                <WarningFilled />
-              </el-icon>
-            </div>
-            <div class="stats-info">
-              <div class="stats-label">已过保</div>
-              <div class="stats-value">{{ summary.expired }}</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="stats-card">
-          <div class="stats-content">
-            <div class="stats-icon warning">
-              <el-icon :size="24">
-                <Clock />
-              </el-icon>
-            </div>
-            <div class="stats-info">
-              <div class="stats-label">即将过保</div>
-              <div class="stats-value">{{ summary.soonToExpire }}</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="stats-card">
-          <div class="stats-content">
-            <div class="stats-icon info">
-              <el-icon :size="24">
-                <Box />
-              </el-icon>
-            </div>
-            <div class="stats-info">
-              <div class="stats-label">低库存</div>
-              <div class="stats-value">{{ summary.lowStock }}</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <ArtStatsCard title="配件总数" :count="summary.total" icon="ri:box-3-line" icon-style="bg-blue-500" />
+      <ArtStatsCard title="已过保" :count="summary.expired" icon="ri:alarm-warning-line" icon-style="bg-red-500" />
+      <ArtStatsCard title="即将过保" :count="summary.soonToExpire" icon="ri:time-line" icon-style="bg-orange-500" />
+      <ArtStatsCard title="低库存" :count="summary.lowStock" icon="ri:inbox-line" icon-style="bg-gray-500" />
+    </div>
 
     <!-- 月度价值趋势图 -->
     <div class="art-card p-5 mt-4">
@@ -96,7 +36,7 @@
     AccessoryStatsSummary,
     MonthlyValueStat
   } from '@/api/itam/accessories'
-  import { Grid, WarningFilled, Clock, Box } from '@element-plus/icons-vue'
+  import ArtStatsCard from '@/components/core/cards/art-stats-card/index.vue'
 
   defineOptions({
     name: 'AccessoriesStats'
@@ -148,62 +88,6 @@
 
 <style scoped lang="scss">
   .stats-page {
-    .stats-card {
-      .stats-content {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-
-        .stats-icon {
-          width: 60px;
-          height: 60px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &.primary {
-            background-color: rgba(64, 158, 255, 0.1);
-            color: #409eff;
-          }
-
-          &.success {
-            background-color: rgba(103, 194, 58, 0.1);
-            color: #67c23a;
-          }
-
-          &.warning {
-            background-color: rgba(230, 162, 60, 0.1);
-            color: #e6a23c;
-          }
-
-          &.danger {
-            background-color: rgba(245, 108, 108, 0.1);
-            color: #f56c6c;
-          }
-
-          &.info {
-            background-color: rgba(144, 147, 153, 0.1);
-            color: #909399;
-          }
-        }
-
-        .stats-info {
-          flex: 1;
-
-          .stats-label {
-            font-size: 14px;
-            color: #909399;
-            margin-bottom: 8px;
-          }
-
-          .stats-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #303133;
-          }
-        }
-      }
-    }
+    background-color: var(--el-bg-color);
   }
 </style>
