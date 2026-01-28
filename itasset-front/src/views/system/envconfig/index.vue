@@ -246,4 +246,96 @@
   .el-input {
     width: 35%;
   }
+
+  /* 移动端适配 */
+  @media (max-width: 768px) {
+    :deep(.el-card__body) {
+      padding: 12px;
+    }
+
+    :deep(.el-tabs__header) {
+      padding: 0;
+    }
+
+    :deep(.el-tabs__nav-wrap) {
+      padding: 0 10px;
+    }
+
+    :deep(.el-tabs__item) {
+      font-size: 14px;
+      padding: 0 12px;
+    }
+
+    :deep(.el-tabs__content) {
+      padding: 15px 0;
+    }
+
+    /* 表单项垂直布局 */
+    :deep(.el-form .el-form-item) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    :deep(.el-form .el-form-item__label) {
+      text-align: left !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-bottom: 6px !important;
+      padding-right: 0 !important;
+      float: none !important;
+      display: block !important;
+      font-size: 13px;
+    }
+
+    :deep(.el-form .el-form-item__content) {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
+
+    :deep(.el-form .el-form-item__content .el-input),
+    :deep(.el-form .el-form-item__content .el-select) {
+      width: 100% !important;
+    }
+
+    :deep(.el-form .el-form-item__content .el-button) {
+      width: 100%;
+    }
+
+    .el-input {
+      width: 100% !important;
+    }
+
+    .select-width {
+      width: 100% !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    :deep(.el-card__body) {
+      padding: 10px;
+    }
+
+    :deep(.el-tabs__item) {
+      font-size: 13px;
+      padding: 0 10px;
+    }
+
+    :deep(.el-tabs__content) {
+      padding: 12px 0;
+    }
+
+    :deep(.el-form .el-form-item) {
+      margin-bottom: 12px;
+    }
+
+    :deep(.el-form .el-form-item__label) {
+      font-size: 12px;
+    }
+
+    :deep(.el-form .el-form-item__content .el-input__inner) {
+      font-size: 14px;
+    }
+  }
 </style>

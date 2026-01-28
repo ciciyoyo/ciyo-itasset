@@ -68,7 +68,7 @@
       <el-tabs v-model="activeTab" class="detail-tabs">
         <el-tab-pane label="详细信息" name="detail">
           <div class="info-section">
-            <el-descriptions :column="2" border>
+            <el-descriptions :column="descriptionColumn" border>
               <el-descriptions-item label="设备编号">
                 {{ deviceData.deviceNo || '-' }}
               </el-descriptions-item>
@@ -123,7 +123,7 @@
 
         <el-tab-pane label="型号信息" name="model" v-if="deviceData.model">
           <div class="info-section">
-            <el-descriptions :column="2" border>
+            <el-descriptions :column="descriptionColumn" border>
               <el-descriptions-item label="型号名称">
                 {{ deviceData.model.name || '-' }}
               </el-descriptions-item>
@@ -221,12 +221,20 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
+  import { useWindowSize } from '@vueuse/core'
   import { getDeviceDetail, DeviceEntity, DeviceDetailVO } from '@/api/itam/device'
 
   const visible = ref(false)
   const loading = ref(false)
   const deviceData = ref<DeviceDetailVO | null>(null)
   const activeTab = ref('detail')
+
+  // 响应式窗口尺寸
+  const { width } = useWindowSize()
+  const isMobile = computed(() => width.value < 768)
+
+  // 响应式描述列表列数
+  const descriptionColumn = computed(() => (isMobile.value ? 1 : 2))
 
   // 判断是否已过保
   const isExpired = computed(() => {
@@ -330,8 +338,6 @@
 
   .detail-content {
     padding: 24px;
-    height: calc(100vh - 140px);
-    overflow-y: auto;
   }
 
   .overview-card {
@@ -469,5 +475,164 @@
 
   .mr-2 {
     margin-right: 8px;
+  }
+
+  // 移动端适配
+  @media (max-width: 768px) {
+    :deep(.el-drawer__header) {
+      padding: 12px 15px !important;
+    }
+
+    :deep(.el-drawer__body) {
+      padding: 0 !important;
+    }
+
+    :deep(.el-drawer__footer) {
+      padding: 10px 15px !important;
+    }
+
+    .drawer-header .header-title {
+      .title-text {
+        font-size: 16px;
+      }
+    }
+
+    .detail-content {
+      padding: 15px;
+    }
+
+    .overview-card {
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+
+      .device-image {
+        align-self: center;
+
+        .device-img,
+        .no-image {
+          width: 120px;
+          height: 120px;
+        }
+      }
+
+      .device-info {
+        .device-name {
+          font-size: 20px;
+          margin-bottom: 12px;
+        }
+
+        .info-row {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .detail-tabs {
+      :deep(.el-tabs__item) {
+        font-size: 14px;
+        padding: 0 12px;
+      }
+    }
+
+    .info-section {
+      padding: 12px;
+
+      :deep(.el-descriptions__label) {
+        font-size: 13px;
+      }
+
+      :deep(.el-descriptions__content) {
+        font-size: 13px;
+      }
+    }
+
+    .related-section {
+      margin-bottom: 20px;
+
+      .section-title {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      // 表格横向滚动
+      :deep(.el-table) {
+        font-size: 12px;
+
+        .el-table__cell {
+          padding: 6px 4px;
+        }
+
+        .cell {
+          font-size: 12px;
+        }
+      }
+
+      // 将表格包裹在可滚动容器中
+      .el-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    .detail-content {
+      padding: 12px;
+    }
+
+    .overview-card {
+      padding: 12px;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      .device-image {
+        .device-img,
+        .no-image {
+          width: 100px;
+          height: 100px;
+        }
+      }
+
+      .device-info {
+        .device-name {
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+
+        .info-row {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .info-section {
+      padding: 10px;
+
+      :deep(.el-descriptions__label) {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
+      :deep(.el-descriptions__content) {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+    }
+
+    .related-section {
+      .section-title {
+        font-size: 13px;
+      }
+
+      :deep(.el-table) {
+        font-size: 11px;
+
+        .cell {
+          font-size: 11px;
+        }
+      }
+    }
   }
 </style>

@@ -2,8 +2,8 @@
 <!-- 支持常用表单组件、自定义组件、插槽、校验、隐藏表单项 -->
 <!-- 写法同 ElementPlus 官方文档组件，把属性写在 props 里面就可以了 -->
 <template>
-  <section class="art-search-bar art-card-xs" :class="{ 'is-expanded': isExpanded }">
-    <ElForm ref="formRef" :model="modelValue" :label-position="labelPosition" v-bind="{ ...$attrs }">
+  <section class="art-search-bar art-card-xs" :class="{ 'is-expanded': isExpanded, 'is-mobile': isMobile }">
+    <ElForm ref="formRef" :model="modelValue" :label-position="responsiveLabelPosition" v-bind="{ ...$attrs }">
       <ElRow :gutter="gutter">
         <ElCol
           v-for="item in visibleFormItems"
@@ -14,7 +14,7 @@
           :lg="getColSpan(item.span, 'lg')"
           :xl="getColSpan(item.span, 'xl')"
         >
-          <ElFormItem :prop="item.key" :label-width="item.label ? item.labelWidth || labelWidth : undefined">
+          <ElFormItem :prop="item.key" :label-width="item.label && !isMobile ? item.labelWidth || labelWidth : undefined">
             <template #label v-if="item.label">
               <component v-if="typeof item.label !== 'string'" :is="item.label" />
               <span v-else>{{ item.label }}</span>
@@ -127,7 +127,9 @@
 
   const { width } = useWindowSize()
   const { t } = useI18n()
-  const isMobile = computed(() => width.value < 500)
+
+  // 使用 ref 确保响应式
+  const isMobile = computed(() => width.value < 768)
 
   const formInstance = useTemplateRef<FormInstance>('formRef')
 
@@ -284,6 +286,14 @@
   })
 
   /**
+   * 响应式标签位置
+   * 移动端自动切换为 top（标签在上方）
+   */
+  const responsiveLabelPosition = computed(() => {
+    return isMobile.value ? 'top' : props.labelPosition
+  })
+
+  /**
    * 操作按钮样式
    */
   const actionButtonsStyle = computed(() => ({
@@ -329,7 +339,7 @@
   })
 
   // 解构 props 以便在模板中直接使用
-  const { span, gutter, labelPosition, labelWidth } = toRefs(props)
+  const { span, gutter, labelWidth } = toRefs(props)
 </script>
 
 <style lang="scss" scoped>
@@ -382,24 +392,218 @@
     }
   }
 
-  // 响应式优化
-  @media (width <= 768px) {
+  // 移动端专用类 - 确保路由切换时立即生效
+  .art-search-bar.is-mobile {
+    padding: 12px 12px 0;
+
+    :deep(.el-col) {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+    }
+
+    :deep(.el-form-item) {
+      margin-bottom: 12px;
+
+      .el-form-item__label {
+        text-align: left;
+        width: 100% !important;
+        margin-bottom: 6px;
+        padding-right: 0;
+        justify-content: flex-start;
+      }
+
+      .el-form-item__content {
+        margin-left: 0 !important;
+        width: 100%;
+
+        .el-input,
+        .el-select,
+        .el-date-editor,
+        .el-cascader,
+        .el-tree-select,
+        .el-input-number {
+          width: 100% !important;
+
+          .el-input__wrapper {
+            width: 100% !important;
+          }
+        }
+      }
+    }
+
+    .action-column {
+      .action-buttons-wrapper {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+
+        .form-buttons {
+          display: flex;
+          gap: 8px;
+          width: 100%;
+
+          .el-button {
+            flex: 1;
+            min-width: 0;
+          }
+        }
+
+        .filter-toggle {
+          justify-content: center;
+          margin-left: 0;
+          padding: 8px 0;
+          border-top: 1px solid var(--el-border-color-lighter);
+        }
+      }
+    }
+  }
+
+  // 响应式优化 - 平板和手机
+  @media (max-width: 768px) {
     .art-search-bar {
-      padding: 16px 16px 0;
+      padding: 12px 12px 0;
+
+      // 表单标签改为垂直布局
+      :deep(.el-form-item) {
+        margin-bottom: 12px;
+
+        .el-form-item__label {
+          text-align: left;
+          width: 100% !important;
+          margin-bottom: 4px;
+          padding-right: 0;
+        }
+
+        .el-form-item__content {
+          margin-left: 0 !important;
+
+          .el-input,
+          .el-select,
+          .el-date-editor,
+          .el-cascader,
+          .el-tree-select {
+            width: 100% !important;
+          }
+        }
+      }
 
       .action-column {
         .action-buttons-wrapper {
           flex-direction: column;
           gap: 8px;
           align-items: stretch;
+          margin-top: 4px;
 
           .form-buttons {
-            justify-content: center;
+            display: flex;
+            gap: 8px;
+            width: 100%;
+
+            .el-button {
+              flex: 1;
+              min-width: 0;
+            }
           }
 
           .filter-toggle {
             justify-content: center;
             margin-left: 0;
+            padding: 8px 0;
+            border-top: 1px solid var(--el-border-color-lighter);
+          }
+        }
+      }
+    }
+  }
+
+  // 移动端优化 - 手机
+  @media (max-width: 640px) {
+    .art-search-bar {
+      padding: 10px 10px 0;
+
+      // 进一步优化表单项间距
+      :deep(.el-form-item) {
+        margin-bottom: 10px;
+
+        .el-form-item__label {
+          font-size: 13px;
+          line-height: 1.5;
+          margin-bottom: 6px;
+        }
+
+        .el-form-item__content {
+          // 输入框高度适配
+          .el-input__wrapper {
+            min-height: 36px;
+          }
+
+          .el-input__inner {
+            height: 36px;
+            line-height: 36px;
+            font-size: 14px;
+          }
+
+          // 选择器优化
+          .el-select .el-input__wrapper {
+            min-height: 36px;
+          }
+
+          // 日期选择器优化
+          .el-date-editor {
+            .el-input__wrapper {
+              min-height: 36px;
+            }
+
+            .el-input__inner {
+              height: 36px;
+            }
+          }
+        }
+      }
+
+      // 按钮优化
+      .action-column {
+        .action-buttons-wrapper {
+          .form-buttons {
+            .el-button {
+              height: 36px;
+              font-size: 14px;
+              padding: 8px 15px;
+            }
+          }
+
+          .filter-toggle {
+            font-size: 13px;
+            padding: 10px 0;
+
+            .icon-wrapper {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 超小屏幕优化 - 小手机
+  @media (max-width: 375px) {
+    .art-search-bar {
+      padding: 8px 8px 0;
+
+      :deep(.el-form-item) {
+        margin-bottom: 8px;
+
+        .el-form-item__label {
+          font-size: 12px;
+        }
+      }
+
+      .action-column {
+        .form-buttons {
+          .el-button {
+            font-size: 13px;
+            padding: 6px 12px;
           }
         }
       }

@@ -592,4 +592,96 @@
       }
     }
   }
+
+  // 移动端优化
+  @media (max-width: 640px) {
+    .dashboard-container {
+      padding: 12px;
+      background: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    .overview-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .stat-card {
+        gap: 12px;
+        padding: 16px;
+
+        .card-icon {
+          width: 48px;
+          height: 48px;
+
+          .el-icon {
+            font-size: 24px;
+          }
+        }
+
+        .card-content {
+          .card-label {
+            font-size: 12px;
+            margin-bottom: 6px;
+          }
+
+          .card-value {
+            font-size: 20px;
+            margin-bottom: 3px;
+          }
+
+          .card-trend {
+            font-size: 11px;
+
+            .el-icon {
+              font-size: 11px;
+            }
+          }
+        }
+
+        &:hover {
+          transform: none;
+        }
+      }
+    }
+
+    .charts-container {
+      gap: 12px;
+
+      .chart-card {
+        padding: 12px;
+
+        .chart-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 16px;
+
+          .chart-title {
+            font-size: 15px;
+
+            .el-icon {
+              font-size: 18px;
+            }
+          }
+
+          .asset-type-select {
+            width: 100%;
+          }
+
+          .el-tag {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+
+  // 平板优化 (641px - 768px)
+  @media (max-width: 768px) and (min-width: 641px) {
+    .overview-cards {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
 </style>
