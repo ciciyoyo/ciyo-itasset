@@ -24,3 +24,7 @@
 
 // 自定义快捷工具样式
 @use './custom/shortcuts.scss';
+
+// 移动端响应式优化
+@use './core/mobile.scss';
+

@@ -1,0 +1,972 @@
+/**
+ * 移动端全局样式优化
+ * 
+ * 统一处理所有页面的移动端适配
+ * 断点定义:
+ * - xs: < 640px  (手机)
+ * - sm: < 768px  (大手机/小平板)
+ * - md: < 1024px (平板)
+ */
+
+// ================================
+// 1. 页面容器优化
+// ================================
+@media (max-width: 640px) {
+  // 页面主容器
+  .page-container {
+    padding: 8px !important;
+  }
+
+  // 卡片容器
+  .art-card {
+    border-radius: 8px !important;
+    margin-bottom: 8px !important;
+
+    .card-header {
+      padding: 12px !important;
+      margin-bottom: 12px !important;
+
+      h2,
+      h3 {
+        font-size: 16px !important;
+      }
+    }
+  }
+
+  // Dashboard 特殊处理
+  .dashboard-container {
+    padding: 12px !important;
+  }
+}
+
+// ================================
+// 2. 对话框响应式
+// ================================
+@media (max-width: 768px) {
+  // 对话框容器
+  .el-overlay {
+    .el-overlay-dialog {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+  }
+
+  .el-dialog {
+    width: 95% !important;
+    max-width: 95vw !important;
+    margin: 0 auto !important;
+    max-height: 90vh !important;
+
+    &__header {
+      padding: 15px !important;
+      margin: 0 !important;
+
+      .el-dialog__title {
+        font-size: 16px !important;
+      }
+    }
+
+    &__body {
+      padding: 15px !important;
+      max-height: calc(90vh - 120px) !important;
+      overflow-y: auto !important;
+
+      // 对话框内的表单 - 强制垂直布局
+      .el-form {
+        // 强制表单使用 top 布局样式
+        &.el-form--label-right,
+        &.el-form--label-left {
+          .el-form-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+
+        .el-form-item {
+          margin-bottom: 16px !important;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          .el-form-item__label {
+            text-align: left !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-bottom: 6px !important;
+            padding-right: 0 !important;
+            float: none !important;
+            display: block !important;
+            
+            &::before {
+              margin-right: 2px !important;
+            }
+          }
+
+          .el-form-item__content {
+            margin-left: 0 !important;
+            width: 100% !important;
+
+            .el-input,
+            .el-select,
+            .el-date-editor,
+            .el-cascader,
+            .el-tree-select,
+            .el-input-number,
+            .el-textarea {
+              width: 100% !important;
+            }
+          }
+        }
+      }
+
+      // 对话框内的行列布局 - 强制单列
+      .el-row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+
+        .el-col {
+          width: 100% !important;
+          max-width: 100% !important;
+          flex: 0 0 100% !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+      }
+
+      // 直接选择 el-col（更高优先级）
+      .el-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+      }
+
+      // 针对特定的列宽设置
+      .el-col-24,
+      .el-col-xs-24,
+      .el-col-sm-24,
+      .el-col-md-24,
+      .el-col-lg-24,
+      .el-col-xl-24,
+      .el-col-12,
+      .el-col-xs-12,
+      .el-col-sm-12,
+      .el-col-md-12,
+      .el-col-lg-12,
+      .el-col-xl-12,
+      .el-col-8,
+      .el-col-6 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+      }
+    }
+
+    &__footer {
+      padding: 12px 15px !important;
+
+      .dialog-footer {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+
+        .el-button {
+          flex: 1;
+          min-width: 0 !important;
+          margin: 0 !important;
+        }
+      }
+
+      // 如果没有 dialog-footer 类
+      > * {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+
+        .el-button {
+          flex: 1;
+          min-width: 80px;
+          margin: 0 !important;
+        }
+      }
+    }
+  }
+
+  // 抽屉式组件
+  .el-drawer {
+    &__body {
+      padding: 15px !important;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .el-dialog {
+    &__header {
+      padding: 12px !important;
+
+      .el-dialog__title {
+        font-size: 15px !important;
+      }
+    }
+
+    &__body {
+      padding: 12px !important;
+
+      .el-form {
+        .el-form-item {
+          margin-bottom: 12px !important;
+
+          .el-form-item__label {
+            font-size: 13px !important;
+          }
+
+          .el-form-item__content {
+            .el-input__inner,
+            .el-textarea__inner {
+              font-size: 14px !important;
+            }
+          }
+        }
+      }
+    }
+
+    &__footer {
+      padding: 10px 12px !important;
+
+      .el-button {
+        font-size: 14px !important;
+        padding: 8px 15px !important;
+      }
+    }
+  }
+}
+
+// ================================
+// 3. 表单响应式
+// ================================
+@media (max-width: 640px) {
+  .el-form {
+    // 标签改为上下布局
+    .el-form-item__label {
+      text-align: left !important;
+      width: 100% !important;
+      margin-bottom: 4px;
+    }
+
+    .el-form-item__content {
+      margin-left: 0 !important;
+    }
+
+    // 减小表单项间距
+    .el-form-item {
+      margin-bottom: 16px !important;
+    }
+  }
+
+  // 行间距
+  .el-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+// ================================
+// 4. 按钮组响应式
+// ================================
+@media (max-width: 768px) {
+  // 表格头部按钮组
+  .art-table-header {
+    .el-space {
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+    }
+  }
+
+  // 对话框底部按钮
+  .dialog-footer {
+    .el-space {
+      flex-wrap: wrap !important;
+      width: 100%;
+    }
+
+    .el-button {
+      flex: 1;
+      min-width: 100px;
+    }
+  }
+
+  // 所有按钮尺寸调整
+  .el-button {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+
+    &.el-button--small {
+      font-size: 12px !important;
+      padding: 6px 10px !important;
+    }
+  }
+
+  // 操作按钮组
+  .operation-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .el-button {
+    &:not(.el-button--text):not(.is-link) {
+      min-width: auto;
+    }
+  }
+
+  // Icon按钮增大点击区域
+  .el-button--icon {
+    padding: 10px !important;
+  }
+}
+
+// ================================
+// 5. 表格优化
+// ================================
+@media (max-width: 768px) {
+  .art-table {
+    // 启用横向滚动
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .el-table {
+      min-width: 100%;
+    }
+
+    // 固定操作列
+    .el-table__fixed-right {
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .el-table {
+    // 减小表格内边距
+    .el-table__cell {
+      padding: 8px 6px !important;
+    }
+
+    // 表头
+    thead {
+      .cell {
+        font-size: 13px;
+      }
+    }
+
+    // 表体
+    tbody {
+      .cell {
+        font-size: 13px;
+      }
+    }
+
+    // 操作列按钮
+    .el-button--text,
+    .el-button.is-link {
+      padding: 4px 8px !important;
+      font-size: 13px;
+    }
+  }
+
+  // 分页器
+  .el-pagination {
+    padding: 12px 0 !important;
+
+    .el-pager {
+      li {
+        min-width: 28px;
+        height: 28px;
+        line-height: 28px;
+        font-size: 13px;
+      }
+    }
+
+    .btn-prev,
+    .btn-next {
+      min-width: 28px;
+      height: 28px;
+      line-height: 28px;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  // 移动端简化分页显示
+  .el-pagination {
+    .el-pagination__sizes {
+      display: none !important;
+    }
+
+    .el-pagination__jump {
+      display: none !important;
+    }
+  }
+}
+
+// ================================
+// 6. 搜索栏优化
+// ================================
+@media (max-width: 768px) {
+  .art-search-bar {
+    // 强制所有列为100%宽度
+    .el-col {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+    }
+
+    // 表单项优化
+    .el-form {
+      .el-form-item {
+        margin-bottom: 12px !important;
+
+        // 标签样式
+        .el-form-item__label {
+          text-align: left !important;
+          width: 100% !important;
+          margin-bottom: 6px !important;
+          padding-right: 0 !important;
+          justify-content: flex-start !important;
+
+          &::before {
+            margin-right: 2px !important;
+          }
+        }
+
+        // 内容区域
+        .el-form-item__content {
+          margin-left: 0 !important;
+          width: 100% !important;
+
+          // 所有输入组件100%宽度
+          .el-input,
+          .el-select,
+          .el-date-editor,
+          .el-cascader,
+          .el-tree-select,
+          .el-input-number {
+            width: 100% !important;
+
+            .el-input__wrapper {
+              width: 100% !important;
+            }
+          }
+
+          // 日期范围选择器
+          .el-date-editor--daterange,
+          .el-date-editor--datetimerange {
+            width: 100% !important;
+          }
+        }
+      }
+    }
+
+    // 搜索按钮组
+    .search-buttons,
+    .action-buttons-wrapper {
+      margin-top: 12px;
+      width: 100% !important;
+
+      .form-buttons {
+        display: flex;
+        gap: 8px;
+        width: 100% !important;
+
+        .el-button {
+          flex: 1;
+          min-width: 0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .art-search-bar {
+    padding: 10px !important;
+
+    .el-form-item {
+      margin-bottom: 10px !important;
+
+      .el-form-item__label {
+        font-size: 13px !important;
+        margin-bottom: 4px !important;
+      }
+    }
+  }
+}
+
+
+// ================================
+// 7. 统计卡片优化
+// ================================
+@media (max-width: 640px) {
+  // 概览卡片网格
+  .overview-cards,
+  .stat-cards {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  // 单个统计卡片
+  .stat-card {
+    padding: 16px !important;
+
+    .card-icon {
+      width: 48px !important;
+      height: 48px !important;
+
+      .el-icon {
+        font-size: 24px !important;
+      }
+    }
+
+    .card-content {
+      .card-label {
+        font-size: 13px !important;
+      }
+
+      .card-value {
+        font-size: 20px !important;
+        line-height: 1.2;
+      }
+
+      .card-trend {
+        font-size: 11px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) and (min-width: 641px) {
+  // 平板设备 - 双列布局
+  .overview-cards,
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+// ================================
+// 8. 图表容器优化
+// ================================
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr !important;
+
+    .chart-card {
+      &.large,
+      &.medium {
+        grid-column: 1 !important;
+      }
+
+      padding: 16px !important;
+
+      .chart-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+
+        .chart-title {
+          font-size: 15px !important;
+        }
+
+        .asset-type-select,
+        .el-select {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .charts-container {
+    gap: 12px !important;
+
+    .chart-card {
+      padding: 12px !important;
+    }
+  }
+}
+
+// ================================
+// 9. Tab 标签页优化
+// ================================
+@media (max-width: 768px) {
+  .el-tabs {
+    &__header {
+      margin-bottom: 12px !important;
+    }
+
+    &__nav {
+      .el-tabs__item {
+        padding: 0 12px !important;
+        font-size: 13px;
+      }
+    }
+  }
+
+  // Segmented Tabs 组件
+  .segmented-tabs {
+    .tabs-nav {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+
+      .tab-item {
+        flex-shrink: 0;
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+    }
+  }
+}
+
+// ================================
+// 10. 下拉菜单优化
+// ================================
+@media (max-width: 640px) {
+  .el-dropdown-menu {
+    min-width: 150px;
+
+    &__item {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .el-select-dropdown {
+    &__item {
+      padding: 0 16px;
+      height: 36px;
+      line-height: 36px;
+      font-size: 13px;
+    }
+  }
+}
+
+// ================================
+// 11. 标签 Tag 优化
+// ================================
+@media (max-width: 640px) {
+  .el-tag {
+    font-size: 11px !important;
+    padding: 0 6px !important;
+    height: 22px !important;
+    line-height: 20px !important;
+
+    &--small {
+      font-size: 10px !important;
+      padding: 0 5px !important;
+      height: 18px !important;
+    }
+  }
+}
+
+// ================================
+// 12. 图片预览优化
+// ================================
+@media (max-width: 640px) {
+  .el-image {
+    &__preview {
+      .el-image-viewer__canvas {
+        img {
+          max-width: 90vw !important;
+          max-height: 90vh !important;
+        }
+      }
+    }
+  }
+}
+
+// ================================
+// 13. 消息提示优化
+// ================================
+@media (max-width: 640px) {
+  .el-message {
+    min-width: auto !important;
+    max-width: 90vw !important;
+    padding: 12px 16px !important;
+
+    &__content {
+      font-size: 13px;
+    }
+  }
+
+  .el-notification {
+    width: 90vw !important;
+    max-width: 90vw !important;
+    right: 5vw !important;
+  }
+}
+
+// ================================
+// 14. 树形选择器优化
+// ================================
+@media (max-width: 640px) {
+  .el-tree-select {
+    &__popper {
+      max-width: 90vw !important;
+    }
+  }
+
+  .el-tree {
+    .el-tree-node__content {
+      height: 32px !important;
+      font-size: 13px;
+    }
+  }
+}
+
+// ================================
+// 15. 步骤条优化
+// ================================
+@media (max-width: 640px) {
+  .el-steps {
+    &--horizontal {
+      .el-step__head {
+        .el-step__icon {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      .el-step__title {
+        font-size: 13px;
+      }
+
+      .el-step__description {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+// ================================
+// 16. 时间选择器优化
+// ================================
+@media (max-width: 640px) {
+  .el-picker__popper,
+  .el-date-picker {
+    max-width: 95vw !important;
+    transform: translateX(-50%) !important;
+    left: 50% !important;
+  }
+}
+
+// ================================
+// 17. Card 组件优化
+// ================================
+@media (max-width: 640px) {
+  .el-card {
+    &__header {
+      padding: 12px !important;
+      font-size: 15px;
+    }
+
+    &__body {
+      padding: 12px !important;
+    }
+  }
+}
+
+// ================================
+// 18. 面包屑优化
+// ================================
+@media (max-width: 640px) {
+  .el-breadcrumb {
+    display: none !important;
+  }
+
+  // Art 面包屑组件
+  .art-breadcrumb {
+    display: none !important;
+  }
+}
+
+// ================================
+// 19. 上传组件优化
+// ================================
+@media (max-width: 640px) {
+  .el-upload {
+    &-dragger {
+      width: 100% !important;
+      height: 150px !important;
+
+      .el-icon {
+        font-size: 48px !important;
+      }
+    }
+
+    &-list {
+      &__item {
+        font-size: 13px;
+      }
+    }
+  }
+
+  // Image Upload 组件
+  .image-upload {
+    .upload-trigger {
+      width: 100px !important;
+      height: 100px !important;
+    }
+  }
+}
+
+// ================================
+// 20. 工作台标签页优化
+// ================================
+@media (max-width: 768px) {
+  .art-work-tab {
+    .work-tab-item {
+      padding: 8px 12px !important;
+      font-size: 13px;
+
+      .close-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// ================================
+// 21. 顶部栏优化（补充）
+// ================================
+@media (max-width: 640px) {
+  .art-header-bar {
+    height: auto !important;
+    min-height: 50px;
+    padding: 8px !important;
+
+    // 隐藏不重要的元素
+    .fast-enter {
+      display: none !important;
+    }
+
+    // Logo 文字简化
+    .system-name {
+      display: none;
+    }
+  }
+}
+
+// ================================
+// 22. 侧边栏菜单优化
+// ================================
+@media (max-width: 768px) {
+  .art-sidebar-menu {
+    // 移动端完全覆盖
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    z-index: 2000 !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+
+    // 遮罩层
+    &::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+  }
+}
+
+// ================================
+// 23. 设置面板优化
+// ================================
+@media (max-width: 640px) {
+  .art-settings-panel {
+    .setting-drawer {
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+
+    .setting-item {
+      .box {
+        img {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// ================================
+// 24. 通用工具类
+// ================================
+@media (max-width: 640px) {
+  // 移动端隐藏
+  .hidden-xs {
+    display: none !important;
+  }
+
+  // 移动端全宽
+  .full-width-xs {
+    width: 100% !important;
+  }
+
+  // 移动端文字缩小
+  .text-xs-sm {
+    font-size: 13px !important;
+  }
+
+  // 移动端间距调整
+  .p-xs-2 {
+    padding: 8px !important;
+  }
+
+  .m-xs-2 {
+    margin: 8px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+// ================================
+// 25. 触摸优化
+// ================================
+@media (hover: none) and (pointer: coarse) {
+  // 增大可点击区域
+  .el-button,
+  .el-link,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // 移除 hover 效果
+  *:hover {
+    transform: none !important;
+  }
+
+  // 添加点击反馈
+  .clickable {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+}

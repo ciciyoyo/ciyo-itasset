@@ -640,3 +640,140 @@
     }
   })
 </script>
+
+<style scoped lang="scss">
+  /* 移动端适配 */
+  @media (max-width: 768px) {
+    /* 对话框宽度 */
+    :deep(.el-dialog) {
+      width: 95% !important;
+      max-width: 95vw !important;
+      margin: 0 auto !important;
+    }
+
+    :deep(.el-dialog__body) {
+      padding: 15px;
+      max-height: calc(90vh - 120px);
+      overflow-y: auto;
+    }
+
+    :deep(.el-dialog__footer) {
+      padding: 12px 15px;
+
+      .el-button {
+        width: 48%;
+        min-width: 0 !important;
+        margin: 0 !important;
+      }
+    }
+
+    /* 表单垂直布局 */
+    :deep(.el-form) {
+      .el-form-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .el-form-item__label {
+        text-align: left !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 6px !important;
+        padding-right: 0 !important;
+        float: none !important;
+        display: block !important;
+        font-size: 13px;
+      }
+
+      .el-form-item__content {
+        margin-left: 0 !important;
+        width: 100% !important;
+
+        .el-input,
+        .el-select,
+        .el-input-number,
+        .el-textarea {
+          width: 100% !important;
+        }
+
+        .el-radio-group {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .el-radio {
+            margin-right: 0 !important;
+          }
+        }
+      }
+    }
+
+    /* 菜单权限和数据权限区域 */
+    :deep(.flex.flex-row) {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 8px;
+
+      .el-checkbox {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-bottom: 4px;
+      }
+    }
+
+    /* Tree 树形控件 */
+    :deep(.el-tree) {
+      font-size: 13px;
+    }
+
+    :deep(.tree-border) {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    :deep(.el-scrollbar) {
+      max-height: 200px !important;
+    }
+
+    /* 选择框 */
+    :deep(.el-select) {
+      width: 100% !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    :deep(.el-dialog__body) {
+      padding: 12px;
+    }
+
+    :deep(.el-dialog__footer) {
+      padding: 10px 12px;
+      flex-direction: column;
+      gap: 8px;
+
+      .el-button {
+        width: 100% !important;
+      }
+    }
+
+    :deep(.el-form .el-form-item) {
+      margin-bottom: 12px;
+    }
+
+    :deep(.el-form .el-form-item__label) {
+      font-size: 12px !important;
+    }
+
+    :deep(.tree-border),
+    :deep(.el-scrollbar) {
+      max-height: 150px !important;
+    }
+
+    :deep(.flex.flex-row .el-checkbox) {
+      font-size: 12px;
+    }
+  }
+</style>
