@@ -227,7 +227,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, useTemplateRef, onMounted } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import {
     AccessoriesEntity,
     addAccessories,
@@ -483,6 +483,12 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadSuppliers()
+    loadManufacturers()
+    loadLocations()
+    loadDepreciations()
     open.value = true
     dialogTitle.value = '添加配件'
   }
@@ -490,6 +496,12 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: AccessoriesEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadSuppliers()
+    loadManufacturers()
+    loadLocations()
+    loadDepreciations()
     if (row.id) {
       getAccessories(row.id).then((data: AccessoriesEntity) => {
         form.value = data
@@ -574,14 +586,6 @@
   const handleAllocate = (row: AccessoriesEntity) => {
     assignToDeviceModalRef.value?.open(row)
   }
-
-  onMounted(() => {
-    loadCategories()
-    loadSuppliers()
-    loadManufacturers()
-    loadLocations()
-    loadDepreciations()
-  })
 </script>
 
 <style scoped lang="scss"></style>

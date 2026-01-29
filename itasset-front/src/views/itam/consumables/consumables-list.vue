@@ -227,7 +227,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, ref, useTemplateRef } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import {
     addConsumables,
     collectConsumables,
@@ -435,6 +435,10 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadLocations()
+    loadManufacturers()
     open.value = true
     dialogTitle.value = '添加耗材'
   }
@@ -442,6 +446,10 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: ConsumablesEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadLocations()
+    loadManufacturers()
     if (row.id) {
       getConsumables(row.id).then((data: ConsumablesEntity) => {
         form.value = data
@@ -618,12 +626,6 @@
       }
     })
   }
-
-  onMounted(() => {
-    loadCategories()
-    loadLocations()
-    loadManufacturers()
-  })
 </script>
 
 <style scoped lang="scss"></style>
