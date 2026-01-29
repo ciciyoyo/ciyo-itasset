@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, useTemplateRef, onMounted } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import { addModels, delModels, exportModels, getModels, ModelsEntity, pageModels, updateModels } from '@/api/itam/models'
   import { listManufacturers } from '@/api/itam/manufacturers'
   import { listDepreciations } from '@/api/itam/depreciations'
@@ -353,6 +353,9 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadManufacturers()
+    loadDepreciations()
     open.value = true
     dialogTitle.value = '添加型号'
   }
@@ -360,6 +363,9 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: ModelsEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadManufacturers()
+    loadDepreciations()
     if (row.id) {
       getModels(row.id).then((data: ModelsEntity) => {
         form.value = {
@@ -438,12 +444,6 @@
       })
       .catch(() => {})
   }
-
-  // 组件挂载时加载选项数据
-  onMounted(() => {
-    loadManufacturers()
-    loadDepreciations()
-  })
 </script>
 
 <style scoped lang="scss">
