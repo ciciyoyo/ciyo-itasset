@@ -11,7 +11,7 @@ import java.io.InputStream;
 /**
  * Oss基础客户端
  *
- * @author : smalljop
+ * @author : codeck
  * @since : 2018-10-18 13:57
  **/
 public abstract class OssStorageService {

@@ -24,6 +24,12 @@
     "pleaseSelect": "Please select a file to import",
     "success": "Import Successful",
     "fail": "Import Failed",
-    "error": "Error occurred during upload"
+    "error": "Error occurred during upload",
+    "uploadSuccess": "File uploaded successfully, processing...",
+    "downloadTemplate": "Download Template",
+    "templateTip": "Please download the template first and fill in data according to the template format",
+    "downloadSuccess": "Template downloaded successfully",
+    "downloadError": "Template download failed, please retry",
+    "noTemplateUrl": "Template download URL or method not configured"
   }
 }

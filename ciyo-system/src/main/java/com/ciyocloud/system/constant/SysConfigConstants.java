@@ -3,7 +3,7 @@ package com.ciyocloud.system.constant;
 /**
  * 系统配置常量
  *
- * @author : smalljop
+ * @author : codeck
  */
 public interface SysConfigConstants {
 

@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * 邮件发送实现
  *
- * @author smalljop
+ * @author codeck
  */
 @Slf4j
 @UtilityClass

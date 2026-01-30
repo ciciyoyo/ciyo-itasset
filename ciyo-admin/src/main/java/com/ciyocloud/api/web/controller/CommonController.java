@@ -3,12 +3,14 @@ package com.ciyocloud.api.web.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.IdUtil;
-import com.ciyocloud.common.util.AsyncProcessUtils;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.storage.cloud.OssStorageFactory;
 import com.ciyocloud.storage.util.MimeTypeUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,7 +18,7 @@ import java.io.IOException;
 /**
  * 通用接口
  *
- * @author : smalljop
+ * @author : codeck
  * @description : 通用
  * @create :  2021/06/08 15:32
  **/
@@ -25,16 +27,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CommonController {
 
-
-    /**
-     * 获取异步处理进度
-     *
-     * @param key 唯一标识
-     */
-    @GetMapping("/process")
-    public Result getProcess(@RequestParam String key) {
-        return Result.success(AsyncProcessUtils.getProcess(key));
-    }
 
 
     /**

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author : smalljop
+ * @author : codeck
  * @description : 滑动验证码校验
  * @create : 2020-12-14 15:51
  **/

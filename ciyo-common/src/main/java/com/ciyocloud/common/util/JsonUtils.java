@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static cn.hutool.core.date.DatePattern.NORM_DATETIME_PATTERN;
  * @description: json工具类 使用jackson
  * @create: 2018-10-23 10:21
  **/
+@Slf4j
 public class JsonUtils {
 
     private final static ObjectMapper objectMapper = new ObjectMapper();
@@ -61,7 +63,7 @@ public class JsonUtils {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error("json转换异常", e);
         }
         return null;
     }
