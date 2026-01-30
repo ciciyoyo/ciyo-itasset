@@ -5,7 +5,7 @@ import com.ciyocloud.message.entity.MsgSendResult;
 import java.util.Map;
 
 /**
- * @author : smalljop
+ * @author : codeck
  * @description : 短信服务
  * @create : 2020-12-15 10:30
  **/

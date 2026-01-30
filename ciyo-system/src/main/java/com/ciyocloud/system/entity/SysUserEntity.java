@@ -10,6 +10,7 @@ import com.ciyocloud.common.jackson.LongToStringSerializer;
 import com.ciyocloud.common.mybatis.handler.JacksonTypeHandler;
 import com.ciyocloud.excel.annotation.ExcelDictFormat;
 import com.ciyocloud.excel.annotation.ExcelPropertyType;
+import com.ciyocloud.excel.annotation.ExcelTemplate;
 import com.ciyocloud.excel.convert.ExcelDictConvert;
 import com.ciyocloud.excel.convert.ExcelLongListConvert;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,6 +33,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @TableName(value = "sys_user", autoResultMap = true)
+@ExcelTemplate(code = "sysUser", sheetName = "用户导入模板")
 public class SysUserEntity extends SysBaseEntity {
 
     /**

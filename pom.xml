@@ -47,7 +47,7 @@
         <weixin-java.version>4.8.0-20260110.142351</weixin-java.version>
         <captcha.version>1.3.0</captcha.version>
         <jwt.version>0.13.0</jwt.version>
-        <satoken.version>1.42.0</satoken.version>
+        <satoken.version>1.44.0</satoken.version>
         <poi.version>5.5.1</poi.version>
         <alibaba-ttl.version>2.14.5</alibaba-ttl.version>
         <zxing.version>3.5.3</zxing.version>

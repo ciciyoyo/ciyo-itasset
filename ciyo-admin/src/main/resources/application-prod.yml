@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.6:3306/ciyo-crm?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&tinyInt1isBit=false&nullCatalogMeansCurrent=true
+    url: jdbc:mysql://127.0.0.1:3306/ciyo-itam?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&tinyInt1isBit=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: root
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 5

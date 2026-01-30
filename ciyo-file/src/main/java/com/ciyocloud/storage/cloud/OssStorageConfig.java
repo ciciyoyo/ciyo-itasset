@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Oss配置
  *
- * @author : smalljop
+ * @author : codeck
  * @since : 2018-10-18 13:53
  **/
 @Data

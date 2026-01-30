@@ -24,6 +24,12 @@
     "pleaseSelect": "请选择要导入的文件",
     "success": "导入成功",
     "fail": "导入失败",
-    "error": "上传过程中发生错误"
+    "error": "上传过程中发生错误",
+    "uploadSuccess": "文件上传成功，开始处理...",
+    "downloadTemplate": "下载模板",
+    "templateTip": "请先下载模板，按照模板格式填写数据",
+    "downloadSuccess": "模板下载成功",
+    "downloadError": "模板下载失败，请重试",
+    "noTemplateUrl": "未配置模板下载地址或下载方法"
   }
 }

@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelTemplate;
 import com.ciyocloud.excel.convert.DictEnumConvert;
 import com.ciyocloud.itam.enums.DeviceStatus;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @TableName("itam_device")
 @ExcelIgnoreUnannotated
+@ExcelTemplate(code = "device", sheetName = "设备导入模板")
 public class DeviceEntity extends SysBaseEntity {
 
     private static final long serialVersionUID = 1L;

@@ -36,6 +36,17 @@
                 删除
               </el-button>
 
+              <ExcelImport
+                url="/itam/manufacturers/importData"
+                title="厂商数据导入"
+                templateCode="manufacturer"
+                v-hasPermi="['itam:manufacturers:import']"
+              >
+                <template #trigger>
+                  <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>
+                </template>
+              </ExcelImport>
+
               <el-button v-hasPermi="['itam:manufacturers:export']" icon="ele-Download" v-ripple @click="handleExport">
                 导出
               </el-button>
@@ -152,6 +163,7 @@
   import { MessageUtil } from '@/utils/messageUtil'
   import { download, resetFormRef } from '@/utils/business'
   import ImageUpload from '@/components/business/image-upload/index.vue'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
 
   defineOptions({
     name: 'manufacturers'
@@ -370,5 +382,24 @@
 <style scoped lang="scss">
   .log-page {
     padding: 16px;
+  }
+
+  .import-description-content {
+    color: #606266;
+    line-height: 1.6;
+
+    ol {
+      margin: 8px 0;
+      padding-left: 20px;
+
+      li {
+        margin: 4px 0;
+        color: #606266;
+      }
+    }
+
+    p {
+      margin: 8px 0;
+    }
   }
 </style>

@@ -2,7 +2,7 @@ package com.ciyocloud.common.constant;
 
 /**
  * @description: 响应状态码
- * @author: smalljop
+ * @author: codeck
  * @create: 2020-02-10 15:46
  **/
 public interface ResponseCodeConstants {

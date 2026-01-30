@@ -2,7 +2,7 @@ package com.ciyocloud.common.constant;
 
 /**
  * @description: 文件路径常量
- * @author: smalljop
+ * @author: codeck
  * @create: 2020-02-19 14:40
  **/
 public interface StorageConstants {
