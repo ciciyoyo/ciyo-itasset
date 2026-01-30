@@ -226,7 +226,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, ref, useTemplateRef } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import {
     addLicenses,
     delLicenses,
@@ -471,6 +471,10 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadManufacturers()
+    loadSuppliers()
     open.value = true
     dialogTitle.value = '添加软件'
   }
@@ -478,6 +482,10 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: LicensesEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadCategories()
+    loadManufacturers()
+    loadSuppliers()
     if (row.id) {
       getLicenses(row.id).then((data: LicensesEntity) => {
         form.value = data
@@ -560,12 +568,6 @@
       })
       .catch(() => {})
   }
-
-  onMounted(() => {
-    loadCategories()
-    loadManufacturers()
-    loadSuppliers()
-  })
 </script>
 
 <style scoped lang="scss"></style>

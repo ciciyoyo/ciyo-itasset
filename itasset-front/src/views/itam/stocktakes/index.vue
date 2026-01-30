@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, useTemplateRef, onMounted } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import {
     addStocktakes,
     delStocktakes,
@@ -346,6 +346,8 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadLocations()
     open.value = true
     dialogTitle.value = '添加盘点任务'
     // 加载默认类型的分类
@@ -360,6 +362,8 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: StocktakesEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadLocations()
     if (row.id) {
       getStocktakes(row.id).then((data: StocktakesEntity) => {
         // 赋值时添加前端专用字段
@@ -455,12 +459,6 @@
       categoryOptions.value = []
     }
   }
-
-  // 组件挂载时加载位置数据
-  onMounted(() => {
-    loadLocations()
-    // 不需要在挂载时加载分类，会在打开对话框时加载
-  })
 </script>
 
 <style scoped lang="scss">

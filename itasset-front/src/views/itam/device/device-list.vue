@@ -275,7 +275,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, useTemplateRef, onMounted } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import { useRouter } from 'vue-router'
   import {
     addDevice,
@@ -569,6 +569,12 @@
   /** 新增按钮操作 */
   const handleAdd = () => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadSuppliers()
+    loadLocations()
+    loadDepreciations()
+    loadModels()
+    loadCategories()
     open.value = true
     dialogTitle.value = '添加设备'
   }
@@ -576,6 +582,12 @@
   /** 修改按钮操作 */
   const handleUpdate = (row: DeviceEntity) => {
     reset()
+    // 重新加载下拉选项数据，确保数据是最新的
+    loadSuppliers()
+    loadLocations()
+    loadDepreciations()
+    loadModels()
+    loadCategories()
     if (row.id) {
       getDevice(row.id).then((data: DeviceEntity) => {
         form.value = data
@@ -695,15 +707,6 @@
       console.error('批量打印失败:', error)
     }
   }
-
-  // 组件挂载时加载选项数据
-  onMounted(() => {
-    loadSuppliers()
-    loadLocations()
-    loadDepreciations()
-    loadModels()
-    loadCategories()
-  })
 </script>
 
 <style scoped lang="scss">
