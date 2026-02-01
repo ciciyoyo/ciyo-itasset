@@ -63,13 +63,13 @@ public class SseConnectionManager {
     /**
      * 创建 SSE 连接（本地+分布式注册）
      *
-     * @param userId      用户ID
-     * @param progressKey 进度键
+     * @param userId   用户ID
+     * @param platform 平台标识
      * @return SSE连接对象
      * @throws RuntimeException 连接创建失败时抛出
      */
-    public SseEmitter createConnection(String userId, String progressKey) {
-        var key = buildConnectionKey(userId, progressKey);
+    public SseEmitter createConnection(String userId, String platform) {
+        var key = buildConnectionKey(userId, platform);
 
         try {
             // 1. 如果已存在本地连接，先关闭旧连接
@@ -79,13 +79,13 @@ public class SseConnectionManager {
             var emitter = new SseEmitter(SseConstants.SSE_TIMEOUT_MILLIS);
 
             // 3. 设置连接回调并存储连接
-            setupEmitterAndStore(emitter, userId, progressKey, key);
+            setupEmitterAndStore(emitter, userId, platform, key);
 
-            logConnectionSuccess(userId, progressKey);
+            logConnectionSuccess(userId, platform);
             return emitter;
         } catch (Exception e) {
-            log.error("创建SSE连接失败: userId={}, progressKey={}", userId, progressKey, e);
-            cleanup(userId, progressKey);
+            log.error("创建SSE连接失败: userId={}, platform={}", userId, platform, e);
+            cleanup(userId, platform);
             throw new RuntimeException("创建SSE连接失败: " + e.getMessage(), e);
         }
     }
@@ -94,45 +94,45 @@ public class SseConnectionManager {
     /**
      * 发送事件到指定本地连接
      *
-     * @param userId      用户ID
-     * @param progressKey 进度键
-     * @param event       事件对象
+     * @param userId   用户ID
+     * @param platform 平台标识
+     * @param event    事件对象
      * @return 发送是否成功
      */
-    public boolean sendLocalEvent(String userId, String progressKey, SseEvent event) {
-        var key = buildConnectionKey(userId, progressKey);
+    public boolean sendLocalEvent(String userId, String platform, SseEvent event) {
+        var key = buildConnectionKey(userId, platform);
         var emitter = connections.get(key);
 
         if (emitter == null) {
-            log.warn("本地SSE连接不存在: userId={}, progressKey={}", userId, progressKey);
+            log.warn("本地SSE连接不存在: userId={}, platform={}", userId, platform);
             return false;
         }
 
         // 使用重试机制发送事件
-        return sendEventWithRetry(key, emitter, event, userId, progressKey);
+        return sendEventWithRetry(key, emitter, event, userId, platform);
     }
 
     /**
      * 关闭连接
      *
-     * @param userId      用户ID
-     * @param progressKey 进度键
+     * @param userId   用户ID
+     * @param platform 平台标识
      */
-    public void closeConnection(String userId, String progressKey) {
-        cleanup(userId, progressKey);
-        log.info("关闭SSE连接: userId={}, progressKey={}", userId, progressKey);
+    public void closeConnection(String userId, String platform) {
+        cleanup(userId, platform);
+        log.info("关闭SSE连接: userId={}, platform={}", userId, platform);
     }
 
 
     /**
      * 检查本地连接是否存在
      *
-     * @param userId      用户ID
-     * @param progressKey 进度键
+     * @param userId   用户ID
+     * @param platform 平台标识
      * @return true 如果连接存在
      */
-    public boolean hasLocalConnection(String userId, String progressKey) {
-        return connections.containsKey(buildConnectionKey(userId, progressKey));
+    public boolean hasLocalConnection(String userId, String platform) {
+        return connections.containsKey(buildConnectionKey(userId, platform));
     }
 
     /**
@@ -148,28 +148,28 @@ public class SseConnectionManager {
     /**
      * 记录连接成功日志
      */
-    private void logConnectionSuccess(String userId, String progressKey) {
-        log.info("创建SSE连接成功: userId={}, progressKey={}, node={}, 当前连接数={}", userId, progressKey, "local-node", connections.size());
+    private void logConnectionSuccess(String userId, String platform) {
+        log.info("创建SSE连接成功: userId={}, platform={}, node={}, 当前连接数={}", userId, platform, "local-node", connections.size());
     }
 
 
     /**
      * 清理连接资源
      */
-    private void cleanup(String userId, String progressKey) {
+    private void cleanup(String userId, String platform) {
         try {
             // 关闭本地连接
-            closeLocalConnection(buildConnectionKey(userId, progressKey));
+            closeLocalConnection(buildConnectionKey(userId, platform));
         } catch (Exception e) {
-            log.error("清理连接资源失败: userId={}, progressKey={}", userId, progressKey, e);
+            log.error("清理连接资源失败: userId={}, platform={}", userId, platform, e);
         }
     }
 
     /**
      * 设置 SSE Emitter 回调
      */
-    private void setupEmitterCallbacks(SseEmitter emitter, String userId, String progressKey) {
-        var key = buildConnectionKey(userId, progressKey);
+    private void setupEmitterCallbacks(SseEmitter emitter, String userId, String platform) {
+        var key = buildConnectionKey(userId, platform);
 
         // 统一的清理逻辑
         Runnable cleanup = () -> {
@@ -177,17 +177,17 @@ public class SseConnectionManager {
         };
 
         emitter.onCompletion(() -> {
-            log.debug("SSE连接完成: userId={}, progressKey={}", userId, progressKey);
+            log.debug("SSE连接完成: userId={}, platform={}", userId, platform);
             cleanup.run();
         });
 
         emitter.onTimeout(() -> {
-            log.debug("SSE连接超时: userId={}, progressKey={}", userId, progressKey);
+            log.debug("SSE连接超时: userId={}, platform={}", userId, platform);
             cleanup.run();
         });
 
         emitter.onError(throwable -> {
-            log.error("SSE连接错误: userId={}, progressKey={}", userId, progressKey, throwable);
+            log.error("SSE连接错误: userId={}, platform={}", userId, platform, throwable);
             cleanup.run();
         });
     }
@@ -195,13 +195,13 @@ public class SseConnectionManager {
     /**
      * 发送连接成功事件
      */
-    private void sendConnectionSuccessEvent(SseEmitter emitter, String userId, String progressKey) {
+    private void sendConnectionSuccessEvent(SseEmitter emitter, String userId, String platform) {
         try {
             emitter.send(SseEmitter.event().id(String.valueOf(System.currentTimeMillis())).name("connected").data("SSE连接建立成功").reconnectTime(SseConstants.DEFAULT_RECONNECT_TIME));
-            log.debug("发送连接成功事件成功: userId={}, progressKey={}", userId, progressKey);
+            log.debug("发送连接成功事件成功: userId={}, platform={}", userId, platform);
         } catch (IOException e) {
             // 发送连接成功事件失败不应该导致连接创建失败，只记录警告日志
-            log.warn("发送连接成功事件失败: userId={}, progressKey={}, 但连接仍然有效", userId, progressKey, e);
+            log.warn("发送连接成功事件失败: userId={}, platform={}, 但连接仍然有效", userId, platform, e);
         }
     }
 
@@ -230,10 +230,10 @@ public class SseConnectionManager {
     }
 
     /**
-     * 构建连接键
+     * 构建连接键 (userId:platform)
      */
-    private String buildConnectionKey(String userId, String progressKey) {
-        return userId + ":" + progressKey;
+    private String buildConnectionKey(String userId, String platform) {
+        return userId + ":" + platform;
     }
 
 
@@ -256,17 +256,17 @@ public class SseConnectionManager {
     /**
      * 设置 Emitter 并存储连接
      */
-    private void setupEmitterAndStore(SseEmitter emitter, String userId, String progressKey, String key) {
-        setupEmitterCallbacks(emitter, userId, progressKey);
+    private void setupEmitterAndStore(SseEmitter emitter, String userId, String platform, String key) {
+        setupEmitterCallbacks(emitter, userId, platform);
         connections.put(key, emitter);
-        sendConnectionSuccessEvent(emitter, userId, progressKey);
+        sendConnectionSuccessEvent(emitter, userId, platform);
     }
 
     /**
      * 创建事件构建器
      */
     private SseEmitter.SseEventBuilder createEventBuilder(SseEvent event) {
-        var eventData = JsonUtils.objToJson(event.getData());
+        var eventData = JsonUtils.objToJson(event);
         var eventBuilder = SseEmitter.event().id(event.getId()).name(event.getEvent()).data(eventData, MediaType.APPLICATION_JSON);
 
         return event.getRetry() != null ? eventBuilder.reconnectTime(event.getRetry()) : eventBuilder;
@@ -306,7 +306,7 @@ public class SseConnectionManager {
 
             } catch (IOException | IllegalStateException e) {
                 health.incrementFailures();
-                log.warn("发送心跳失败，连接: {}，连续失败次数: {}", key, health.getConsecutiveFailures());
+                log.debug("发送心跳失败，连接: {}，连续失败次数: {}", key, health.getConsecutiveFailures());
 
                 // 只有连续失败次数超过阈值才移除连接
                 if (health.getConsecutiveFailures() >= MAX_RETRY_COUNT) {
@@ -333,7 +333,7 @@ public class SseConnectionManager {
     /**
      * 带重试机制的事件发送
      */
-    private boolean sendEventWithRetry(String key, SseEmitter emitter, SseEvent event, String userId, String progressKey) {
+    private boolean sendEventWithRetry(String key, SseEmitter emitter, SseEvent event, String userId, String platform) {
         ConnectionHealth health = connectionHealthMap.computeIfAbsent(key, k -> new ConnectionHealth());
 
         for (int attempt = 1; attempt <= MAX_RETRY_COUNT; attempt++) {
@@ -347,18 +347,18 @@ public class SseConnectionManager {
                 }
                 health.resetFailures();
 
-                log.debug("发送SSE事件成功: userId={}, progressKey={}, event={}, attempt={}", userId, progressKey, event.getEvent(), attempt);
+                log.debug("发送SSE事件成功: userId={}, platform={}, event={}, progressKey={}, attempt={}", userId, platform, event.getEvent(), event.getProgressKey(), attempt);
                 return true;
 
             } catch (IllegalStateException e) {
-                log.warn("发送SSE事件失败: userId={}, progressKey={}, 连接已关闭", userId, progressKey, e);
+                log.warn("发送SSE事件失败: userId={}, platform={}, 连接已关闭", userId, platform, e);
                 removeLocalConnection(key);
                 connectionHealthMap.remove(key);
                 return false;
             } catch (IOException e) {
                 health.incrementFailures();
-                log.warn("发送SSE事件失败: userId={}, progressKey={}, attempt={}/{}, 连续失败次数={}",
-                        userId, progressKey, attempt, MAX_RETRY_COUNT, health.getConsecutiveFailures(), e);
+                log.warn("发送SSE事件失败: userId={}, platform={}, attempt={}/{}, 连续失败次数={}",
+                        userId, platform, attempt, MAX_RETRY_COUNT, health.getConsecutiveFailures(), e);
 
                 // 如果不是最后一次尝试，等待后重试
                 if (attempt < MAX_RETRY_COUNT) {
@@ -377,7 +377,7 @@ public class SseConnectionManager {
                     }
                 }
             } catch (Exception e) {
-                log.error("序列化事件数据失败: userId={}, progressKey={}", userId, progressKey, e);
+                log.error("序列化事件数据失败: userId={}, platform={}", userId, platform, e);
                 return false;
             }
         }

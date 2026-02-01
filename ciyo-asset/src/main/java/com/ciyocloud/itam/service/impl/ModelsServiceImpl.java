@@ -6,13 +6,18 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
+import com.ciyocloud.common.sse.util.SseAsyncProcessUtils;
+import com.ciyocloud.excel.util.ExcelUtils;
 import com.ciyocloud.itam.entity.ModelsEntity;
+import com.ciyocloud.itam.listener.ModelsImportListener;
 import com.ciyocloud.itam.mapper.ModelsMapper;
 import com.ciyocloud.itam.service.ModelsService;
 import com.ciyocloud.itam.vo.ModelsVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -21,8 +26,9 @@ import java.util.List;
  * @author codeck
  * @since 2026-01-01
  */
+@Slf4j
 @Service
-public class ModelsServiceImpl extends ServiceImpl<ModelsMapper, ModelsEntity> implements ModelsService {
+public class ModelsServiceImpl extends BaseServiceImpl<ModelsMapper, ModelsEntity> implements ModelsService {
 
     @Override
     public Page<ModelsVO> selectPageVo(IPage<ModelsVO> page, Wrapper<ModelsEntity> queryWrapper) {
@@ -111,5 +117,26 @@ public class ModelsServiceImpl extends ServiceImpl<ModelsMapper, ModelsEntity> i
 
         // 主表字段
         return "t1." + underlineColumn;
+    }
+
+    @Override
+    public void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId) {
+        try {
+            log.info("开始导入型号数据，progressKey: {}, userId: {}, 文件名: {}", progressKey, userId, originalFilename);
+
+            // 初始化进度
+            SseAsyncProcessUtils.setTips("正在解析Excel文件...");
+
+            // 创建支持SSE进度推送的导入监听器
+            ModelsImportListener listener = new ModelsImportListener(progressKey, userId);
+            // 更新进度：开始导入
+            SseAsyncProcessUtils.setProcess(0, "开始导入型号数据...");
+            //执行导入
+            ExcelUtils.importExcel(inputStream, ModelsVO.class, listener);
+        } catch (Exception e) {
+            log.error("型号数据导入失败，progressKey: {}, 错误: {}", progressKey, e.getMessage(), e);
+            SseAsyncProcessUtils.setError("导入失败: " + e.getMessage());
+            throw e;
+        }
     }
 }

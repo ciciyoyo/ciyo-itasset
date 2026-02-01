@@ -5,7 +5,9 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.StocktakeItemStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -51,6 +53,7 @@ public class StocktakeItemsEntity extends SysBaseEntity {
      */
     @NotNull(message = "盘点结果不能为空")
     @ExcelProperty(value = "盘点结果", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private StocktakeItemStatus status;
     /**
      * 执行盘点的人员

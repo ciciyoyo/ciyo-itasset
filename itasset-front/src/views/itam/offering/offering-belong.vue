@@ -52,7 +52,6 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue'
-  import { unbindAsset } from '@/api/itam/offering'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { useTable } from '@/hooks/core/useTable'
 
@@ -61,6 +60,7 @@
 
   import { AllocationsVO, exportAllocations, pageAllocations } from '@/api/itam/allocations'
   import { AssetType } from '@/api/itam/enums'
+  import { unbindAsset } from '@/api/itam/offering'
 
   defineOptions({
     name: 'offering'
@@ -73,15 +73,10 @@
   const selectedRows = ref<AllocationsVO[]>([])
 
   const searchForm = ref({
-    id: undefined,
     itemType: AssetType.SERVICE,
     itemId: undefined,
-    ownerType: undefined,
-    ownerId: undefined,
     quantity: undefined,
     status: 'active',
-    assignDate: undefined,
-    returnDate: undefined,
     note: undefined
   })
 
@@ -153,7 +148,7 @@
       type: 'warning'
     }).then(async () => {
       try {
-        await unbindAsset({ id: row.itemId })
+        await unbindAsset({ id: row.id })
         ElMessage.success('解除关联成功')
         getData()
       } catch (e) {

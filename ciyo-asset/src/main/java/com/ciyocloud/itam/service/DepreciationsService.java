@@ -1,6 +1,6 @@
 package com.ciyocloud.itam.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.DepreciationsEntity;
 
 /**
@@ -9,6 +9,6 @@ import com.ciyocloud.itam.entity.DepreciationsEntity;
  * @author codeck
  * @since 2025-12-29 15:58:21
  */
-public interface DepreciationsService extends IService<DepreciationsEntity> {
+public interface DepreciationsService extends BaseService<DepreciationsEntity> {
 
 }

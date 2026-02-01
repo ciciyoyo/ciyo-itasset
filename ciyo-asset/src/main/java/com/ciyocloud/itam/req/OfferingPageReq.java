@@ -1,6 +1,5 @@
 package com.ciyocloud.itam.req;
 
-import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.OfferingStatus;
 import lombok.Data;
 
@@ -31,15 +30,7 @@ public class OfferingPageReq implements Serializable {
      */
     private OfferingStatus offeringStatus;
 
-    /**
-     * 关联类型
-     */
-    private AssetType targetType;
 
-    /**
-     * 关联目标 ID
-     */
-    private Long targetId;
 
     /**
      * 供应商 ID

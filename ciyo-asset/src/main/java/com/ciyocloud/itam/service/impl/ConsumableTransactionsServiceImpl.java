@@ -3,7 +3,7 @@ package com.ciyocloud.itam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.ConsumableTransactionsEntity;
 import com.ciyocloud.itam.mapper.ConsumableTransactionsMapper;
 import com.ciyocloud.itam.service.ConsumableTransactionsService;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class ConsumableTransactionsServiceImpl extends ServiceImpl<ConsumableTransactionsMapper, ConsumableTransactionsEntity> implements ConsumableTransactionsService {
+public class ConsumableTransactionsServiceImpl extends BaseServiceImpl<ConsumableTransactionsMapper, ConsumableTransactionsEntity> implements ConsumableTransactionsService {
 
     @Override
     public Page<ConsumableTransactionsVO> queryPageVo(Page<ConsumableTransactionsEntity> page, ConsumableTransactionsEntity transaction) {

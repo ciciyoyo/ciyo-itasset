@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 资产报表统计 Service 实现类
@@ -51,6 +52,7 @@ public class AssetsReportServiceImpl implements AssetsReportService {
         List<AssetsReportVO> result = new ArrayList<>();
 
         for (Map<String, Object> map : list) {
+            if (map == null) continue;
             AssetsReportVO vo = new AssetsReportVO();
             vo.setStatsMonth(getStringValue(map, "stats_month"));
 
@@ -88,7 +90,7 @@ public class AssetsReportServiceImpl implements AssetsReportService {
         QueryWrapper<AssetsMonthlyStatsEntity> latestMonthQuery = new QueryWrapper<>();
         latestMonthQuery.select("MAX(stats_month) as latestMonth");
         Map<String, Object> latestMonthMap = assetsMonthlyStatsMapper.selectMaps(latestMonthQuery)
-                .stream().findFirst().orElse(null);
+                .stream().filter(Objects::nonNull).findFirst().orElse(null);
 
         Object latestMonthObj = null;
         if (latestMonthMap != null) {
@@ -111,6 +113,7 @@ public class AssetsReportServiceImpl implements AssetsReportService {
         List<AssetsReportVO> result = new ArrayList<>();
 
         for (Map<String, Object> map : list) {
+            if (map == null) continue;
             AssetsReportVO vo = new AssetsReportVO();
             vo.setStatsMonth(latestMonth);
 
@@ -191,17 +194,17 @@ public class AssetsReportServiceImpl implements AssetsReportService {
         QueryWrapper<AssetsMonthlyStatsEntity> latestMonthQuery = new QueryWrapper<>();
         latestMonthQuery.select("MAX(stats_month) as latestMonth");
         Map<String, Object> latestMonthMap = assetsMonthlyStatsMapper.selectMaps(latestMonthQuery)
-                .stream().findFirst().orElse(null);
+                .stream().filter(Objects::nonNull).findFirst().orElse(null);
 
         if (latestMonthMap != null) {
             Object latestMonthObj = getValueCaseInsensitive(latestMonthMap, "latestMonth");
             if (latestMonthObj != null) {
                 String latestMonth = latestMonthObj.toString();
                 QueryWrapper<AssetsMonthlyStatsEntity> sumQuery = new QueryWrapper<>();
-                sumQuery.select("SUM(current_value) as totalAmount")
+                sumQuery.select("COALESCE(SUM(current_value), 0) as totalAmount")
                         .eq("stats_month", latestMonth);
                 Map<String, Object> sumMap = assetsMonthlyStatsMapper.selectMaps(sumQuery)
-                        .stream().findFirst().orElse(null);
+                        .stream().filter(Objects::nonNull).findFirst().orElse(null);
                 if (sumMap != null) {
                     summary.setTotalAssetAmount(getBigDecimalValue(sumMap, "totalAmount"));
                 }
@@ -215,15 +218,15 @@ public class AssetsReportServiceImpl implements AssetsReportService {
 
         // 总软件 (许可证) 数 - 统计总授权数
         QueryWrapper<LicensesEntity> licenseQuery = new QueryWrapper<>();
-        licenseQuery.select("SUM(total_seats) as total").eq("deleted", 0);
-        Map<String, Object> licenseMap = licensesMapper.selectMaps(licenseQuery).stream().findFirst().orElse(null);
+        licenseQuery.select("COALESCE(SUM(total_seats), 0) as total").eq("deleted", 0);
+        Map<String, Object> licenseMap = licensesMapper.selectMaps(licenseQuery).stream().filter(Objects::nonNull).findFirst().orElse(null);
         Long software = getLongValue(licenseMap, "total");
         summary.setTotalSoftware(software);
 
         // 总配件数 - 统计数量
         QueryWrapper<AccessoriesEntity> accessoriesQuery = new QueryWrapper<>();
-        accessoriesQuery.select("SUM(quantity) as total").eq("deleted", 0);
-        Map<String, Object> accessoriesMap = accessoriesMapper.selectMaps(accessoriesQuery).stream().findFirst().orElse(null);
+        accessoriesQuery.select("COALESCE(SUM(quantity), 0) as total").eq("deleted", 0);
+        Map<String, Object> accessoriesMap = accessoriesMapper.selectMaps(accessoriesQuery).stream().filter(Objects::nonNull).findFirst().orElse(null);
         Long accessories = getLongValue(accessoriesMap, "total");
         summary.setTotalAccessories(accessories);
 
@@ -233,8 +236,8 @@ public class AssetsReportServiceImpl implements AssetsReportService {
 
         // 总耗材数 - 统计当前库存数量
         QueryWrapper<ConsumablesEntity> consumablesQuery = new QueryWrapper<>();
-        consumablesQuery.select("SUM(quantity) as total").eq("deleted", 0);
-        Map<String, Object> consumablesMap = consumablesMapper.selectMaps(consumablesQuery).stream().findFirst().orElse(null);
+        consumablesQuery.select("COALESCE(SUM(quantity), 0) as total").eq("deleted", 0);
+        Map<String, Object> consumablesMap = consumablesMapper.selectMaps(consumablesQuery).stream().filter(Objects::nonNull).findFirst().orElse(null);
         Long consumables = getLongValue(consumablesMap, "total");
         summary.setTotalConsumables(consumables);
 
@@ -260,7 +263,7 @@ public class AssetsReportServiceImpl implements AssetsReportService {
         latestMonthQuery.select("MAX(stats_month) as latestMonth")
                 .eq("assets_type", assetsType.getCode());
         Map<String, Object> latestMonthMap = assetsMonthlyStatsMapper.selectMaps(latestMonthQuery)
-                .stream().findFirst().orElse(null);
+                .stream().filter(Objects::nonNull).findFirst().orElse(null);
 
         if (latestMonthMap == null) {
             return BigDecimal.ZERO;
@@ -275,12 +278,12 @@ public class AssetsReportServiceImpl implements AssetsReportService {
 
         // 2. 统计该月份下该类型的总价值
         QueryWrapper<AssetsMonthlyStatsEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("SUM(current_value) as totalValue")
+        queryWrapper.select("COALESCE(SUM(current_value), 0) as totalValue")
                 .eq("stats_month", latestMonth)
                 .eq("assets_type", assetsType.getCode());
 
         Map<String, Object> resultMap = assetsMonthlyStatsMapper.selectMaps(queryWrapper)
-                .stream().findFirst().orElse(null);
+                .stream().filter(Objects::nonNull).findFirst().orElse(null);
 
         return getBigDecimalValue(resultMap, "totalValue");
     }
@@ -310,6 +313,9 @@ public class AssetsReportServiceImpl implements AssetsReportService {
     }
 
     private Object getValueCaseInsensitive(Map<String, Object> map, String key) {
+        if (map == null) {
+            return null;
+        }
         if (map.containsKey(key)) {
             return map.get(key);
         }

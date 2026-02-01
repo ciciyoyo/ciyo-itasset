@@ -4,7 +4,9 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AllocationStatus;
 import com.ciyocloud.itam.enums.AssetType;
@@ -40,6 +42,7 @@ public class AllocationsEntity extends SysBaseEntity {
      */
     @NotNull(message = "资源类型不能为空")
     @ExcelProperty(value = "资源类型", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AssetType itemType;
 
     /**
@@ -54,6 +57,7 @@ public class AllocationsEntity extends SysBaseEntity {
      */
     @NotNull(message = "归属者类型不能为空")
     @ExcelProperty(value = "归属者类型", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AllocationOwnerType ownerType;
 
     /**
@@ -74,6 +78,7 @@ public class AllocationsEntity extends SysBaseEntity {
      * 状态 (reserved:预约/规划, active:占用中, returned:已归还)
      */
     @ExcelProperty(value = "状态", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AllocationStatus status;
 
     /**

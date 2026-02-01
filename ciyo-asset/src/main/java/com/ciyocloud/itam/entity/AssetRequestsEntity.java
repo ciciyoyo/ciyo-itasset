@@ -4,7 +4,9 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.AssetRequestStatus;
 import com.ciyocloud.itam.enums.AssetType;
 import jakarta.validation.constraints.NotNull;
@@ -51,6 +53,7 @@ public class AssetRequestsEntity extends SysBaseEntity {
      */
     @NotNull(message = "资产类型不能为空")
     @ExcelProperty(value = "资产类型", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AssetType itemType;
 
     /**
@@ -94,6 +97,7 @@ public class AssetRequestsEntity extends SysBaseEntity {
      * 状态 (pending, approved, rejected, canceled)
      */
     @ExcelProperty(value = "状态", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AssetRequestStatus status;
 
     /**

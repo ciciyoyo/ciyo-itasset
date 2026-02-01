@@ -9,6 +9,7 @@ import com.ciyocloud.common.exception.AuthorizationException;
 import com.ciyocloud.common.exception.BaseException;
 import com.ciyocloud.common.exception.PromptException;
 import com.ciyocloud.common.util.ExceptionNotifyUtils;
+import com.ciyocloud.common.util.ResponseUtils;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.common.util.SpringContextUtils;
 import com.ciyocloud.idempotent.exception.RepeatSubmitException;
@@ -16,6 +17,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -40,6 +42,20 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class BaseExceptionHandler {
+    @Value("${platform.api-prefix:/api}")
+    private String apiPrefix;
+
+    /**
+     * 判断是否为 SSE 请求
+     * SSE 请求不能返回 JSON Result 对象
+     */
+    private boolean isSseRequest(HttpServletRequest request) {
+        if (request == null) {
+            return false;
+        }
+        String accept = request.getHeader("Accept");
+        return accept != null && accept.contains("text/event-stream");
+    }
 
     // =================================== Sa-Token 认证鉴权异常 ===================================
 
@@ -47,8 +63,15 @@ public class BaseExceptionHandler {
      * Sa-Token 未登录异常处理
      */
     @ExceptionHandler(NotLoginException.class)
-    public Result<?> handleNotLoginException(NotLoginException e) {
+    public Result<?> handleNotLoginException(NotLoginException e, HttpServletRequest request) {
         log.warn("NotLoginException: {}", e.getMessage());
+
+        // SSE 请求不能返回 Result
+        if (isSseRequest(request)) {
+            log.warn("SSE 请求认证失败，无法返回 Result 对象");
+            return null;
+        }
+
         String message;
         switch (e.getType()) {
             case NotLoginException.NOT_TOKEN:
@@ -76,8 +99,15 @@ public class BaseExceptionHandler {
      * Sa-Token 权限不足异常处理
      */
     @ExceptionHandler(NotPermissionException.class)
-    public Result<?> handleNotPermissionException(NotPermissionException e) {
+    public Result<?> handleNotPermissionException(NotPermissionException e, HttpServletRequest request) {
         log.warn("NotPermissionException: {}", e.getMessage());
+
+        // SSE 请求不能返回 Result
+        if (isSseRequest(request)) {
+            log.warn("SSE 请求权限不足，无法返回 Result 对象");
+            return null;
+        }
+
         return Result.failed(ResponseCodeConstants.FORBIDDEN, "权限不足，无法访问");
     }
 
@@ -105,8 +135,15 @@ public class BaseExceptionHandler {
      * 基础业务异常 & 提示型异常
      */
     @ExceptionHandler({BaseException.class, PromptException.class})
-    public Result<?> handleBaseException(BaseException e) {
+    public Result<?> handleBaseException(BaseException e, HttpServletRequest request) {
         log.info("BusinessException: code={}, msg={}", e.getCode(), e.getMessage());
+
+        // SSE 请求不能返回 Result
+        if (isSseRequest(request)) {
+            log.warn("SSE 请求业务异常，无法返回 Result 对象");
+            return null;
+        }
+
         return Result.restResult(null, e.getCode(), e.getMessage());
     }
 
@@ -201,6 +238,9 @@ public class BaseExceptionHandler {
 
     @ExceptionHandler(NoResourceFoundException.class)
     public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getRequestURI().startsWith(apiPrefix)) {
+            ResponseUtils.outHttpJson(response, Result.success());
+        }
         // 转发到 index.html，保持 URL 不变，支持 SPA 路由
         request.getRequestDispatcher("/index.html").forward(request, response);
     }
@@ -211,8 +251,17 @@ public class BaseExceptionHandler {
      * 全局未知异常
      */
     @ExceptionHandler(Exception.class)
-    public Result<?> handleException(Exception e) {
+    public Result<?> handleException(Exception e, HttpServletRequest request) {
         log.error("Unhandled Exception: {}", e.getMessage(), e);
+
+        // 检测是否为 SSE 请求，SSE 请求不能返回 Result
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("text/event-stream")) {
+            log.warn("SSE 请求异常，无法返回 Result 对象: {}", e.getMessage());
+            // SSE 请求异常时返回 null，让连接自然关闭
+            return null;
+        }
+
         // 异步发送异常通知
         try {
             SpringContextUtils.getBean(ExceptionNotifyUtils.class).notify(e);

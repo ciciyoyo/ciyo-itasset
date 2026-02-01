@@ -3,12 +3,12 @@
     <!-- Trigger Slot -->
     <div @click="handleOpen" class="trigger-container">
       <slot name="trigger">
-        <el-button type="primary">{{ $t('components.excelImport.buttonText') }}</el-button>
+        <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>
       </slot>
     </div>
 
     <!-- Import Dialog -->
-    <el-dialog v-model="visible" :title="dialogTitle" :destroy-on-close="true" width="600px" append-to-body @close="handleClose">
+    <el-dialog v-model="visible" :title="dialogTitle" width="600px" append-to-body @close="handleClose">
       <div class="import-content">
         <!-- Template Download -->
         <div v-if="templateCode || templateDownloadFn" class="template-download">
@@ -24,7 +24,7 @@
           drag
           :action="actionUrl"
           :headers="headers"
-          :data="{ progressKey: progressKey }"
+          :data="uploadData"
           :limit="1"
           :on-exceed="handleExceed"
           :on-success="handleUploadSuccess"
@@ -58,6 +58,7 @@
             :show-details="true"
             :show-actions="true"
             @close="handleProgressClose"
+            @complete="handleProgressComplete"
           />
         </div>
       </div>
@@ -65,7 +66,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="visible = false">{{ $t('components.excelImport.cancel') }}</el-button>
-          <el-button type="primary" @click="submitUpload" :loading="uploading">
+          <el-button v-if="!importCompleted" type="primary" @click="submitUpload" :loading="uploading">
             {{ $t('components.excelImport.confirm') }}
           </el-button>
         </span>
@@ -84,6 +85,8 @@
   import { baseUrl } from '@/utils/auth'
   import SseProgressBar from '@/components/common/sse-progress-bar/index.vue'
   import { importTemplateDownlaod } from '@/api/common'
+  import { download } from '@/utils/business'
+  import { storeToRefs } from 'pinia'
 
   const { t } = useI18n()
 
@@ -94,12 +97,14 @@
     templateName?: string
     title?: string
     fileSize?: number
+    data?: Record<string, any>
   }
 
   const props = withDefaults(defineProps<Props>(), {
     templateName: 'template',
     title: '',
-    fileSize: 5
+    fileSize: 5,
+    data: () => ({})
   })
 
   // Emits
@@ -110,7 +115,7 @@
 
   // Store
   const userStore = useUserStore()
-
+  const { info } = storeToRefs(userStore)
   // State
   const visible = ref(false)
   const uploadRef = ref<UploadInstance>()
@@ -120,23 +125,33 @@
 
   // SSE Progress State
   const showProgress = ref(false)
-  const progressKey = ref('')
+  const pendingUploadResponse = ref<any>(null) // 存储等待进度完成的上传响应
+  const importCompleted = ref(false) // 标记导入是否已完成
 
   // 生成进度key
   const generateProgressKey = () => {
-    const userId = userStore.userId || 'anonymous'
+    const userId = info.value.userId || 'anonymous'
     const timestamp = Date.now()
     const random = Math.random().toString(36).substring(2, 8)
     return `${userId}_${timestamp}_${random}`
   }
+  const progressKey = ref(generateProgressKey())
+
+  // 合并progressKey和自定义data
+  const uploadData = computed(() => {
+    return {
+      progressKey: progressKey.value,
+      ...props.data
+    }
+  })
 
   const resetState = () => {
     fileList.value = []
     uploading.value = false
-    // 清理上传组件
+    pendingUploadResponse.value = null // 清除待处理的响应
+    importCompleted.value = false // 重置导入完成状态
+    showProgress.value = false // 隐藏进度显示
     uploadRef.value?.clearFiles()
-    // 清空所有进度和日志信息
-    sseProgressRef.value?.clearAll?.()
   }
 
   const dialogTitle = computed(() => {
@@ -156,8 +171,6 @@
 
   // Methods
   const handleOpen = () => {
-    // 预先生成progressKey
-    progressKey.value = generateProgressKey()
     visible.value = true
   }
 
@@ -196,6 +209,7 @@
       return
     }
     fileList.value = uploadFiles
+    importCompleted.value = false // 选择文件时重置导入完成状态
   }
 
   const handleExceed: UploadProps['onExceed'] = (files) => {
@@ -206,29 +220,26 @@
   }
 
   const submitUpload = async () => {
-    showProgress.value = false
     if (!uploadRef.value) return
     if (fileList.value.length === 0) {
       ElMessage.warning(t('components.excelImport.pleaseSelect'))
       return
     }
 
-    uploading.value = true
-    // 选择新文件时清空之前的进度信息（只清数据，不断开连接）
-    sseProgressRef.value?.clearData?.()
+    // 每次导入生成新的 progressKey
+    progressKey.value = generateProgressKey()
+    console.log('开始导入，新 progressKey:', progressKey.value)
 
-    // 显示进度组件
+    uploading.value = true
     showProgress.value = true
 
-    // 检测连接是否存在，不存在则重新连接
-    await sseProgressRef.value?.ensureConnection?.()
-
-    // 上传文件
+    // 上传文件（SSE 已在打开对话框时连接，进度条组件会自动订阅新 key）
     uploadRef.value.submit()
   }
 
   const handleUploadSuccess: UploadProps['onSuccess'] = (response) => {
     uploading.value = false
+    // sseProgressRef.value?.clearData?.()
     console.log('Upload response:', response)
     if (response?.code !== 200) {
       resetState()
@@ -238,7 +249,8 @@
       // 导入成功后清空文件，防止重复上传
       fileList.value = []
       uploadRef.value?.clearFiles()
-      emit('success', response)
+      // 存储响应，等待进度完成后再触发 success
+      pendingUploadResponse.value = response
     }
     showProgress.value = true
   }
@@ -256,6 +268,17 @@
     resetState()
   }
 
+  // 进度完成后触发 success
+  const handleProgressComplete = (result: any) => {
+    console.log('Progress complete:', result)
+    // 进度推送完成后，触发 success 事件
+    if (pendingUploadResponse.value) {
+      emit('success', pendingUploadResponse.value)
+      pendingUploadResponse.value = null
+      importCompleted.value = true // 标记导入已完成
+    }
+  }
+
   // Download template method
   const downloadTemplate = async () => {
     try {
@@ -268,7 +291,6 @@
         ElMessage.warning(t('components.excelImport.noTemplateUrl'))
         return
       }
-      const { download } = await import('@/utils/business')
       download(blob, props.templateName || 'template')
       ElMessage.success(t('components.excelImport.downloadSuccess'))
     } catch (error) {

@@ -18,7 +18,8 @@ public class ExcelTemplateRegistrar {
         // 需要扫描的基础包（可按需扩展）
         String[] basePackages = new String[]{
                 "com.ciyocloud.system.entity",
-                "com.ciyocloud.itam.entity"
+                "com.ciyocloud.itam.entity",
+                "com.ciyocloud.itam.vo"
         };
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(ExcelTemplate.class));

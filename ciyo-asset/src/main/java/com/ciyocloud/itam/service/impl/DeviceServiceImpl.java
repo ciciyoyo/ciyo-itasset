@@ -1,13 +1,15 @@
 package com.ciyocloud.itam.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.DeviceEntity;
 import com.ciyocloud.itam.entity.ModelsEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.DeviceStatus;
+import com.ciyocloud.itam.listener.DeviceImportListener;
 import com.ciyocloud.itam.mapper.DeviceMapper;
 import com.ciyocloud.itam.req.DevicePageReq;
 import com.ciyocloud.itam.service.AssetsMonthlyStatsService;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,7 +37,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> implements DeviceService {
+public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, DeviceEntity> implements DeviceService {
 
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
     private final AssetCodeUtils assetCodeUtils;
@@ -172,7 +175,12 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, DeviceEntity> i
         return result;
     }
 
-
-
+    @Override
+    public void importDevices(String progressKey, InputStream inputStream, Long userId) {
+        DeviceImportListener listener = new DeviceImportListener(progressKey, userId);
+        EasyExcel.read(inputStream, DeviceVO.class, listener)
+                .sheet()
+                .doRead();
+    }
 
 }

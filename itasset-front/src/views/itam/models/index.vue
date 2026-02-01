@@ -37,6 +37,18 @@
                 {{ $t('common.delete') }}
               </el-button>
 
+              <ExcelImport
+                url="/itam/models/importData"
+                title="型号数据导入"
+                templateCode="model"
+                v-hasPermi="['itam:models:import']"
+                @success="refreshData"
+              >
+                <template #trigger>
+                  <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>
+                </template>
+              </ExcelImport>
+
               <el-button v-hasPermi="['itam:models:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -124,6 +136,7 @@
   import { download, resetFormRef } from '@/utils/business'
   import { useI18n } from 'vue-i18n'
   import ImageUpload from '@/components/business/image-upload/index.vue'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
 
   defineOptions({
     name: 'models'
@@ -245,31 +258,10 @@
   })
 
   const formRules = ref({
-    id: [
-      {
-        required: true,
-        message: 'Id不能为空',
-        trigger: 'blur'
-      }
-    ],
-    deleted: [
-      {
-        required: true,
-        message: '是否删除不能为空',
-        trigger: 'blur'
-      }
-    ],
     name: [
       {
         required: true,
         message: '型号名称不能为空',
-        trigger: 'blur'
-      }
-    ],
-    imageUrl: [
-      {
-        required: true,
-        message: '型号图片不能为空',
         trigger: 'blur'
       }
     ],
@@ -291,34 +283,6 @@
       {
         required: true,
         message: '关联折旧规则 ID不能为空',
-        trigger: 'blur'
-      }
-    ],
-    modelNumber: [
-      {
-        required: true,
-        message: '型号编码不能为空',
-        trigger: 'blur'
-      }
-    ],
-    eol: [
-      {
-        required: true,
-        message: '报废年限 (月)不能为空',
-        trigger: 'blur'
-      }
-    ],
-    createTime: [
-      {
-        required: true,
-        message: '创建时间不能为空',
-        trigger: 'blur'
-      }
-    ],
-    updateTime: [
-      {
-        required: true,
-        message: '更新时间不能为空',
         trigger: 'blur'
       }
     ]

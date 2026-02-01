@@ -1,11 +1,12 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.OfferingEntity;
 import com.ciyocloud.itam.req.OfferingPageReq;
 import com.ciyocloud.itam.vo.OfferingVO;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface OfferingService extends IService<OfferingEntity> {
+public interface OfferingService extends BaseService<OfferingEntity> {
 
     /**
      * 查询服务列表 VO
@@ -37,20 +38,7 @@ public interface OfferingService extends IService<OfferingEntity> {
      */
     OfferingVO getOfferingDetail(Long id);
 
-    /**
-     * 服务归属到设备
-     *
-     * @param offeringId 服务ID
-     * @param assetId    设备ID
-     */
-    void bindAsset(Long offeringId, Long assetId);
 
-    /**
-     * 解除服务归属
-     *
-     * @param offeringId 服务ID
-     */
-    void unbind(Long offeringId);
 
 
     /**
@@ -68,5 +56,14 @@ public interface OfferingService extends IService<OfferingEntity> {
      */
     boolean removeOfferingsByIds(List<Long> ids);
 
+    /**
+     * 导入服务数据
+     *
+     * @param inputStream      文件输入流
+     * @param originalFilename 原始文件名
+     * @param progressKey      前端传递的进度监听key
+     * @param userId           用户 id
+     */
+    void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId);
 
 }

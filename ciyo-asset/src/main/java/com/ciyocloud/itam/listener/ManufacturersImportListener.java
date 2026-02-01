@@ -24,7 +24,7 @@ public class ManufacturersImportListener extends SseProgressExcelListener<Manufa
     private final Long operatorId;
 
     public ManufacturersImportListener(String progressKey, Long userId) {
-        super(progressKey, userId, true, 50, 1000);
+        super(progressKey, userId, false, 50, 1000);
         this.manufacturersService = SpringContextUtils.getBean(ManufacturersService.class);
         this.operatorId = userId;
     }

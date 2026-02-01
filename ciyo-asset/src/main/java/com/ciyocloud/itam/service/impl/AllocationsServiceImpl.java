@@ -3,7 +3,7 @@ package com.ciyocloud.itam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AllocationStatus;
@@ -28,7 +28,7 @@ import java.util.List;
  * @since 2025-12-30
  */
 @Service
-public class AllocationsServiceImpl extends ServiceImpl<AllocationsMapper, AllocationsEntity> implements AllocationsService {
+public class AllocationsServiceImpl extends BaseServiceImpl<AllocationsMapper, AllocationsEntity> implements AllocationsService {
 
     @Autowired
     @Lazy
@@ -108,6 +108,28 @@ public class AllocationsServiceImpl extends ServiceImpl<AllocationsMapper, Alloc
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public boolean batchAllocate(AssetType itemType, Long itemId, AllocationOwnerType ownerType, List<Long> ownerIds, String note) {
+        if (ownerIds == null || ownerIds.isEmpty()) {
+            return false;
+        }
+
+        for (Long ownerId : ownerIds) {
+            AllocationsEntity allocation = new AllocationsEntity();
+            allocation.setItemType(itemType);
+            allocation.setItemId(itemId);
+            allocation.setOwnerType(ownerType);
+            allocation.setOwnerId(ownerId);
+            allocation.setQuantity(1);
+            allocation.setNote(note);
+            if (!this.allocate(allocation)) {
+                throw new RuntimeException("分配失败: " + ownerId);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deallocate(Long id) {
         AllocationsEntity allocation = this.getById(id);
         if (allocation == null || !AllocationStatus.ACTIVE.equals(allocation.getStatus())) {
@@ -140,11 +162,8 @@ public class AllocationsServiceImpl extends ServiceImpl<AllocationsMapper, Alloc
                         } else if (AllocationOwnerType.LOCATION.equals(allocation.getOwnerType())) {
                             asset.setLocationId(allocation.getOwnerId());
                         }
-                        // 这里可以根据业务需要更新资产状态，如设置 statusId
                     } else {
                         asset.setAssignedTo(null);
-                        // 还原位置通常需要业务逻辑决定是还原到默认位置还是保持不变
-                        // 这里我们仅清除 assignedTo
                     }
                     return deviceService.updateById(asset);
                 }

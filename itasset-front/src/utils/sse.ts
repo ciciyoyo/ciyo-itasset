@@ -1,176 +1,133 @@
 /**
  * SSE (Server-Sent Events) 工具类
- * 封装 EventSource 连接和自动重连机制
+ * 简化版 - 全局单连接，根据 progressKey 分发事件
+ * 智能保持策略：无订阅时延迟关闭连接
  *
  * @author codeck
- * @create 2026/01/28
+ * @create 2026/01/31
  */
 
 import {useUserStore} from '@/store/modules/user'
 
-/**
- * SSE 事件类型枚举
- */
+/** SSE 事件类型 */
 export enum SseEventType {
-  /** 连接成功 */
   CONNECTED = 'connected',
-  /** 心跳检测 */
   HEARTBEAT = 'heartbeat',
-  /** 任务完成 */
   COMPLETE = 'complete',
-  /** 进度更新 */
   PROGRESS = 'progress',
-  /** 错误事件 */
   ERROR = 'error'
 }
 
-/**
- * SSE 事件数据类型定义
- */
+/** 进度数据 */
 export interface SseProgressData {
+  progressKey?: string
   rate?: number
   current?: number
   total?: number
   tips?: string
-}
-
-export interface SseCompleteData {
-  result?: any
-  message?: string
   url?: string
-  tips?: string
 }
 
+/** 完成数据 */
+export interface SseCompleteData {
+  progressKey?: string
+  rate?: number
+  tips?: string
+  url?: string
+  result?: any
+}
+
+/** 错误数据 */
 export interface SseErrorData {
-  error?: string
-  message?: string
+  progressKey?: string
   code?: string
+  message?: string
   details?: string
   suggestion?: string
   level?: 'ERROR' | 'WARN' | 'INFO'
   retryable?: boolean
-  extra?: any
 }
 
-export interface SseEventData {
-  id?: string
-  event?: string
-  data?: any
-  timestamp?: string
+/** 回调函数类型 */
+export type ProgressCallback = (data: SseProgressData) => void
+export type CompleteCallback = (data: SseCompleteData) => void
+export type ErrorCallback = (data: SseErrorData) => void
+
+/** 订阅回调 */
+export interface SseSubscription {
+  onProgress?: ProgressCallback
+  onComplete?: CompleteCallback
+  onError?: ErrorCallback
 }
 
-export interface SseOptions {
-  /** 自动重连 */
-  autoReconnect?: boolean
-  /** 重连间隔(ms) */
-  reconnectInterval?: number
-  /** 最大重连次数 */
-  maxReconnectAttempts?: number
-  /** 连接超时时间(ms) */
-  timeout?: number
-  /** 心跳检测间隔(ms) */
-  heartbeatInterval?: number
-}
+/**
+ * SSE 全局连接管理器（单例）
+ * 智能保持策略：有订阅时保持连接，无订阅一段时间后自动关闭
+ */
+class SseManager {
+  private static instance: SseManager | null = null
 
-export interface SseEventHandlers {
-  onOpen?: (event: Event) => void
-  onMessage?: (data: SseEventData) => void
-  onProgress?: (event: MessageEvent, data: SseProgressData) => void
-  onComplete?: (event: MessageEvent, data: SseCompleteData) => void
-  onError?: (event: MessageEvent, data: SseErrorData) => void
-  onClose?: (event: CloseEvent) => void
-  onReconnect?: (attempt: number) => void
-  onConnected?: (event: MessageEvent) => void
-  onHeartbeat?: (event: MessageEvent) => void
-}
-
-export class SseClient {
   private eventSource: EventSource | null = null
-  private url: string
-  private options: Required<SseOptions>
-  private handlers: SseEventHandlers
-  private reconnectAttempts = 0
+  private subscriptions = new Map<string, SseSubscription>()
   private reconnectTimer: number | null = null
-  private heartbeatTimer: number | null = null
-  private lastHeartbeat = 0
-  private isManualClose = false
+  private idleTimer: number | null = null // 空闲关闭定时器
+  private reconnectAttempts = 0
+  private baseUrl = '/api/sse'
 
-  constructor(url: string, handlers: SseEventHandlers, options: SseOptions = {}) {
-    this.url = url
-    this.handlers = handlers
-    this.options = {
-      autoReconnect: true,
-      reconnectInterval: 3000,
-      maxReconnectAttempts: 10,
-      timeout: 300000, // 5分钟
-      heartbeatInterval: 30000, // 30秒
-      ...options
+  // 配置
+  private readonly maxReconnectAttempts = 10
+  private readonly reconnectInterval = 3000
+  private readonly idleTimeout = 30000 // 无订阅 30 秒后关闭
+
+  private constructor() {}
+
+  static getInstance(): SseManager {
+    if (!SseManager.instance) {
+      SseManager.instance = new SseManager()
+    }
+    return SseManager.instance
+  }
+
+  /**
+   * 确保已连接（可单独调用）
+   */
+  async ensureConnected(): Promise<void> {
+    this.cancelIdleClose()
+    if (!this.isConnected()) {
+      await this.connect()
     }
   }
 
   /**
-   * 连接 SSE
+   * 订阅进度（自动建立连接）
    */
-  connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.cleanup()
-        this.isManualClose = false
-
-        // 构建带token的URL
-        const finalUrl = this.buildUrlWithToken(this.url)
-
-        console.log(`连接 SSE: ${finalUrl}`)
-        this.eventSource = new EventSource(finalUrl)
-
-        // 连接打开
-        this.eventSource.onopen = (event) => {
-          console.log('SSE 连接建立成功')
-          this.reconnectAttempts = 0
-          this.startHeartbeat()
-          this.handlers.onOpen?.(event)
-          resolve()
-        }
-
-        // 接收消息
-        this.eventSource.onmessage = (event) => {
-          this.handleMessage(event)
-        }
-
-        // 连接错误
-        this.eventSource.onerror = (event) => {
-          console.error('SSE 连接错误:', event)
-          this.handleError(event)
-
-          // 首次连接失败时 reject Promise
-          if (this.reconnectAttempts === 0) {
-            reject(new Error('SSE 连接失败'))
-          }
-        }
-
-        // 监听自定义事件
-        this.setupEventListeners()
-      } catch (error) {
-        console.error('创建 SSE 连接失败:', error)
-        reject(error)
-      }
-    })
+  async subscribe(progressKey: string, callbacks: SseSubscription): Promise<void> {
+    await this.ensureConnected()
+    console.log('[SSE] 订阅:', progressKey)
+    this.subscriptions.set(progressKey, callbacks)
   }
 
   /**
-   * 手动关闭连接
+   * 取消订阅（无订阅时延迟关闭）
+   */
+  unsubscribe(progressKey: string): void {
+    console.log('[SSE] 取消订阅:', progressKey)
+    this.subscriptions.delete(progressKey)
+
+    // 检查是否需要延迟关闭
+    // if (this.subscriptions.size === 0) {
+    //   this.scheduleIdleClose()
+    // }
+  }
+
+  /**
+   * 强制关闭连接
    */
   close(): void {
-    console.log('手动关闭 SSE 连接')
-    this.isManualClose = true
+    console.log('[SSE] 强制关闭')
+    this.cancelIdleClose()
     this.cleanup()
-  }
-
-  /**
-   * 获取连接状态
-   */
-  getReadyState(): number {
-    return this.eventSource?.readyState ?? EventSource.CLOSED
+    this.subscriptions.clear()
   }
 
   /**
@@ -181,261 +138,184 @@ export class SseClient {
   }
 
   /**
-   * 构建带token的URL
+   * 获取状态信息
    */
-  private buildUrlWithToken(baseUrl: string): string {
-    try {
-      const { accessToken } = useUserStore()
+  getStatus(): { connected: boolean; subscriptions: number } {
+    return {
+      connected: this.isConnected(),
+      subscriptions: this.subscriptions.size
+    }
+  }
 
-      if (!accessToken) {
-        console.warn('SSE连接缺少访问token')
-        return baseUrl
+  // ==================== 私有方法 ====================
+
+  private connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.isConnected()) {
+        resolve()
+        return
       }
 
-      const url = new URL(baseUrl, window.location.origin)
+      this.cleanup()
+
+      const url = this.buildUrl(`${this.baseUrl}/connect`)
+      console.log('[SSE] 建立连接')
+
+      try {
+        this.eventSource = new EventSource(url)
+
+        this.eventSource.onopen = () => {
+          console.log('[SSE] 连接成功')
+          this.reconnectAttempts = 0
+          resolve()
+        }
+
+        this.eventSource.onerror = () => {
+          if (this.reconnectAttempts === 0) {
+            reject(new Error('SSE 连接失败'))
+          }
+          this.handleReconnect()
+        }
+
+        this.setupListeners()
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  private buildUrl(baseUrl: string): string {
+    const { accessToken } = useUserStore()
+    const url = new URL(baseUrl, window.location.origin)
+    if (accessToken) {
       url.searchParams.set('Authorization', accessToken)
-
-      return url.toString()
-    } catch (error) {
-      console.error('构建SSE URL失败:', error)
-      return baseUrl
     }
+    return url.toString()
   }
 
-  /**
-   * 处理消息
-   */
-  private handleMessage(event: MessageEvent): void {
-    try {
-      this.updateHeartbeat()
-
-      const eventData: SseEventData = {
-        id: event.lastEventId,
-        data: this.parseEventData(event.data),
-        timestamp: new Date().toISOString()
-      }
-
-      this.handlers.onMessage?.(eventData)
-    } catch (error) {
-      console.error('处理 SSE 消息失败:', error)
-    }
-  }
-
-  /**
-   * 解析事件数据
-   */
-  private parseEventData(data: string): any {
-    try {
-      return JSON.parse(data)
-    } catch {
-      return data
-    }
-  }
-
-  /**
-   * 设置事件监听器
-   */
-  private setupEventListeners(): void {
+  private setupListeners(): void {
     if (!this.eventSource) return
 
     // 进度事件
-    this.eventSource.addEventListener(SseEventType.PROGRESS, (event: MessageEvent) => {
-      const data = this.parseEventData(event.data) as SseProgressData
-      console.log('收到进度事件:', data)
-      this.handlers.onProgress?.(event, data)
+    this.eventSource.addEventListener(SseEventType.PROGRESS, (e: MessageEvent) => {
+      console.log('[SSE] 收到进度消息 原始数据:', e.data)
+      const { progressKey, data } = this.parseData(e.data)
+      console.log('[SSE] 进度消息解析:', { progressKey, data })
+      if (progressKey) this.dispatch(progressKey, 'onProgress', data)
     })
 
     // 完成事件
-    this.eventSource.addEventListener(SseEventType.COMPLETE, (event: MessageEvent) => {
-      const data = this.parseEventData(event.data) as SseCompleteData
-      console.log('收到完成事件:', data)
-      this.handlers.onComplete?.(event, data)
+    this.eventSource.addEventListener(SseEventType.COMPLETE, (e: MessageEvent) => {
+      console.log('[SSE] 收到完成消息 原始数据:', e.data)
+      const { progressKey, data } = this.parseData(e.data)
+      console.log('[SSE] 完成消息解析:', { progressKey, data })
+      if (progressKey) {
+        this.dispatch(progressKey, 'onComplete', data)
+        this.unsubscribe(progressKey) // 完成后自动取消
+      }
     })
 
     // 错误事件
-    this.eventSource.addEventListener(SseEventType.ERROR, (event: MessageEvent) => {
-      const data = this.parseEventData(event.data) as SseErrorData
-      console.error('收到错误事件:', data)
-      this.handlers.onError?.(event, data)
+    this.eventSource.addEventListener(SseEventType.ERROR, (e: MessageEvent) => {
+      console.log('[SSE] 收到错误消息 原始数据:', e.data)
+      const { progressKey, data } = this.parseData(e.data)
+      console.log('[SSE] 错误消息解析:', { progressKey, data })
+      if (progressKey) this.dispatch(progressKey, 'onError', data)
     })
 
-    // 连接事件
-    this.eventSource.addEventListener(SseEventType.CONNECTED, (event: MessageEvent) => {
-      console.log('SSE 连接确认:', event.data)
-      this.handlers.onConnected?.(event)
-    })
-
-    // 心跳事件
-    this.eventSource.addEventListener(SseEventType.HEARTBEAT, (event: MessageEvent) => {
-      this.updateHeartbeat()
-      this.handlers.onHeartbeat?.(event)
+    // 心跳（保持连接）
+    this.eventSource.addEventListener(SseEventType.HEARTBEAT, (e: MessageEvent) => {
+      console.log('[SSE] 收到心跳消息:', e.data)
     })
   }
 
-  /**
-   * 处理连接错误
-   */
-  private handleError(event: Event): void {
-    if (this.isManualClose) {
-      return
-    }
-
-    console.warn(`SSE 连接中断，准备重连 (尝试次数: ${this.reconnectAttempts + 1})`)
-
-    if (this.options.autoReconnect && this.reconnectAttempts < this.options.maxReconnectAttempts) {
-      this.scheduleReconnect()
-    } else {
-      console.error('SSE 重连次数已达上限，停止重连')
-      this.handlers.onError?.(new Error('SSE 连接失败，重连次数已达上限'))
-    }
-  }
-
-  /**
-   * 安排重连
-   */
-  private scheduleReconnect(): void {
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer)
-    }
-
-    this.reconnectTimer = window.setTimeout(() => {
-      this.reconnectAttempts++
-      this.handlers.onReconnect?.(this.reconnectAttempts)
-
-      console.log(`尝试重连 SSE (第 ${this.reconnectAttempts} 次)`)
-      this.connect().catch((error) => {
-        console.error(`重连失败 (第 ${this.reconnectAttempts} 次):`, error)
-      })
-    }, this.options.reconnectInterval)
-  }
-
-  /**
-   * 启动心跳检测
-   */
-  private startHeartbeat(): void {
-    this.updateHeartbeat()
-
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer)
-    }
-
-    this.heartbeatTimer = window.setInterval(() => {
-      const now = Date.now()
-      if (now - this.lastHeartbeat > this.options.heartbeatInterval * 2) {
-        console.warn('SSE 心跳超时，可能连接已断开')
-        this.handleError(new Event('heartbeat_timeout'))
+  private parseData(data: string): { progressKey: string; data: any } {
+    try {
+      // 后端返回的是 SseEvent 对象，包含 progressKey 和 data 字段
+      const sseEvent = JSON.parse(data)
+      return {
+        progressKey: sseEvent.progressKey || '',
+        data: sseEvent.data || sseEvent // 如果 data 不存在则使用整个对象
       }
-    }, this.options.heartbeatInterval)
+    } catch {
+      return { progressKey: '', data: null }
+    }
   }
 
-  /**
-   * 更新心跳时间
-   */
-  private updateHeartbeat(): void {
-    this.lastHeartbeat = Date.now()
+  private dispatch(progressKey: string, type: keyof SseSubscription, data: any): void {
+    console.log('[SSE] 分发消息:', { progressKey, type, data })
+    const sub = this.subscriptions.get(progressKey)
+    const callback = sub?.[type]
+    if (callback) {
+      console.log('[SSE] 执行回调:', type)
+      ;(callback as Function)(data)
+    } else {
+      console.warn('[SSE] 未找到回调:', { progressKey, type })
+    }
   }
 
-  /**
-   * 清理资源
-   */
+  private handleReconnect(): void {
+    if (this.subscriptions.size === 0) return // 无订阅不重连
+
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectTimer = window.setTimeout(() => {
+        this.reconnectAttempts++
+        console.log(`[SSE] 重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
+        this.connect().catch(() => {})
+      }, this.reconnectInterval)
+    } else {
+      console.error('[SSE] 重连失败，已达上限')
+    }
+  }
+
+  private scheduleIdleClose(): void {
+    this.cancelIdleClose()
+    console.log(`[SSE] ${this.idleTimeout / 1000}秒后无订阅将关闭连接`)
+    this.idleTimer = window.setTimeout(() => {
+      if (this.subscriptions.size === 0) {
+        console.log('[SSE] 空闲超时，关闭连接')
+        this.cleanup()
+      }
+    }, this.idleTimeout)
+  }
+
+  private cancelIdleClose(): void {
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer)
+      this.idleTimer = null
+    }
+  }
+
   private cleanup(): void {
     if (this.eventSource) {
       this.eventSource.close()
       this.eventSource = null
     }
-
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
     }
-
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer)
-      this.heartbeatTimer = null
-    }
+    this.cancelIdleClose()
   }
 }
 
-/**
- * 创建 SSE 客户端
- */
-export function createSseClient(url: string, handlers: SseEventHandlers, options?: SseOptions): SseClient {
-  return new SseClient(url, handlers, options)
-}
+// 导出单例
+export const sseManager = SseManager.getInstance()
 
 /**
- * SSE 进度监听器
+ * 便捷方法：监听进度
+ *
+ * @example
+ * const unsubscribe = await listenProgress('import_123', {
+ *   onProgress: (data) => console.log('进度:', data.rate),
+ *   onComplete: (data) => console.log('完成:', data),
+ *   onError: (data) => console.error('错误:', data)
+ * })
+ *
+ * // 取消监听
+ * unsubscribe()
  */
-export class SseProgressListener {
-  private sseClient: SseClient
-  private progressKey: string
-
-  constructor(progressKey: string, baseUrl = '/api/sse') {
-    this.progressKey = progressKey
-
-    // 构建基础URL，SseClient会自动添加token
-    const url = `${baseUrl}/progress?progressKey=${encodeURIComponent(progressKey)}`
-
-    this.sseClient = new SseClient(url, {
-      onOpen: () => console.log(`开始监听进度: ${progressKey}`),
-      onError: (error) => console.error('进度监听错误:', error),
-      onClose: () => console.log('进度监听结束')
-    })
-  }
-
-  /**
-   * 开始监听
-   */
-  async start(): Promise<void> {
-    return this.sseClient.connect()
-  }
-
-  /**
-   * 停止监听
-   */
-  stop(): void {
-    this.sseClient.close()
-  }
-
-  /**
-   * 监听进度更新
-   */
-  onProgress(callback: (event: MessageEvent, data: SseProgressData) => void): void {
-    this.sseClient.handlers.onProgress = callback
-  }
-
-  /**
-   * 监听完成事件
-   */
-  onComplete(callback: (event: MessageEvent, data: SseCompleteData) => void): void {
-    this.sseClient.handlers.onComplete = callback
-  }
-
-  /**
-   * 监听错误事件
-   */
-  onError(callback: (event: MessageEvent, data: SseErrorData) => void): void {
-    this.sseClient.handlers.onError = callback
-  }
-
-  /**
-   * 监听连接事件
-   */
-  onConnected(callback: (event: MessageEvent) => void): void {
-    this.sseClient.handlers.onConnected = callback
-  }
-
-  /**
-   * 监听心跳事件
-   */
-  onHeartbeat(callback: (event: MessageEvent) => void): void {
-    this.sseClient.handlers.onHeartbeat = callback
-  }
-
-  /**
-   * 获取连接状态
-   */
-  isConnected(): boolean {
-    return this.sseClient.isConnected()
-  }
+export async function listenProgress(progressKey: string, callbacks: SseSubscription): Promise<() => void> {
+  await sseManager.subscribe(progressKey, callbacks)
+  return () => sseManager.unsubscribe(progressKey)
 }

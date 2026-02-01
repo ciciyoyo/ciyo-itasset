@@ -1,8 +1,8 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ciyocloud.common.entity.request.PageRequest;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.AssetRequestsEntity;
 import com.ciyocloud.itam.req.AssetRequestsApprovalReq;
 import com.ciyocloud.itam.req.AssetRequestsPageReq;
@@ -15,7 +15,7 @@ import com.ciyocloud.itam.vo.AssetRequestsVO;
  * @author codeck
  * @since 2026-01-10
  */
-public interface AssetRequestsService extends IService<AssetRequestsEntity> {
+public interface AssetRequestsService extends BaseService<AssetRequestsEntity> {
 
     /**
      * 分页查询申请

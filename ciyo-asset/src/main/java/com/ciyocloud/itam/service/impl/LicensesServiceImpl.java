@@ -1,14 +1,16 @@
 package com.ciyocloud.itam.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.AllocationsEntity;
 import com.ciyocloud.itam.entity.LicensesEntity;
 import com.ciyocloud.itam.enums.AllocationStatus;
 import com.ciyocloud.itam.enums.AssetType;
+import com.ciyocloud.itam.listener.LicensesImportListener;
 import com.ciyocloud.itam.mapper.LicensesMapper;
 import com.ciyocloud.itam.req.LicenseAllocationReq;
 import com.ciyocloud.itam.req.LicensePageReq;
@@ -36,7 +38,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class LicensesServiceImpl extends ServiceImpl<LicensesMapper, LicensesEntity> implements LicensesService {
+public class LicensesServiceImpl extends BaseServiceImpl<LicensesMapper, LicensesEntity> implements LicensesService {
 
     private final AllocationsService allocationsService;
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
@@ -190,6 +192,14 @@ public class LicensesServiceImpl extends ServiceImpl<LicensesMapper, LicensesEnt
             }
         }
         return result;
+    }
+
+    @Override
+    public void importLicenses(String progressKey, java.io.InputStream inputStream, Long userId) {
+        LicensesImportListener listener = new LicensesImportListener(progressKey, userId);
+        EasyExcel.read(inputStream, LicensesVO.class, listener)
+                .sheet()
+                .doRead();
     }
 
 }

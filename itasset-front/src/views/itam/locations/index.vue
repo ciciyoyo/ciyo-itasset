@@ -26,9 +26,28 @@
               <el-button type="primary" icon="ele-Plus" @click="handleAdd" v-ripple v-hasPermi="['itam:locations:add']">
                 新增
               </el-button>
-              <el-button type="danger" v-ripple icon="ele-Delete" @click="handleDelete" v-hasPermi="['itam:locations:delete']">
+              <el-button
+                type="danger"
+                v-ripple
+                icon="ele-Delete"
+                :disabled="!selectedRows.length"
+                @click="handleDelete"
+                v-hasPermi="['itam:locations:delete']"
+              >
                 删除
               </el-button>
+
+              <ExcelImport
+                url="/itam/locations/importData"
+                title="物理位置数据导入"
+                templateCode="location"
+                v-hasPermi="['itam:locations:import']"
+                @success="refreshData"
+              >
+                <template #trigger>
+                  <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>
+                </template>
+              </ExcelImport>
 
               <el-button v-hasPermi="['itam:locations:export']" icon="ele-Download" v-ripple @click="handleExport">
                 导出
@@ -106,6 +125,7 @@
   import { useTable } from '@/hooks/core/useTable'
   import { MessageUtil } from '@/utils/messageUtil'
   import { download, resetFormRef } from '@/utils/business'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
 
   defineOptions({
     name: 'locations'
@@ -201,13 +221,6 @@
       {
         required: true,
         message: '位置名称不能为空',
-        trigger: 'blur'
-      }
-    ],
-    parentId: [
-      {
-        required: true,
-        message: '父级 ID不能为空',
         trigger: 'blur'
       }
     ]

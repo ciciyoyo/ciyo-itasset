@@ -36,6 +36,14 @@
               >
                 {{ $t('common.delete') }}
               </el-button>
+              <ExcelImport
+                url="/itam/accessories/importData"
+                title="配件导入"
+                templateCode="accessories"
+                v-hasPermi="['itam:accessories:import']"
+                @success="refreshData"
+              >
+              </ExcelImport>
               <el-button v-hasPermi="['itam:accessories:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>

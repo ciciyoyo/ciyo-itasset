@@ -86,6 +86,8 @@ public class ExcelUtils {
                     .registerConverter(new ExcelBigNumberConvert())
                     // 列宽自适配（基于表头与示例数据的最长匹配）
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    // 添加枚举注释处理器
+                    .registerWriteHandler(new com.ciyocloud.excel.handler.EnumCommentWriteHandler(clazz))
                     // 强制写入表头，避免空数据导致文件无表头
                     .needHead(Boolean.TRUE)
                     // 若未显式标注导入字段，则回退为包含所有注解列
@@ -131,6 +133,8 @@ public class ExcelUtils {
                     .registerConverter(new ExcelBigNumberConvert())
                     // 列宽自适配（基于表头与示例数据的最长匹配）
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    // 添加枚举注释处理器
+                    .registerWriteHandler(new com.ciyocloud.excel.handler.EnumCommentWriteHandler(clazz))
                     // 强制写入表头，避免空数据导致文件无表头
                     .needHead(Boolean.TRUE)
                     .sheet(sheetName);

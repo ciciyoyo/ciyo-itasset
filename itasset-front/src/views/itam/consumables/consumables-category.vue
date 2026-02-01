@@ -8,6 +8,15 @@
               <el-button type="primary" icon="ele-Plus" @click="handleAdd" v-ripple v-hasPermi="['itam:categories:add']">
                 {{ $t('common.add') }}
               </el-button>
+              <ExcelImport
+                url="/itam/categories/importData"
+                template-code="category"
+                template-name="分类导入模板"
+                title="导入耗材分类"
+                :data="{ categoryType: AssetType.CONSUMABLE }"
+                @success="handleImportSuccess"
+                v-hasPermi="['itam:consumables:import']"
+              />
             </ElSpace>
           </template>
         </ArtTableHeader>
@@ -222,6 +231,10 @@
   const cancel = () => {
     open.value = false
     reset()
+  }
+
+  const handleImportSuccess = () => {
+    loadCategories()
   }
 
   onMounted(() => {

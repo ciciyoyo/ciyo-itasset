@@ -31,5 +31,15 @@
     "downloadSuccess": "Template downloaded successfully",
     "downloadError": "Template download failed, please retry",
     "noTemplateUrl": "Template download URL or method not configured"
+  },
+  "sseProgressBar": {
+    "msgCount": "{count} messages",
+    "viewAll": "View All",
+    "details": "Message Details",
+    "clear": "Clear",
+    "close": "Close",
+    "failed": "Processing failed",
+    "connected": "[SseProgressBar] SSE connected",
+    "connectFailed": "[SseProgressBar] SSE connection failed:"
   }
 }
