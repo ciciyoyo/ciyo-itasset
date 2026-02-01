@@ -38,6 +38,16 @@ public class SseConstants {
      */
     public static final long DEFAULT_RECONNECT_TIME = 3000L;
 
+    /**
+     * 平台请求头名称
+     */
+    public static final String PLATFORM_HEADER = "X-Platform";
+
+    /**
+     * 默认平台
+     */
+    public static final String DEFAULT_PLATFORM = "web";
+
     private SseConstants() {
         // 工具类，禁止实例化
     }

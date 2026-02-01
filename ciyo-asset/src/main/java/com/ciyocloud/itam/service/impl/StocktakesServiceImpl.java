@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AssetType;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class StocktakesServiceImpl extends ServiceImpl<StocktakesMapper, StocktakesEntity> implements StocktakesService {
+public class StocktakesServiceImpl extends BaseServiceImpl<StocktakesMapper, StocktakesEntity> implements StocktakesService {
 
     private final DeviceService deviceService;
     private final ModelsService modelsService;

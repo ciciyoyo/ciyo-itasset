@@ -1,5 +1,5 @@
 import request from '@/utils/http'
-import { FailuresEntity } from './failures'
+import {FailuresEntity} from './failures'
 
 export interface OfferingEntity extends Api.Common.BaseEntity {
   id: number | null
@@ -11,8 +11,6 @@ export interface OfferingEntity extends Api.Common.BaseEntity {
   cost: number
   notes: string
   offeringStatus: string
-  targetType?: string
-  targetId?: number
   deleted?: number
 }
 
@@ -25,12 +23,8 @@ export interface OfferingVO extends Api.Common.BaseEntity {
   endDate: string
   cost: number
   notes: string
-  targetType: string | null
-  targetId: number
   offeringStatus: string | null
   supplierName: string
-  targetName: string | null
-  assignDate: string | null
 }
 
 type OfferingList = Api.Common.PaginatedResponse<OfferingVO>
@@ -59,8 +53,6 @@ type OfferingSearchFields = {
   cost: number
   notes: string
   offeringStatus: string
-  targetType: string
-  targetId: number
   deleted: number
   exceptionStartDate: string
   exceptionEndDate: string
@@ -144,16 +136,6 @@ export function reportException(data: FailuresEntity) {
   })
 }
 
-/**
- * 绑定设备
- * @param data
- */
-export function bindAsset(data: { id: number; targetId: number }) {
-  return request.post<boolean>({
-    url: '/itam/offering/bind-asset',
-    data
-  })
-}
 
 /**
  * 解除服务归属
@@ -209,5 +191,23 @@ export interface SupplierExceptionStatisticsVO {
 export function getSupplierExceptionStatistics() {
   return request.get<SupplierExceptionStatisticsVO[]>({
     url: '/itam/offering/statistics/supplier-failure-stats'
+  })
+}
+
+export interface BatchAllocationReq {
+  itemType: string
+  itemId: number
+  ownerType: string
+  ownerIds: number[]
+  note?: string
+}
+
+/**
+ * 批量分配设备到服务
+ */
+export function batchAllocateOffering(data: BatchAllocationReq) {
+  return request.post({
+    url: '/itam/offering/batch-allocate',
+    data
   })
 }

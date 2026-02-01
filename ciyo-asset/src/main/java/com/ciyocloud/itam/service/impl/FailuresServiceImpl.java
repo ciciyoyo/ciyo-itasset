@@ -2,7 +2,7 @@ package com.ciyocloud.itam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.DeviceEntity;
 import com.ciyocloud.itam.entity.FailuresEntity;
@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
  */
 @Service
 @RequiredArgsConstructor
-public class FailuresServiceImpl extends ServiceImpl<FailuresMapper, FailuresEntity> implements FailuresService {
+public class FailuresServiceImpl extends BaseServiceImpl<FailuresMapper, FailuresEntity> implements FailuresService {
 
     private final OfferingService offeringService;
     private final DeviceService deviceService;

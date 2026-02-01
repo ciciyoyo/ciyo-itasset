@@ -57,7 +57,14 @@
               >
                 打印标签
               </el-button>
-
+              <ExcelImport
+                url="/itam/device/importData"
+                title="设备导入"
+                templateCode="device"
+                v-hasPermi="['itam:device:import']"
+                @success="refreshData"
+              >
+              </ExcelImport>
               <el-button v-hasPermi="['itam:device:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -303,6 +310,7 @@
   import AllocateModal from './components/AllocateModal.vue'
   import DeviceExceptionModal from './components/DeviceExceptionModal.vue'
   import DeviceDetailDrawer from './components/DeviceDetailDrawer.vue'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
   import { useUserStore } from '@/store/modules/user'
 
   defineOptions({

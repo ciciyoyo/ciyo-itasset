@@ -2,6 +2,7 @@ package com.ciyocloud.excel.core;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.context.AnalysisContext;
+import com.ciyocloud.common.sse.context.SseContext;
 import com.ciyocloud.common.sse.util.SseAsyncProcessUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,16 +64,19 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
         this.userId = userId;
         this.progressInterval = progressInterval;
         this.progressTimeInterval = progressTimeInterval;
+        // 初始化 SSE 上下文
+        SseContext.init(userId, progressKey, "web");
+        setProcessTips("开始处理Excel文件...");
     }
 
     /**
-     * 设置总行数（用于精确计算进度）
+     * 设置总行数（用于精确计算进度百分比，可选调用）
      */
     public void setTotalRows(long totalRows) {
         this.totalRows = totalRows;
-        // 初始化进度为0
-        SseAsyncProcessUtils.setProcess(progressKey, 0, totalRows, userId);
-        setProcessTips("开始处理Excel文件...");
+        if (totalRows > 0) {
+            SseAsyncProcessUtils.setProcess(0, totalRows);
+        }
     }
 
     @Override
@@ -91,7 +95,7 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
             processedRows++;
             failureRows++;
             String errorMsg = String.format("第%d行数据处理失败: %s", context.readRowHolder().getRowIndex() + 1, e.getMessage());
-            SseAsyncProcessUtils.setProcessError(progressKey, errorMsg, userId);
+            SseAsyncProcessUtils.setError(errorMsg);
         }
     }
 
@@ -99,7 +103,7 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
      * 处理单行数据的方法，子类可以重写此方法实现具体的业务逻辑
      * 默认实现调用父类的invoke方法
      *
-     * @param data Excel行数据
+     * @param data    Excel行数据
      * @param context 解析上下文
      */
     protected void processData(T data, AnalysisContext context) {
@@ -107,7 +111,7 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
 
 
     @Override
-    public void onException(Exception exception, AnalysisContext context)  {
+    public void onException(Exception exception, AnalysisContext context) {
         try {
             super.onException(exception, context);
         } catch (Exception e) {
@@ -119,9 +123,14 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        super.doAfterAllAnalysed(context);
-        setComplete();
-        log.info("Excel文件处理完成，共处理 {} 行数据，成功 {} 行，失败 {} 行", processedRows, successRows, failureRows);
+        try {
+            super.doAfterAllAnalysed(context);
+            setComplete();
+            log.info("Excel文件处理完成，共处理 {} 行数据，成功 {} 行，失败 {} 行", processedRows, successRows, failureRows);
+        } finally {
+            // 清理 SSE 上下文，防止内存泄漏或线程污染
+            SseContext.clear();
+        }
     }
 
     /**
@@ -135,7 +144,7 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
 
             if (totalRows > 0) {
                 // 有总行数，精确计算进度
-                SseAsyncProcessUtils.setProcess(progressKey, processedRows, totalRows, userId);
+                SseAsyncProcessUtils.setProcess(processedRows, totalRows);
                 setProcessTips(String.format("正在处理Excel文件... (%d/%d) 成功:%d 失败:%d", processedRows, totalRows, successRows, failureRows));
             } else {
                 // 无总行数，按处理行数显示
@@ -153,24 +162,23 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
     public void setComplete() {
         // 设置进度为100%
         if (totalRows > 0) {
-            SseAsyncProcessUtils.setProcess(progressKey, 100, totalRows, userId);
+            SseAsyncProcessUtils.setProcess(100, "");
         }
 
         String message;
         if (failureRows == 0) {
             message = String.format("Excel导入完成，共处理 %d 行数据，全部成功", processedRows);
         } else {
-            message = String.format("Excel导入完成，共处理 %d 行数据，成功 %d 行，失败 %d 行", processedRows, successRows, failureRows);
+            message = String.format("Excel导入完成，共处理 %d 行数据，成功 <span style='color: #52c41a; font-weight: bold;'>%d</span> 行，失败 <span style='color: #ff4d4f; font-weight: bold;'>%d</span> 行", processedRows, successRows, failureRows);
         }
-        SseAsyncProcessUtils.setProcessFinish(progressKey, message, userId);
-
+        SseAsyncProcessUtils.setFinish(message);
     }
 
     /**
      * 设置错误状态
      */
     public void setError(String errorMsg) {
-        SseAsyncProcessUtils.setProcessError(progressKey, errorMsg, userId);
+        SseAsyncProcessUtils.setError(errorMsg);
     }
 
     /**
@@ -178,7 +186,7 @@ public class SseProgressExcelListener<T> extends DefaultExcelListener<T> {
      */
     private void setProcessTips(String tips) {
         if (StrUtil.isNotBlank(tips)) {
-            SseAsyncProcessUtils.setProcessTips(progressKey, tips, userId);
+            SseAsyncProcessUtils.setTips(tips);
         }
     }
 

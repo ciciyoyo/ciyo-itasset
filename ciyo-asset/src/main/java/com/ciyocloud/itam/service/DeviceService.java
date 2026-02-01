@@ -1,11 +1,12 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.DeviceEntity;
 import com.ciyocloud.itam.req.DevicePageReq;
 import com.ciyocloud.itam.vo.DeviceVO;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface DeviceService extends IService<DeviceEntity> {
+public interface DeviceService extends BaseService<DeviceEntity> {
 
     /**
      * 分页查询设备列表 (VO)
@@ -58,8 +59,14 @@ public interface DeviceService extends IService<DeviceEntity> {
      */
     Map<String, Object> getSummaryStats();
 
-
-
+    /**
+     * 导入设备
+     *
+     * @param progressKey SSE进度key
+     * @param inputStream 文件流
+     * @param userId      操作用户ID
+     */
+    void importDevices(String progressKey, InputStream inputStream, Long userId);
 
 }
 

@@ -1,17 +1,23 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.hutool.core.thread.ThreadUtil;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.Result;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
 import com.ciyocloud.common.validator.group.UpdateGroup;
 import com.ciyocloud.excel.util.ExcelUtils;
+import com.ciyocloud.itam.entity.AllocationsEntity;
 import com.ciyocloud.itam.entity.FailuresEntity;
 import com.ciyocloud.itam.entity.OfferingEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.OfferingStatus;
+import com.ciyocloud.itam.req.BatchAllocationReq;
 import com.ciyocloud.itam.req.OfferingPageReq;
+import com.ciyocloud.itam.service.AllocationsService;
 import com.ciyocloud.itam.service.AssetsReportService;
 import com.ciyocloud.itam.service.FailuresService;
 import com.ciyocloud.itam.service.OfferingService;
@@ -21,10 +27,12 @@ import com.ciyocloud.itam.vo.SupplierFailureStatsVO;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +51,9 @@ public class OfferingController {
     private final OfferingService offeringService;
     private final FailuresService failuresService;
     private final AssetsReportService assetsReportService;
+    private final AllocationsService allocationsService;
+
+
 
 
     /**
@@ -111,19 +122,6 @@ public class OfferingController {
         return Result.success(offeringService.removeOfferingsByIds(ids));
     }
 
-    /**
-     * 服务归属到设备
-     */
-    @SaCheckPermission("itam:offering:update")
-    @Log(title = "服务", businessType = BusinessType.UPDATE)
-    @PostMapping("/bind-asset")
-    public Result<Boolean> bindAsset(@RequestBody OfferingEntity offering) {
-        if (offering.getId() == null || offering.getTargetId() == null) {
-            return Result.failed("服务ID和设备ID不能为空");
-        }
-        offeringService.bindAsset(offering.getId(), offering.getTargetId());
-        return Result.success(true);
-    }
 
     /**
      * 解除服务归属
@@ -131,11 +129,11 @@ public class OfferingController {
     @SaCheckPermission("itam:offering:update")
     @Log(title = "服务", businessType = BusinessType.UPDATE)
     @PostMapping("/unbind")
-    public Result<Boolean> unbind(@RequestBody OfferingEntity offering) {
-        if (offering.getId() == null) {
+    public Result<Boolean> unbind(@RequestBody AllocationsEntity allocationsEntity) {
+        if (allocationsEntity.getId() == null) {
             return Result.failed("服务ID不能为空");
         }
-        offeringService.unbind(offering.getId());
+        allocationsService.closeAllocation(allocationsEntity.getId());
         return Result.success(true);
     }
 
@@ -190,5 +188,37 @@ public class OfferingController {
     @GetMapping("/statistics/supplier-failure-stats")
     public Result<List<SupplierFailureStatsVO>> getSupplierFailureStats() {
         return Result.success(assetsReportService.getSupplierFailureStats());
+    }
+
+    /**
+     * SSE进度导入服务列表
+     *
+     * @param file        导入文件
+     * @param progressKey 前端传递的进度监听key
+     */
+    @SaCheckPermission("itam:offering:import")
+    @Log(title = "服务", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public Result<String> importData(MultipartFile file, @RequestParam String progressKey) throws Exception {
+        Long userId = SecurityUtils.getUserId();
+        ThreadUtil.execute(() -> {
+            // 异步导入会删除文件 这里要转换到新的流
+            try (var inputStream = new ByteArrayInputStream(file.getBytes())) {
+                offeringService.importData(inputStream, file.getOriginalFilename(), progressKey, userId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return Result.success();
+    }
+
+    /**
+     * 批量分配设备到服务
+     */
+    @SaCheckPermission("itam:offering:update")
+    @Log(title = "服务", businessType = BusinessType.UPDATE)
+    @PostMapping("/batch-allocate")
+    public Result<Boolean> batchAllocate(@Validated @RequestBody BatchAllocationReq req) {
+        return Result.success(allocationsService.batchAllocate(req.getItemType(), req.getItemId(), req.getOwnerType(), req.getOwnerIds(), req.getNote()));
     }
 }

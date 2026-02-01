@@ -28,7 +28,7 @@
   import { allocateLicense, LicensesEntity } from '@/api/itam/licenses'
   import { MessageUtil } from '@/utils/messageUtil'
   import { resetFormRef } from '@/utils/business'
-  import DeviceSelect from '@/views/itam/components/devcie-select/index.vue'
+  import DeviceSelect from '@/views/itam/components/device-select/index.vue'
 
   const visible = ref(false)
   const loading = ref(false)

@@ -46,6 +46,11 @@ public class SseEvent implements Serializable {
     private String progressKey;
 
     /**
+     * 目标平台（用于路由）
+     */
+    private String platform;
+
+    /**
      * 重试次数
      */
     private Integer retry;
@@ -84,19 +89,6 @@ public class SseEvent implements Serializable {
         return event;
     }
 
-    /**
-     * 构造错误事件（字符串消息）
-     */
-    public static SseEvent error(String userId, String progressKey, String error) {
-        SseEvent event = new SseEvent();
-        event.setId(System.currentTimeMillis() + "");
-        event.setEvent("error");
-        event.setData(error);
-        event.setUserId(userId);
-        event.setProgressKey(progressKey);
-        event.setTimestamp(LocalDateTime.now());
-        return event;
-    }
 
     /**
      * 构造错误事件（结构化错误对象）
@@ -112,29 +104,6 @@ public class SseEvent implements Serializable {
         return event;
     }
 
-    /**
-     * 转换为 SSE 格式字符串
-     */
-    public String toSseFormat() {
-        StringBuilder sb = new StringBuilder();
-        
-        if (id != null) {
-            sb.append("id: ").append(id).append("\n");
-        }
-        
-        if (event != null) {
-            sb.append("event: ").append(event).append("\n");
-        }
-        
-        if (retry != null) {
-            sb.append("retry: ").append(retry).append("\n");
-        }
-        
-        if (data != null) {
-            sb.append("data: ").append(data).append("\n");
-        }
-        
-        sb.append("\n");
-        return sb.toString();
-    }
+
+
 }

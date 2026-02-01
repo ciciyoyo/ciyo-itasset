@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -20,12 +21,11 @@ import java.util.Objects;
  */
 @TableName("gen_table")
 public class GenTableEntity extends SysBaseEntity {
-
     /**
      * 请求参数
      */
     @TableField(exist = false)
-    private java.util.Map<String, Object> params;
+    private Map<String, Object> params;
     /**
      * 编号
      */

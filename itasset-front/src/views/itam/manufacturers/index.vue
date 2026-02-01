@@ -30,6 +30,7 @@
                 type="danger"
                 v-ripple
                 icon="ele-Delete"
+                :disabled="!selectedRows.length"
                 @click="handleDelete"
                 v-hasPermi="['itam:manufacturers:delete']"
               >
@@ -41,6 +42,7 @@
                 title="厂商数据导入"
                 templateCode="manufacturer"
                 v-hasPermi="['itam:manufacturers:import']"
+                @success="refreshData"
               >
                 <template #trigger>
                   <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>

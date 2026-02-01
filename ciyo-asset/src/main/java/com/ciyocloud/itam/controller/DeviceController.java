@@ -1,6 +1,7 @@
 package com.ciyocloud.itam.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -8,6 +9,7 @@ import com.ciyocloud.common.entity.request.IdListRequest;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.Result;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
 import com.ciyocloud.common.validator.group.UpdateGroup;
@@ -29,7 +31,10 @@ import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +85,25 @@ public class DeviceController {
     public void export(DevicePageReq req) {
         List<DeviceVO> list = deviceService.queryListVo(req);
         ExcelUtils.exportExcel(list, "设备数据", DeviceVO.class);
+    }
+
+    /**
+     * 导入设备
+     */
+    @SaCheckPermission("itam:device:import")
+    @Log(title = "设备管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public Result<String> importData(MultipartFile file, @RequestParam String progressKey) throws Exception {
+        Long userId = SecurityUtils.getUserId();
+        ThreadUtil.execute(() -> {
+            // 异步导入会删除文件 这里要转换到新的流
+            try (var inputStream = new ByteArrayInputStream(file.getBytes())) {
+                deviceService.importDevices(progressKey, inputStream, userId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return Result.success();
     }
 
     /**
@@ -211,7 +235,6 @@ public class DeviceController {
     public Result<Map<String, Object>> getSummaryStats() {
         return Result.success(deviceService.getSummaryStats());
     }
-
 
 
     /**

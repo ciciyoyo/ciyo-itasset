@@ -4,7 +4,9 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.FailureStatus;
 import jakarta.validation.constraints.NotBlank;
@@ -33,6 +35,7 @@ public class FailuresEntity extends SysBaseEntity {
      */
     @NotNull(message = "关联类型不能为空")
     @ExcelProperty(value = "关联类型", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AssetType targetType;
 
     /**
@@ -67,6 +70,7 @@ public class FailuresEntity extends SysBaseEntity {
      */
     @NotNull(message = "故障状态不能为空")
     @ExcelProperty(value = "故障状态", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private FailureStatus status;
 
     /**

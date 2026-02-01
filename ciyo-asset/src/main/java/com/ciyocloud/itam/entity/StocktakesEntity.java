@@ -5,7 +5,9 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.StocktakeStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,6 +57,7 @@ public class StocktakesEntity extends SysBaseEntity {
      * 状态
      */
     @ExcelProperty(value = "状态", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private StocktakeStatus status;
     /**
      * 负责人 ID

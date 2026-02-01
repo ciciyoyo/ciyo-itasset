@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.AllocationsEntity;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AssetType;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author codeck
  * @since 2025-12-30
  */
-public interface AllocationsService extends IService<AllocationsEntity> {
+public interface AllocationsService extends BaseService<AllocationsEntity> {
 
     /**
      * 创建分配记录
@@ -55,6 +55,18 @@ public interface AllocationsService extends IService<AllocationsEntity> {
      * @return 是否成功
      */
     boolean allocate(AllocationsEntity allocation);
+
+    /**
+     * 批量资源分配
+     *
+     * @param itemType   资源类型
+     * @param itemId     资源ID
+     * @param ownerType  归属类型
+     * @param ownerIds   归属ID列表
+     * @param note       备注
+     * @return 是否全部成功
+     */
+    boolean batchAllocate(AssetType itemType, Long itemId, AllocationOwnerType ownerType, List<Long> ownerIds, String note);
 
     /**
      * 资源取消分配 (归还)

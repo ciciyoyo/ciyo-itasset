@@ -4,7 +4,9 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ciyocloud.common.entity.BaseEntity;
+import com.ciyocloud.excel.annotation.ExcelSample;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.AssetType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +32,7 @@ public class AssetsMonthlyStatsEntity extends BaseEntity {
      * 资产类型 (设备/耗材)
      */
     @ExcelProperty(value = "资产类型", converter = DictEnumConvert.class)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private AssetType assetsType;
 
     /**

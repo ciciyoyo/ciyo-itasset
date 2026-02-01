@@ -31,5 +31,15 @@
     "downloadSuccess": "模板下载成功",
     "downloadError": "模板下载失败，请重试",
     "noTemplateUrl": "未配置模板下载地址或下载方法"
+  },
+  "sseProgressBar": {
+    "msgCount": "{count} 条消息",
+    "viewAll": "查看全部",
+    "details": "消息详情",
+    "clear": "清空",
+    "close": "关闭",
+    "failed": "处理失败",
+    "connected": "[SseProgressBar] SSE 已连接",
+    "connectFailed": "[SseProgressBar] SSE 连接失败:"
   }
 }

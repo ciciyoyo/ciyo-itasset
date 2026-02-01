@@ -1,13 +1,14 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.LicensesEntity;
 import com.ciyocloud.itam.req.LicenseAllocationReq;
 import com.ciyocloud.itam.req.LicensePageReq;
 import com.ciyocloud.itam.vo.LicenseAllocationVO;
 import com.ciyocloud.itam.vo.LicensesVO;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface LicensesService extends IService<LicensesEntity> {
+public interface LicensesService extends BaseService<LicensesEntity> {
 
     /**
      * 查询软件授权列表VO
@@ -84,5 +85,14 @@ public interface LicensesService extends IService<LicensesEntity> {
      * @return 结果
      */
     boolean removeLicensesByIds(List<Long> ids);
+
+    /**
+     * 导入软件授权
+     *
+     * @param progressKey SSE进度key
+     * @param inputStream 文件流
+     * @param userId      操作用户ID
+     */
+    void importLicenses(String progressKey, InputStream inputStream, Long userId);
 }
 

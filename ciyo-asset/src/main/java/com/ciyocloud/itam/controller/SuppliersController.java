@@ -1,9 +1,12 @@
 package com.ciyocloud.itam.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.hutool.core.thread.ThreadUtil;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.entity.vo.PageResultVO;
 import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
 import com.ciyocloud.common.validator.group.UpdateGroup;
@@ -13,10 +16,12 @@ import com.ciyocloud.itam.service.SuppliersService;
 import com.ciyocloud.oplog.annotation.Log;
 import com.ciyocloud.oplog.enums.BusinessType;
 import lombok.RequiredArgsConstructor;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -105,5 +110,27 @@ public class SuppliersController {
     @PostMapping("/delete/{ids}")
     public Result<Boolean> delete(@PathVariable List<Long> ids) {
         return Result.success(suppliersService.removeByIds(ids));
+    }
+
+    /**
+     * SSE进度导入供应商列表
+     *
+     * @param file        导入文件
+     * @param progressKey 前端传递的进度监听key
+     */
+    @SaCheckPermission("itam:suppliers:import")
+    @Log(title = "供应商", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public Result<String> importData(MultipartFile file, @RequestParam String progressKey) throws Exception {
+        Long userId = SecurityUtils.getUserId();
+        ThreadUtil.execute(() -> {
+            // 异步导入会删除文件 这里要转换到新的流
+            try (var inputStream = new ByteArrayInputStream(file.getBytes())) {
+                suppliersService.importData(inputStream, file.getOriginalFilename(), progressKey, userId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return Result.success();
     }
 }

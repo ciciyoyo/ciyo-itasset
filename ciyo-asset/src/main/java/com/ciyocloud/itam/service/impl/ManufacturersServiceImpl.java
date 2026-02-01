@@ -27,17 +27,17 @@ public class ManufacturersServiceImpl extends BaseServiceImpl<ManufacturersMappe
             log.info("开始导入制造商数据，progressKey: {}, userId: {}, 文件名: {}", progressKey, userId, originalFilename);
 
             // 初始化进度
-            SseAsyncProcessUtils.setProcessTips(progressKey, "正在解析Excel文件...", userId);
+            SseAsyncProcessUtils.setTips("正在解析Excel文件...");
 
             // 创建支持SSE进度推送的导入监听器
             ManufacturersImportListener listener = new ManufacturersImportListener(progressKey, userId);
             // 更新进度：开始导入
-            SseAsyncProcessUtils.setProcess(progressKey, 0, userId, "开始导入制造商数据...");
+            SseAsyncProcessUtils.setProcess(0, "开始导入制造商数据...");
             //执行导入
             ExcelUtils.importExcel(inputStream, ManufacturersEntity.class, listener);
         } catch (Exception e) {
             log.error("制造商数据导入失败，progressKey: {}, 错误: {}", progressKey, e.getMessage(), e);
-            SseAsyncProcessUtils.setProcessError(progressKey, "导入失败: " + e.getMessage(), userId);
+            SseAsyncProcessUtils.setError("导入失败: " + e.getMessage());
         }
 
     }

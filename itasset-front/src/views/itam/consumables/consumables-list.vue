@@ -36,6 +36,19 @@
               >
                 {{ $t('common.delete') }}
               </el-button>
+
+              <ExcelImport
+                url="/itam/consumables/importData"
+                title="耗材数据导入"
+                templateCode="consumable"
+                v-hasPermi="['itam:consumables:import']"
+                @success="refreshData"
+              >
+                <template #trigger>
+                  <el-button type="success" icon="ele-Upload" v-ripple> 导入 </el-button>
+                </template>
+              </ExcelImport>
+
               <el-button v-hasPermi="['itam:consumables:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -249,6 +262,7 @@
   import { download, resetFormRef } from '@/utils/business'
   import { useI18n } from 'vue-i18n'
   import UserChooseTable from '@/views/system/user/chooseTable.vue'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
 
   defineOptions({
     name: 'ConsumablesList'
