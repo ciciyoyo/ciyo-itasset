@@ -7,8 +7,8 @@ INSERT INTO `sys_menu` (`id`, `menu_name`, `lang_key`, `parent_id`, `order_num`,
 INSERT INTO `sys_menu` (`id`, `menu_name`, `lang_key`, `parent_id`, `order_num`, `path`, `component`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1347, '软件导入', NULL, 1295, 6, '#', '', 1, 0, 'F', '0', '0', 'itam:licenses:import', '#', 1, '2026-01-31 22:45:00', NULL, NULL, '');
 INSERT INTO `sys_menu` (`id`, `menu_name`, `lang_key`, `parent_id`, `order_num`, `path`, `component`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1348, '服务导入', NULL, 1301, 6, '#', '', 1, 0, 'F', '0', '0', 'itam:offering:import', '#', 1, '2026-01-31 22:45:00', NULL, NULL, '');
 INSERT INTO `sys_menu` (`id`, `menu_name`, `lang_key`, `parent_id`, `order_num`, `path`, `component`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1350, '型号导入', NULL, 1319, 6, '#', '', 1, 0, 'F', '0', '0', 'itam:models:import', '#', 1, '2026-01-31 22:45:00', NULL, NULL, '');
+INSERT INTO `sys_menu` (`id`, `menu_name`, `lang_key`, `parent_id`, `order_num`, `path`, `component`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1351, '设备扫描', '', 1277, 3, '', NULL, 1, 0, 'F', '0', '0', 'itam:device:scan', '#', 1, '2026-02-05 17:47:09', 1, '2026-02-05 17:47:15', '');
 
-
-ALTER TABLE `itam_offering` 
+ALTER TABLE `itam_offering`
 DROP COLUMN `target_type`,
 DROP COLUMN `target_id`;
