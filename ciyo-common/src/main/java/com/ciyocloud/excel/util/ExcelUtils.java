@@ -56,6 +56,99 @@ public class ExcelUtils {
         return EasyExcel.read(is).head(clazz).autoCloseStream(false).sheet().doReadSync();
     }
 
+    /**
+     * 根据实体类自动生成并下载导入模板（仅包含标注为 IMPORT/ALL 的字段）
+     *
+     * @param sheetName 工作表名称/文件前缀
+     * @param clazz     实体类
+     */
+    public static <T> void downloadImportTemplate(String sheetName, Class<T> clazz) {
+        try {
+            // 仅包含允许导入的字段
+            Field[] fields = ReflectUtil.getFields(clazz);
+            List<String> includeColumnFieldNames = CollUtil.newArrayList();
+            for (Field field : fields) {
+                ExcelPropertyType annotation = AnnotationUtil.getAnnotation(field, ExcelPropertyType.class);
+                if (ObjectUtil.isNotNull(annotation)) {
+                    if (annotation.type() == ExcelPropertyType.TypeEnum.IMPORT || annotation.type() == ExcelPropertyType.TypeEnum.ALL) {
+                        includeColumnFieldNames.add(field.getName());
+                    }
+                }
+            }
+
+            HttpServletResponse response = ServletUtils.getResponse();
+            resetResponse(sheetName, response);
+            ServletOutputStream os = response.getOutputStream();
+
+            // 使用 EasyExcel 写出仅表头的空模板
+                ExcelWriterSheetBuilder builder = EasyExcel.write(os, clazz)
+                    .autoCloseStream(false)
+                    .registerConverter(new ExcelBigNumberConvert())
+                    // 列宽自适配（基于表头与示例数据的最长匹配）
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    // 添加枚举注释处理器
+                    .registerWriteHandler(new com.ciyocloud.excel.handler.EnumCommentWriteHandler(clazz))
+                    // 强制写入表头，避免空数据导致文件无表头
+                    .needHead(Boolean.TRUE)
+                    // 若未显式标注导入字段，则回退为包含所有注解列
+                    .sheet(sheetName);
+
+            if (CollUtil.isNotEmpty(includeColumnFieldNames)) {
+                builder.includeColumnFieldNames(includeColumnFieldNames);
+            }
+
+            builder.doWrite(CollUtil.newArrayList());
+        } catch (IOException e) {
+            throw new RuntimeException("导出Excel异常");
+        }
+    }
+
+    /**
+     * 根据实体类自动生成并下载导入模板，并附带示例数据
+     *
+     * @param sheetName 工作表名称/文件前缀
+     * @param clazz     实体类
+     * @param examples  示例数据列表（可为空）
+     */
+    public static <T> void downloadImportTemplate(String sheetName, Class<T> clazz, List<T> examples) {
+        try {
+            // 仅包含允许导入的字段
+            Field[] fields = ReflectUtil.getFields(clazz);
+            List<String> includeColumnFieldNames = CollUtil.newArrayList();
+            for (Field field : fields) {
+                ExcelPropertyType annotation = AnnotationUtil.getAnnotation(field, ExcelPropertyType.class);
+                if (ObjectUtil.isNotNull(annotation)) {
+                    if (annotation.type() == ExcelPropertyType.TypeEnum.IMPORT || annotation.type() == ExcelPropertyType.TypeEnum.ALL) {
+                        includeColumnFieldNames.add(field.getName());
+                    }
+                }
+            }
+
+            HttpServletResponse response = ServletUtils.getResponse();
+            resetResponse(sheetName, response);
+            ServletOutputStream os = response.getOutputStream();
+
+                ExcelWriterSheetBuilder builder = EasyExcel.write(os, clazz)
+                    .autoCloseStream(false)
+                    .registerConverter(new ExcelBigNumberConvert())
+                    // 列宽自适配（基于表头与示例数据的最长匹配）
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    // 添加枚举注释处理器
+                    .registerWriteHandler(new com.ciyocloud.excel.handler.EnumCommentWriteHandler(clazz))
+                    // 强制写入表头，避免空数据导致文件无表头
+                    .needHead(Boolean.TRUE)
+                    .sheet(sheetName);
+
+            if (CollUtil.isNotEmpty(includeColumnFieldNames)) {
+                builder.includeColumnFieldNames(includeColumnFieldNames);
+            }
+
+            List<T> data = CollUtil.isEmpty(examples) ? CollUtil.newArrayList() : examples;
+            builder.doWrite(data);
+        } catch (IOException e) {
+            throw new RuntimeException("导出Excel异常");
+        }
+    }
 
     /**
      * 使用校验监听器 异步导入 同步返回

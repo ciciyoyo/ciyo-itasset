@@ -2,7 +2,7 @@ package com.ciyocloud.common.constant;
 
 /**
  * @description: 配置表key
- * @author: smalljop
+ * @author: codeck
  * @create: 2020-02-18 23:22
  **/
 public interface ConfigConstants {

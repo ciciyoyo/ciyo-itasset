@@ -31,18 +31,18 @@
  * @module store/modules/user
  * @author Art Design Pro Team
  */
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-import { LanguageEnum } from '@/enums/appEnum'
-import { router } from '@/router'
-import { useSettingStore } from './setting'
-import { useWorktabStore } from './worktab'
-import { AppRouteRecord } from '@/types/router'
-import { setPageTitle } from '@/utils/router'
-import { resetRouterState } from '@/router/guards/beforeEach'
-import { useMenuStore } from './menu'
-import { StorageConfig } from '@/utils/storage/storage-config'
-import UserInfo = Api.Auth.UserInfo
+import {defineStore} from 'pinia'
+import {computed, ref} from 'vue'
+import {LanguageEnum} from '@/enums/appEnum'
+import {router} from '@/router'
+import {useSettingStore} from './setting'
+import {useWorktabStore} from './worktab'
+import {AppRouteRecord} from '@/types/router'
+import {setPageTitle} from '@/utils/router'
+import {resetRouterState} from '@/router/guards/beforeEach'
+import {useMenuStore} from './menu'
+import {StorageConfig} from '@/utils/storage/storage-config'
+import UserInfo = Api.Auth.UserInfo;
 
 /**
  * 用户状态管理
@@ -134,7 +134,6 @@ export const useUserStore = defineStore(
       if (newRefreshToken) {
         refreshToken.value = newRefreshToken
       }
-      // TODO
       localStorage.setItem('X-Admin-Token', newAccessToken)
     }
 

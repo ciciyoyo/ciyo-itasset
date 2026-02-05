@@ -6,9 +6,9 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ciyocloud.common.entity.request.PageRequest;
 import com.ciyocloud.common.exception.BusinessException;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AssetRequestStatus;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class AssetRequestsServiceImpl extends ServiceImpl<AssetRequestsMapper, AssetRequestsEntity> implements AssetRequestsService {
+public class AssetRequestsServiceImpl extends BaseServiceImpl<AssetRequestsMapper, AssetRequestsEntity> implements AssetRequestsService {
 
     private final AssetApprovalService assetApprovalService;
     private final DeviceMapper deviceMapper;

@@ -16,5 +16,11 @@ public interface BaseService<T> extends IService<T> {
      */
     T getOneSafe(QueryWrapper<T> queryWrapper);
 
+    /**
+     * 查询单条记录 只会返回唯一一条记录
+     *
+     * @param lambdaQueryWrapper 查询条件
+     * @return 单条记录
+     */
     T getOneSafe(LambdaQueryWrapper<T> lambdaQueryWrapper);
 }

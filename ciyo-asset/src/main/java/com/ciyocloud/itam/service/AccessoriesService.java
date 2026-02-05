@@ -2,12 +2,13 @@ package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ciyocloud.common.entity.request.PageRequest;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.AccessoriesEntity;
 import com.ciyocloud.itam.req.AccessoriesPageReq;
 import com.ciyocloud.itam.vo.AccessoriesVO;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:26
  */
-public interface AccessoriesService extends IService<AccessoriesEntity> {
+public interface AccessoriesService extends BaseService<AccessoriesEntity> {
 
     /**
      * 分页查询配件列表
@@ -52,5 +53,15 @@ public interface AccessoriesService extends IService<AccessoriesEntity> {
      * @return 统计结果
      */
     Map<String, Object> getSummaryStats();
+
+    /**
+     * 导入配件数据
+     *
+     * @param inputStream      文件输入流
+     * @param originalFilename 原始文件名
+     * @param progressKey      前端传递的进度监听key
+     * @param userId           用户 id
+     */
+    void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId);
 
 }

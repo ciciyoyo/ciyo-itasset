@@ -14,12 +14,12 @@
  * @author Art Design Pro Team
  */
 
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { useUserStore } from '@/store/modules/user'
-import { ApiStatus } from './status'
-import { handleError, HttpError, showError, showSuccess } from './error'
-import { BaseResponse } from '@/types'
-import { i18n } from '@/i18n'
+import axios, {AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
+import {useUserStore} from '@/store/modules/user'
+import {ApiStatus} from './status'
+import {handleError, HttpError, showError, showSuccess} from './error'
+import {BaseResponse} from '@/types'
+import {i18n} from '@/i18n'
 
 /** 请求配置常量 */
 const REQUEST_TIMEOUT = 15000
@@ -82,15 +82,18 @@ axiosInstance.interceptors.request.use(
 
 /** 响应拦截器 */
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse<BaseResponse>) => {
-    const { code, msg } = response.data
-    // 如果是文件下载请求，返回文件流
+  (response: AxiosResponse<any>) => {
+    // 先判断是否为文件下载，避免对 Blob/二进制数据进行对象解构
     const contentDisposition = response.headers['content-disposition']
-    const isFileDownload = contentDisposition && contentDisposition.includes('attachment')
+    const isAttachment = typeof contentDisposition === 'string' && contentDisposition.toLowerCase().includes('attachment')
+    const isBlob = typeof Blob !== 'undefined' && response.data instanceof Blob
+    const isArrayBuffer = response.config.responseType === 'arraybuffer'
 
-    if (isFileDownload) {
+    if (isBlob || isArrayBuffer || isAttachment) {
       return response
     }
+
+    const { code, msg } = response.data as BaseResponse
     if (code === ApiStatus.success) return response
     if (code === ApiStatus.unauthorized) handleUnauthorizedError(msg)
     throw createHttpError(msg || i18n.global.t('httpMsg.requestFailed'), code)

@@ -39,7 +39,14 @@
               >
                 {{ $t('common.delete') }}
               </el-button>
-
+              <ExcelImport
+                url="/itam/offering/importData"
+                title="服务数据导入"
+                templateCode="offering"
+                v-hasPermi="['itam:offering:import']"
+                @success="refreshData"
+              >
+              </ExcelImport>
               <el-button v-hasPermi="['itam:offering:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -58,12 +65,6 @@
           @pagination:size-change="handleSizeChange"
           @pagination:current-change="handleCurrentChange"
         >
-          <template #targetName="{ row }">
-            <div class="flex items-center" v-if="row.targetName">
-              <el-icon class="mr-1"><Monitor /></el-icon>
-              <span>{{ row.targetName }}</span>
-            </div>
-          </template>
           <template #offeringStatus="{ row }">
             <el-tag v-if="row.offeringStatus" :type="getStatusInfo(row.offeringStatus).type">
               {{ getStatusInfo(row.offeringStatus).label }}
@@ -76,7 +77,7 @@
             <span v-else>{{ row.endDate }}</span>
           </template>
           <template #operation="{ row }">
-            <el-button link type="primary" @click="handleAssignToDevice(row)" v-hasPermi="['itam:offering:update']">
+            <el-button link type="primary" @click="handleAssignDevice(row)" v-hasPermi="['itam:offering:update']">
               分配设备
             </el-button>
             <el-button link type="warning" @click="handleReportException(row)" v-hasPermi="['itam:offering:update']">
@@ -145,7 +146,9 @@
 
     <!-- 报告异常对话框 -->
     <ServiceExceptionModal ref="serviceExceptionModalRef" @success="refreshData" />
-    <AssignToDeviceModal ref="assignToDeviceModalRef" @success="refreshData" />
+
+    <!-- 分配设备对话框 -->
+    <DeviceAssignModal ref="deviceAssignModalRef" @success="refreshData" />
   </div>
 </template>
 
@@ -167,16 +170,21 @@
   import { download, resetFormRef } from '@/utils/business'
   import { useI18n } from 'vue-i18n'
   import SupplierSelect from '@/views/itam/components/supplier-select/index.vue'
-
+  import ExcelImport from '@/components/business/excel-import/index.vue'
   import ServiceExceptionModal from './components/ServiceExceptionModal.vue'
-  import AssignToDeviceModal from './components/AssignToDeviceModal.vue'
-  import { Monitor } from '@element-plus/icons-vue'
+  import DeviceAssignModal from './components/DeviceAssignModal.vue'
 
   defineOptions({
     name: 'offering'
   })
 
   const { t } = useI18n()
+
+  const deviceAssignModalRef = useTemplateRef('deviceAssignModalRef')
+
+  const handleAssignDevice = (row: OfferingVO) => {
+    deviceAssignModalRef.value?.open(row)
+  }
 
   const statusMap: Record<string, { label: string; type: 'success' | 'warning' | 'info' | 'danger' | 'primary' }> = {
     normal: { label: '正常', type: 'success' },
@@ -207,9 +215,6 @@
     cost: undefined,
     notes: undefined,
     offeringStatus: undefined,
-    targetType: undefined,
-    targetId: undefined,
-    deleted: undefined,
     exceptionStartDate: undefined,
     exceptionEndDate: undefined
   })
@@ -261,7 +266,7 @@
         { type: 'selection' },
         { prop: 'id', label: 'Id', minWidth: 120 },
         { prop: 'name', label: '服务名称', minWidth: 120 },
-        { prop: 'targetName', label: '关联设备', minWidth: 150, useSlot: true },
+
         { prop: 'offeringStatus', label: '服务状态', minWidth: 120, useSlot: true },
         { prop: 'supplierName', label: '供应商', minWidth: 120 },
         { prop: 'serviceNumber', label: '服务单号', minWidth: 120 },
@@ -409,12 +414,6 @@
         MessageUtil.success(t('common.deleteSuccess'))
       })
       .catch(() => {})
-  }
-
-  const assignToDeviceModalRef = useTemplateRef('assignToDeviceModalRef')
-
-  const handleAssignToDevice = (row: OfferingVO) => {
-    assignToDeviceModalRef.value?.open(row)
   }
 
   const serviceExceptionModalRef = useTemplateRef('serviceExceptionModalRef')

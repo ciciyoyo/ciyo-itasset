@@ -2,7 +2,7 @@ package com.ciyocloud.itam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.itam.entity.StocktakeItemsEntity;
 import com.ciyocloud.itam.entity.StocktakesEntity;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class StocktakeItemsServiceImpl extends ServiceImpl<StocktakeItemsMapper, StocktakeItemsEntity> implements StocktakeItemsService {
+public class StocktakeItemsServiceImpl extends BaseServiceImpl<StocktakeItemsMapper, StocktakeItemsEntity> implements StocktakeItemsService {
 
     private final DeviceService deviceService;
     private final StocktakesMapper stocktakesMapper;

@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * @description: hibernate 校验工具类
  * 不通过注解使用 通过工具类返回自定义结果
- * @author: smalljop
+ * @author: codeck
  * @create: 2018-10-12 10:20
  **/
 public class ValidatorUtils {

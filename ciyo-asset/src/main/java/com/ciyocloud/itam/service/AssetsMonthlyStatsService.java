@@ -1,6 +1,6 @@
 package com.ciyocloud.itam.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.AssetsMonthlyStatsEntity;
 import com.ciyocloud.itam.enums.AssetType;
 
@@ -12,7 +12,7 @@ import java.time.LocalDate;
  * @author codeck
  * @since 2026-01-01
  */
-public interface AssetsMonthlyStatsService extends IService<AssetsMonthlyStatsEntity> {
+public interface AssetsMonthlyStatsService extends BaseService<AssetsMonthlyStatsEntity> {
 
     /**
      * 计算并保存当天的资产价值统计

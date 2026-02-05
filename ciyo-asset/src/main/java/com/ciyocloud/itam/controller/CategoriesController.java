@@ -1,12 +1,15 @@
 package com.ciyocloud.itam.controller;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
+import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.validator.ValidatorUtils;
 import com.ciyocloud.common.validator.group.AddGroup;
 import com.ciyocloud.common.validator.group.UpdateGroup;
 import com.ciyocloud.excel.util.ExcelUtils;
 import com.ciyocloud.itam.entity.CategoriesEntity;
+import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.service.CategoriesService;
 import com.ciyocloud.itam.util.AssetPermissionUtils;
 import com.ciyocloud.oplog.annotation.Log;
@@ -15,7 +18,10 @@ import com.ciyocloud.system.constant.UserConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -101,5 +107,31 @@ public class CategoriesController {
     public Result<Boolean> delete(@PathVariable List<Long> ids, @RequestParam String categorieType) {
         assetPermissionUtils.hasAssetPermi(categorieType, "delete");
         return Result.success(categoriesService.removeByIds(ids));
+    }
+
+    /**
+     * SSE进度导入分类列表
+     *
+     * @param file         导入文件
+     * @param progressKey  前端传递的进度监听key
+     * @param categoryType 分类类型
+     */
+    @Log(title = "分类", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public Result<String> importData(MultipartFile file, @RequestParam String progressKey, @RequestParam AssetType categoryType) throws Exception {
+        if (categoryType == null) {
+            return Result.failed("分类类型不能为空");
+        }
+        assetPermissionUtils.hasAssetPermi(categoryType.getCode(), "import");
+        Long userId = SecurityUtils.getUserId();
+        ThreadUtil.execute(() -> {
+            // 异步导入会删除文件 这里要转换到新的流
+            try (var inputStream = new ByteArrayInputStream(file.getBytes())) {
+                categoriesService.importData(inputStream, file.getOriginalFilename(), progressKey, userId, categoryType);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return Result.success();
     }
 }

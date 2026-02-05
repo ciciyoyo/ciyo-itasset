@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * @description: 云存储工具类
- * @author: smalljop
+ * @author: codeck
  * @create: 2019-01-25 15:37
  **/
 public class StorageUtils {

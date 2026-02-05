@@ -2,7 +2,7 @@ package com.ciyocloud.common.constant;
 
 /**
  * @description: 通用的常亮
- * @author: smalljop
+ * @author: codeck
  * @create: 2018-09-27 13:25
  **/
 public interface CommonConstants {

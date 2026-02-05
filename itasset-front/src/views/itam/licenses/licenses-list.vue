@@ -36,7 +36,14 @@
               >
                 {{ $t('common.delete') }}
               </el-button>
-
+              <ExcelImport
+                url="/itam/licenses/importData"
+                title="软件授权导入"
+                templateCode="license"
+                v-hasPermi="['itam:licenses:import']"
+                @success="refreshData"
+              >
+              </ExcelImport>
               <el-button v-hasPermi="['itam:licenses:export']" icon="ele-Download" v-ripple @click="handleExport">
                 {{ $t('common.export') }}
               </el-button>
@@ -246,6 +253,7 @@
   import { download, resetFormRef } from '@/utils/business'
   import { useI18n } from 'vue-i18n'
   import AssignToDeviceModal from './components/AssignToDeviceModal.vue'
+  import ExcelImport from '@/components/business/excel-import/index.vue'
 
   defineOptions({
     name: 'LicensesList'

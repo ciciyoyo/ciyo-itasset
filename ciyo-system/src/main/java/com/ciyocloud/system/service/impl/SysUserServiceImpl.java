@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ciyocloud.common.exception.BaseException;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.common.util.*;
 import com.ciyocloud.system.constant.SysConfigConstants;
 import com.ciyocloud.system.constant.SystemConstants;
@@ -41,7 +41,7 @@ import static com.ciyocloud.system.constant.SysConfigConstants.REGISTER_ROLE;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity> implements SysUserService {
+public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUserEntity> implements SysUserService {
 
     private final SysRoleMapper roleMapper;
 

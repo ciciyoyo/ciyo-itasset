@@ -1,11 +1,12 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.ConsumableTransactionsEntity;
 import com.ciyocloud.itam.entity.ConsumablesEntity;
 import com.ciyocloud.itam.vo.ConsumablesVO;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface ConsumablesService extends IService<ConsumablesEntity> {
+public interface ConsumablesService extends BaseService<ConsumablesEntity> {
 
     /**
      * 查询耗材列表VO
@@ -71,4 +72,14 @@ public interface ConsumablesService extends IService<ConsumablesEntity> {
      * @return 统计结果
      */
     Map<String, Object> getOverviewStats();
+    
+    /**
+     * 导入耗材数据
+     *
+     * @param inputStream      文件输入流
+     * @param originalFilename 原始文件名
+     * @param progressKey      前端传递的进度监听key
+     * @param userId           用户 id
+     */
+    void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId);
 }

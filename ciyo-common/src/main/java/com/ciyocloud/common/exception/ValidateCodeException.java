@@ -1,7 +1,7 @@
 package com.ciyocloud.common.exception;
 
 /**
- * @author : smalljop
+ * @author : codeck
  * @description : 验证码错误
  * @create : 2020-12-14 16:00
  **/

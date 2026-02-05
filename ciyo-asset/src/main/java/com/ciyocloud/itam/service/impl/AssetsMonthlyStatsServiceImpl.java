@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.mapper.*;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AssetsMonthlyStatsServiceImpl extends ServiceImpl<AssetsMonthlyStatsMapper, AssetsMonthlyStatsEntity> implements AssetsMonthlyStatsService {
+public class AssetsMonthlyStatsServiceImpl extends BaseServiceImpl<AssetsMonthlyStatsMapper, AssetsMonthlyStatsEntity> implements AssetsMonthlyStatsService {
 
     private final DeviceMapper deviceMapper;
     private final AccessoriesMapper accessoriesMapper;

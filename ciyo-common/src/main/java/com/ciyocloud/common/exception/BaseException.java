@@ -2,7 +2,7 @@ package com.ciyocloud.common.exception;
 
 /**
  * @description: 异常基类
- * @author: smalljop
+ * @author: codeck
  * @create: 2018-09-13 10:19
  **/
 public class BaseException extends RuntimeException {

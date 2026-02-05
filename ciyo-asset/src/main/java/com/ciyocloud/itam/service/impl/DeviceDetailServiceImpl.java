@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ciyocloud.itam.entity.AllocationsEntity;
 import com.ciyocloud.itam.entity.DeviceEntity;
+import com.ciyocloud.itam.entity.OfferingEntity;
 import com.ciyocloud.itam.entity.StocktakeItemsEntity;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AssetType;
@@ -57,14 +58,7 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
             }
         }
 
-        // 3. 查询相关的服务 (Offering)
-        com.ciyocloud.itam.req.OfferingPageReq offeringReq = new com.ciyocloud.itam.req.OfferingPageReq();
-        offeringReq.setTargetType(AssetType.DEVICE);
-        offeringReq.setTargetId(id);
-        List<OfferingVO> services = offeringService.queryListVo(offeringReq);
-        detailVO.setServices(services);
-
-        // 4. 查询分配表，获取关联的资产ID
+        // 3. 查询分配表，获取关联的资产ID
         // ownerType = ASSET (设备) AND ownerId = id
         QueryWrapper<AllocationsEntity> allocWrapper = new QueryWrapper<>();
         allocWrapper.eq("owner_type", AllocationOwnerType.ASSET).eq("owner_id", id);
@@ -74,6 +68,7 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
         List<Long> accessoryIds = new ArrayList<>();
         List<Long> licenseIds = new ArrayList<>();
         List<Long> consumableIds = new ArrayList<>();
+        List<Long> serviceIds = new ArrayList<>();
 
         if (allocations != null) {
             for (AllocationsEntity alloc : allocations) {
@@ -83,8 +78,23 @@ public class DeviceDetailServiceImpl implements DeviceDetailService {
                     licenseIds.add(alloc.getItemId());
                 } else if (alloc.getItemType() == AssetType.CONSUMABLE) {
                     consumableIds.add(alloc.getItemId());
+                } else if (alloc.getItemType() == AssetType.SERVICE) {
+                    serviceIds.add(alloc.getItemId());
                 }
             }
+        }
+
+        // 4. 填充服务信息
+        if (!serviceIds.isEmpty()) {
+            List<OfferingEntity> list = offeringService.listByIds(serviceIds);
+            List<OfferingVO> voList = list.stream().map(e -> {
+                OfferingVO vo = new OfferingVO();
+                BeanUtils.copyProperties(e, vo);
+                return vo;
+            }).collect(Collectors.toList());
+            detailVO.setServices(voList);
+        } else {
+            detailVO.setServices(new ArrayList<>());
         }
 
         // 5. 填充配件信息

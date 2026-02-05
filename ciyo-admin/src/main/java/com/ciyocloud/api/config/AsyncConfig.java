@@ -26,6 +26,17 @@ public class AsyncConfig implements AsyncConfigurer {
         return executor;
     }
 
+    @Bean("taskExecutor")
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);     // 核心线程数
+        executor.setMaxPoolSize(4);      // 最大线程数
+        executor.setQueueCapacity(50);   // 队列容量
+        executor.setThreadNamePrefix("task-");
+        executor.initialize();
+        return executor;
+    }
+
     // 可选：捕获 @Async 异常
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
