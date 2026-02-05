@@ -26,6 +26,7 @@
                 type="danger"
                 v-ripple
                 icon="ele-Delete"
+                :disabled="!selectedRows.length"
                 @click="handleDelete"
                 v-hasPermi="['itam:depreciations:delete']"
               >
@@ -129,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, ref, useTemplateRef } from 'vue'
+  import { computed, ref, useTemplateRef } from 'vue'
   import {
     addDepreciations,
     delDepreciations,

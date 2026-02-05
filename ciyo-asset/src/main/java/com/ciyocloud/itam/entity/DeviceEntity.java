@@ -4,7 +4,11 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 import com.ciyocloud.common.entity.SysBaseEntity;
+import com.ciyocloud.excel.annotation.ExcelPropertyType;
+import com.ciyocloud.excel.annotation.ExcelSample;
+import com.ciyocloud.excel.annotation.ExcelTemplate;
 import com.ciyocloud.excel.convert.DictEnumConvert;
+import com.ciyocloud.excel.core.EnumSampleProvider;
 import com.ciyocloud.itam.enums.DeviceStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @TableName("itam_device")
 @ExcelIgnoreUnannotated
+@ExcelTemplate(code = "device", sheetName = "设备导入模板")
 public class DeviceEntity extends SysBaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -32,83 +37,108 @@ public class DeviceEntity extends SysBaseEntity {
      */
     @TableId(value = "id")
     @ExcelProperty(value = "设备ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long id;
     /**
      * 关联型号 ID
      */
     @NotNull(message = "关联型号 ID不能为空")
     @ExcelProperty(value = "关联型号ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long modelId;
     /**
      * 分类 ID
      */
     @ExcelProperty(value = "分类ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long categoryId;
     /**
      * 设备状态
      */
     @NotNull(message = "设备状态不能为空")
     @ExcelProperty(value = "设备状态", converter = DictEnumConvert.class)
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample(provider = EnumSampleProvider.class)
     private DeviceStatus assetsStatus;
     /**
      * 序列号
      */
     @ExcelProperty(value = "序列号")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("SN123456789")
     private String serial;
     /**
      * 设备编号
      */
     @ExcelProperty(value = "设备编号")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("DEV-2026-001")
     private String deviceNo;
     /**
      * 设备名称
      */
     @ExcelProperty(value = "设备名称")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("张三的笔记本")
     private String name;
     /**
      * 设备图片
      */
     @ExcelProperty(value = "设备图片")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("https://example.com/device.jpg")
     private String imageUrl;
     /**
      * 购买日期
      */
     @ExcelProperty(value = "购买日期")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("2026-01-15")
     private LocalDate purchaseDate;
     /**
      * 购买成本
      */
     @ExcelProperty(value = "购买成本")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("8000.00")
     private BigDecimal purchaseCost;
     /**
      * 过保日期
      */
     @ExcelProperty(value = "过保日期")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("2029-01-15")
     private LocalDate warrantyDate;
     /**
      * 描述
      */
     @ExcelProperty(value = "描述")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.ALL)
+    @ExcelSample("员工办公设备")
     private String description;
     /**
      * 分配给谁 (User ID)
      */
     @ExcelProperty(value = "分配给谁ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long assignedTo;
     /**
      * 物理位置 ID
      */
     @ExcelProperty(value = "物理位置ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long locationId;
     /**
      * 供应商 ID
      */
     @ExcelProperty(value = "供应商ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long supplierId;
     /**
      * 关联折旧规则 ID
      */
     @ExcelProperty(value = "折旧规则ID")
+    @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.EXPORT)
     private Long depreciationId;
     /**
      * 逻辑删除

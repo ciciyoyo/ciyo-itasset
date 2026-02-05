@@ -1,7 +1,7 @@
 package com.ciyocloud.system.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.system.entity.SysUserEntity;
 import com.ciyocloud.system.request.SysUserPageReq;
 
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author codeck
  */
-public interface SysUserService extends IService<SysUserEntity> {
+public interface SysUserService extends BaseService<SysUserEntity> {
 
 
     /**

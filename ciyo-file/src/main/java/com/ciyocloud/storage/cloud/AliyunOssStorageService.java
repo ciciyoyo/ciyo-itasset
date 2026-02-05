@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * 阿里云oss
  *
- * @author : smalljop
+ * @author : codeck
  * @since : 2018-10-18 14:01
  **/
 public class AliyunOssStorageService extends OssStorageService {
@@ -53,7 +53,7 @@ public class AliyunOssStorageService extends OssStorageService {
 //    @Override
 //    public InputStream download(String path) {
 //        // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
-//        OSSObject ossObject = client.getObject(com.smalljop.manage.platform.com.ciyocloud.wx.mp.config.getBucketName(), path);
+//        OSSObject ossObject = client.getObject(com.codeck.manage.platform.com.ciyocloud.wx.mp.config.getBucketName(), path);
 //        ByteOutputStream out = new ByteOutputStream();
 //        return ossObject.getObjectContent();
 //    }

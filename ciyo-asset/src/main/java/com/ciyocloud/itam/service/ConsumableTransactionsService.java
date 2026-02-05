@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.ConsumableTransactionsEntity;
 import com.ciyocloud.itam.vo.ConsumableTransactionsVO;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface ConsumableTransactionsService extends IService<ConsumableTransactionsEntity> {
+public interface ConsumableTransactionsService extends BaseService<ConsumableTransactionsEntity> {
 
     /**
      * 查询耗材出入库明细列表

@@ -1,6 +1,6 @@
 package com.ciyocloud.itam.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
 import com.ciyocloud.itam.entity.DepreciationsEntity;
 import com.ciyocloud.itam.mapper.DepreciationsMapper;
 import com.ciyocloud.itam.service.DepreciationsService;
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-12-29 15:58:21
  */
 @Service
-public class DepreciationsServiceImpl extends ServiceImpl<DepreciationsMapper, DepreciationsEntity> implements DepreciationsService {
+public class DepreciationsServiceImpl extends BaseServiceImpl<DepreciationsMapper, DepreciationsEntity> implements DepreciationsService {
 
 }

@@ -64,6 +64,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new CorsFilter(source);
     }
 
+
+
     /**
      * 配置本地文件上传的虚拟路径和静态化的文件生成路径
      * 备注：这是一种图片上传访问图片的方法，推荐使用nginx反向代理访问图片

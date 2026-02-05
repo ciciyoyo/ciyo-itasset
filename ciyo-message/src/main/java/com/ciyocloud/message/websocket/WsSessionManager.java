@@ -2,6 +2,7 @@ package com.ciyocloud.message.websocket;
 
 import cn.hutool.core.map.MapUtil;
 import com.ciyocloud.common.constant.RedisKeyConstants;
+import com.ciyocloud.common.redis.listener.RedisMessage;
 import com.ciyocloud.common.util.JsonUtils;
 import com.ciyocloud.common.util.RedisUtils;
 import com.ciyocloud.common.util.SpringContextUtils;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @UtilityClass
 public class WsSessionManager {
-    private static final String REDIS_TOPIC_NAME = "wsSocketHandler";
+    private static final String REDIS_MSG_HANDLE_NAME = "wsSocketHandler";
     /**
      * 保存连接 session 的地方
      */
@@ -85,11 +86,14 @@ public class WsSessionManager {
      * @param message
      */
     public void sendMessage(WsMessage message) {
-        Map<String, Object> params = MapUtil.of();
+        Map<String, Object> params = MapUtil.newHashMap();
         params.put("userId", "");
         params.put("message", JsonUtils.objToJson(message));
-        params.put(RedisKeyConstants.HANDLER_NAME, REDIS_TOPIC_NAME);
-        SpringContextUtils.getBean(RedisUtils.class).getRedisTemplate().convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, params);
+        RedisMessage redisMessage = new RedisMessage();
+        redisMessage.setHandlerName(REDIS_MSG_HANDLE_NAME);
+        redisMessage.setContent(params);
+        SpringContextUtils.getBean(RedisUtils.class).getRedisTemplate().convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, redisMessage);
+
     }
 
 
@@ -101,11 +105,13 @@ public class WsSessionManager {
      */
     public void sendMessage(String userId, WsMessage message) {
         log.info("【websocket消息】广播消息:" + message);
-        Map<String, Object> params = MapUtil.of();
+        Map<String, Object> params = MapUtil.newHashMap();
         params.put("userId", userId);
         params.put("message", JsonUtils.objToJson(message));
-        params.put(RedisKeyConstants.HANDLER_NAME, REDIS_TOPIC_NAME);
-        SpringContextUtils.getBean(RedisUtils.class).getRedisTemplate().convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, params);
+        RedisMessage redisMessage = new RedisMessage();
+        redisMessage.setHandlerName(REDIS_MSG_HANDLE_NAME);
+        redisMessage.setContent(params);
+        SpringContextUtils.getBean(RedisUtils.class).getRedisTemplate().convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, redisMessage);
     }
 
     /**

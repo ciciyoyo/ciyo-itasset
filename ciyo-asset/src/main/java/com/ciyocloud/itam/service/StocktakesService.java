@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.StocktakesEntity;
 import com.ciyocloud.itam.req.StocktakesPageReq;
 import com.ciyocloud.itam.vo.StocktakesDetailVO;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
-public interface StocktakesService extends IService<StocktakesEntity> {
+public interface StocktakesService extends BaseService<StocktakesEntity> {
 
 
     /**

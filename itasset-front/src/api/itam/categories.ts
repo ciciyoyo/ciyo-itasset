@@ -99,3 +99,24 @@ export function getCategoriesTree(categoryType: string) {
     params: { categoryType }
   })
 }
+
+/**
+ * 导入分类
+ * @param file 文件
+ * @param categoryType 分类类型
+ */
+export function importCategories(file: File, categoryType: string, progressKey?: string) {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('categoryType', categoryType)
+  if (progressKey) {
+    formData.append('progressKey', progressKey)
+  }
+  return request.post({
+    url: '/itam/categories/import',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

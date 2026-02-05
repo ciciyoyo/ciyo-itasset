@@ -3,21 +3,26 @@ package com.ciyocloud.itam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
+import com.ciyocloud.common.sse.util.SseAsyncProcessUtils;
+import com.ciyocloud.excel.util.ExcelUtils;
 import com.ciyocloud.itam.entity.ConsumableTransactionsEntity;
 import com.ciyocloud.itam.entity.ConsumablesEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.enums.ConsumableActionType;
 import com.ciyocloud.itam.enums.ConsumableTargetType;
+import com.ciyocloud.itam.listener.ConsumablesImportListener;
 import com.ciyocloud.itam.mapper.ConsumablesMapper;
 import com.ciyocloud.itam.service.AssetsMonthlyStatsService;
 import com.ciyocloud.itam.service.ConsumableTransactionsService;
 import com.ciyocloud.itam.service.ConsumablesService;
 import com.ciyocloud.itam.vo.ConsumablesVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,9 +37,10 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:27
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, ConsumablesEntity> implements ConsumablesService {
+public class ConsumablesServiceImpl extends BaseServiceImpl<ConsumablesMapper, ConsumablesEntity> implements ConsumablesService {
 
     private final ConsumableTransactionsService consumableTransactionsService;
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
@@ -235,5 +241,26 @@ public class ConsumablesServiceImpl extends ServiceImpl<ConsumablesMapper, Consu
             }
         }
         return result;
+    }
+
+    @Override
+    public void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId) {
+        try {
+            log.info("开始导入耗材数据，progressKey: {}, userId: {}, 文件名: {}", progressKey, userId, originalFilename);
+
+            // 初始化进度
+            SseAsyncProcessUtils.setTips("正在解析Excel文件...");
+
+            // 创建支持SSE进度推送的导入监听器
+            ConsumablesImportListener listener = new ConsumablesImportListener(progressKey, userId);
+            // 更新进度：开始导入
+            SseAsyncProcessUtils.setProcess(0, "开始导入耗材数据...");
+            //执行导入
+            ExcelUtils.importExcel(inputStream, ConsumablesVO.class, listener);
+        } catch (Exception e) {
+            log.error("耗材数据导入失败，progressKey: {}, 错误: {}", progressKey, e.getMessage(), e);
+            SseAsyncProcessUtils.setError("导入失败: " + e.getMessage());
+            throw e;
+        }
     }
 }

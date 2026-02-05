@@ -6,9 +6,9 @@ import cn.dev33.satoken.stp.StpUtil;
 
 /**
  * Sa-Token 认证拦截器
- * 
+ *
  * 该拦截器用于全局路由拦截，配合 @SaCheckLogin、@SaCheckRole、@SaCheckPermission 等注解使用
- * 
+ *
  * @author codeck
  */
 public class SaAuthInterceptor extends SaInterceptor {

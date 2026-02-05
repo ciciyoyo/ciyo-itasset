@@ -100,3 +100,41 @@ export function exportManufacturers(query: ManufacturersSearchParams) {
     params: query
   })
 }
+
+/**
+ * 导入制造商
+ * @param file 文件
+ * @param updateSupport 是否支持更新
+ * @param progressKey 进度标识key（可选）
+ * @param sessionId 会话ID（可选）
+ */
+export function importManufacturers(file: FormData, updateSupport: boolean = false, progressKey?: string, sessionId?: string) {
+  // 添加额外参数
+  if (updateSupport !== undefined) {
+    file.append('updateSupport', updateSupport.toString())
+  }
+  if (progressKey) {
+    file.append('progressKey', progressKey)
+  }
+  if (sessionId) {
+    file.append('sessionId', sessionId)
+  }
+
+  return request.post<string>({
+    url: '/itam/manufacturers/importData',
+    data: file,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
+ * 获取制造商导入模板
+ */
+export function downloadManufacturersTemplate() {
+  return request.get<Blob>({
+    url: '/itam/manufacturers/importTemplate',
+    responseType: 'blob'
+  })
+}

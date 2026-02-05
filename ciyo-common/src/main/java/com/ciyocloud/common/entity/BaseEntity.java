@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 /**
  * @description: 实体类基类
- * @author: smalljop
+ * @author: codeck
  * @create: 2020-02-15 22:57
  **/
 @Data

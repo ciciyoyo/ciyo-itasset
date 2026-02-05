@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 短信配置类
  *
- * @author smalljop
+ * @author codeck
  */
 @Data
 @Configuration

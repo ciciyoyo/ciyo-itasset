@@ -5,19 +5,25 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ciyocloud.common.entity.request.PageRequest;
+import com.ciyocloud.common.mybatis.service.BaseServiceImpl;
+import com.ciyocloud.common.sse.util.SseAsyncProcessUtils;
+import com.ciyocloud.excel.util.ExcelUtils;
 import com.ciyocloud.itam.entity.AccessoriesEntity;
 import com.ciyocloud.itam.enums.AssetType;
+import com.ciyocloud.itam.listener.AccessoriesImportListener;
 import com.ciyocloud.itam.mapper.AccessoriesMapper;
 import com.ciyocloud.itam.req.AccessoriesPageReq;
 import com.ciyocloud.itam.service.AccessoriesService;
 import com.ciyocloud.itam.service.AssetsMonthlyStatsService;
+import com.ciyocloud.itam.util.AssetCodeUtils;
 import com.ciyocloud.itam.vo.AccessoriesVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +34,13 @@ import java.util.Map;
  * @author codeck
  * @since 2025-12-29 20:10:26
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccessoriesServiceImpl extends ServiceImpl<AccessoriesMapper, AccessoriesEntity> implements AccessoriesService {
+public class AccessoriesServiceImpl extends BaseServiceImpl<AccessoriesMapper, AccessoriesEntity> implements AccessoriesService {
 
     private final AssetsMonthlyStatsService assetsMonthlyStatsService;
-    private final com.ciyocloud.itam.util.AssetCodeUtils assetCodeUtils;
+    private final AssetCodeUtils assetCodeUtils;
 
     @Override
     public Page<AccessoriesVO> queryPage(PageRequest pageReq, AccessoriesPageReq req) {
@@ -129,6 +136,27 @@ public class AccessoriesServiceImpl extends ServiceImpl<AccessoriesMapper, Acces
             }
         }
         return result;
+    }
+
+    @Override
+    public void importData(InputStream inputStream, String originalFilename, String progressKey, Long userId) {
+        try {
+            log.info("开始导入配件数据，progressKey: {}, userId: {}, 文件名: {}", progressKey, userId, originalFilename);
+
+            // 初始化进度
+            SseAsyncProcessUtils.setTips("正在解析Excel文件...");
+
+            // 创建支持SSE进度推送的导入监听器
+            AccessoriesImportListener listener = new AccessoriesImportListener(progressKey, userId);
+            // 更新进度：开始导入
+            SseAsyncProcessUtils.setProcess(0, "开始导入配件数据...");
+            //执行导入
+            ExcelUtils.importExcel(inputStream, AccessoriesVO.class, listener);
+        } catch (Exception e) {
+            log.error("配件数据导入失败，progressKey: {}, 错误: {}", progressKey, e.getMessage(), e);
+            SseAsyncProcessUtils.setError("导入失败: " + e.getMessage());
+            throw e;
+        }
     }
 
 }

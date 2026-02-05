@@ -25,7 +25,7 @@ import java.io.InputStream;
 /**
  * 通用S3存储 支持所有S3兼容的存储
  *
- * @author : smalljop
+ * @author : codeck
  * @since :  2021/03/25 11:02
  **/
 public class S3StorageService extends OssStorageService {

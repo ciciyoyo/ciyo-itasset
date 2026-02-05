@@ -1,7 +1,7 @@
 package com.ciyocloud.itam.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.ciyocloud.common.mybatis.service.BaseService;
 import com.ciyocloud.itam.entity.FailuresEntity;
 import com.ciyocloud.itam.enums.AssetType;
 import com.ciyocloud.itam.req.FailuresPageReq;
@@ -14,7 +14,7 @@ import com.ciyocloud.itam.vo.FailuresVO;
  * @author codeck
  * @since 2026-01-01
  */
-public interface FailuresService extends IService<FailuresEntity> {
+public interface FailuresService extends BaseService<FailuresEntity> {
 
     /**
      * 报告故障
