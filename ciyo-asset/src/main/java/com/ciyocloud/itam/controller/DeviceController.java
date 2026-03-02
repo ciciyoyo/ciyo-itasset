@@ -174,6 +174,16 @@ public class DeviceController {
     }
 
     /**
+     * 恢复报废设备
+     */
+    @SaCheckPermission("itam:device:update")
+    @Log(title = "设备管理", businessType = BusinessType.UPDATE)
+    @PostMapping("/recover")
+    public Result<Boolean> recover(@RequestBody IdListRequest request) {
+        return Result.success(deviceService.recover(request.getIds()));
+    }
+
+    /**
      * 解决故障
      */
     @SaCheckPermission("itam:assets:resolve")

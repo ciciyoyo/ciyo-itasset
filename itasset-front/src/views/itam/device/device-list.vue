@@ -128,8 +128,14 @@
                   <el-dropdown-item v-if="hasPermi(['itam:device:update'])" @click="handleReportException(row)">
                     <span class="text-warning">报告异常</span>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="hasPermi(['itam:device:update'])" @click="handleScrap(row)">
+                  <el-dropdown-item v-if="hasPermi(['itam:device:update']) && row.assetsStatus !== 10" @click="handleScrap(row)">
                     <span class="text-danger">报废</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="row.assetsStatus === 10 && hasPermi(['itam:device:update'])"
+                    @click="handleRecover(row)"
+                  >
+                    <span class="text-success">恢复</span>
                   </el-dropdown-item>
                   <el-dropdown-item v-if="hasPermi(['itam:device:delete'])" @click="handleDelete(row)">
                     <span class="text-danger">{{ $t('system.roleManagement.delete') }}</span>
@@ -293,6 +299,7 @@
     pageDevice,
     updateDevice,
     scrappedDevice,
+    recoverDevice,
     batchPrintDeviceLabels
   } from '@/api/itam/device'
   import { listSuppliers } from '@/api/itam/suppliers'
@@ -663,6 +670,24 @@
       .then(() => {
         refreshData()
         MessageUtil.success('报废成功')
+      })
+      .catch(() => {})
+  }
+
+  /** 恢复报废设备操作 */
+  const handleRecover = (row: any) => {
+    const ids = [row.id]
+    const name = `设备 "${row.name}"`
+
+    ElMessageBox.confirm(`确认要恢复${name}吗？`, t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    })
+      .then(() => recoverDevice(ids))
+      .then(() => {
+        refreshData()
+        MessageUtil.success('恢复成功')
       })
       .catch(() => {})
   }

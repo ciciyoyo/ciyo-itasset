@@ -44,6 +44,14 @@ public interface DeviceService extends BaseService<DeviceEntity> {
     Boolean scrap(List<Long> ids);
 
     /**
+     * 恢复报废设备
+     *
+     * @param ids ID列表
+     * @return 结果
+     */
+    Boolean recover(List<Long> ids);
+
+    /**
      * 批量删除设备
      *
      * @param ids ID列表

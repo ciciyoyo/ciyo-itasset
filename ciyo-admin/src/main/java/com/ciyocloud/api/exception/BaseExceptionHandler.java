@@ -237,10 +237,26 @@ public class BaseExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request, 
+    HttpServletResponse response) throws ServletException, IOException {
         if (request.getRequestURI().startsWith(apiPrefix)) {
             ResponseUtils.outHttpJson(response, Result.success());
+            return;
         }
+        
+        // 检查 index.html 是否存在
+        try {
+            if (request.getServletContext().getResource("/index.html") == null) {
+                log.warn("index.html 不存在，请启动前端项目");
+                ResponseUtils.outHttpJson(response, Result.failed("请启动前端项目"));
+                return;
+            }
+        } catch (Exception e) {
+            log.error("检查 index.html 失败: {}", e.getMessage());
+            ResponseUtils.outHttpJson(response, Result.failed("请启动前端项目"));
+            return;
+        }
+        
         // 转发到 index.html，保持 URL 不变，支持 SPA 路由
         request.getRequestDispatcher("/index.html").forward(request, response);
     }
