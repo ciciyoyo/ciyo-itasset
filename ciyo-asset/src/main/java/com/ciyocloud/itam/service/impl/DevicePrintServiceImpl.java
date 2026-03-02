@@ -5,6 +5,8 @@ import com.ciyocloud.envconfig.service.SysEnvConfigService;
 import com.ciyocloud.itam.entity.DeviceEntity;
 import com.ciyocloud.itam.service.DevicePrintService;
 import com.ciyocloud.itam.service.DeviceService;
+import com.ciyocloud.system.entity.SysUserEntity;
+import com.ciyocloud.system.service.SysUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.pdf.pdfbox.core.base.Document;
@@ -34,6 +36,7 @@ public class DevicePrintServiceImpl implements DevicePrintService {
     private static final float LABEL_HEIGHT = 113F; // ~40mm
     private final DeviceService deviceService;
     private final SysEnvConfigService configService;
+    private final SysUserService userService;
 
     @Override
     public void printLabels(List<Long> ids, HttpServletResponse response) {
@@ -246,7 +249,7 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 warrantyLabel.setBorderLineWidth(0.5F);
                 warrantyLabel.setIsBorderBottom(false);
                 Textarea warrantyLabelText = new Textarea(page);
-                warrantyLabelText.setText("过保日期");
+                warrantyLabelText.setText("领取人");
                 warrantyLabelText.setFontSize(7F);
                 warrantyLabelText.setMarginLeft(2F);
                 warrantyLabel.addComponents(warrantyLabelText);
@@ -258,7 +261,17 @@ public class DevicePrintServiceImpl implements DevicePrintService {
                 warrantyValue.setBorderColor(Color.BLACK);
                 warrantyValue.setBorderLineWidth(0.5F);
                 Textarea warrantyValueText = new Textarea(page);
-                warrantyValueText.setText(device.getWarrantyDate() != null ? device.getWarrantyDate().toString() : "");
+                String assignedUserName = "";
+                if (device.getAssignedTo() != null) {
+                    SysUserEntity user = userService.getUserByUserId(device.getAssignedTo());
+                    if (user != null) {
+                        assignedUserName = user.getNickName() != null ? user.getNickName() : user.getUserName();
+                    }
+                }
+                if (assignedUserName == null || assignedUserName.trim().isEmpty()) {
+                    assignedUserName = "未分配";
+                }
+                warrantyValueText.setText(assignedUserName);
                 warrantyValueText.setFontSize(7F);
                 warrantyValueText.setMarginLeft(2F);
                 warrantyValue.addComponents(warrantyValueText);

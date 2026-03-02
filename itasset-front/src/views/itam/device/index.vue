@@ -10,17 +10,17 @@
         </div>
       </div>
       <SegmentedTabs v-model="activeTab" :options="tabOptions">
-        <template #list>
+        <template #list v-if="activeTab === 'list'">
           <DeviceList />
         </template>
         <template #category>
           <DeviceCategory />
         </template>
         <template #allocation>
-          <AllocationList />
+          <AllocationList v-if="activeTab === 'allocation'" />
         </template>
         <template #failure>
-          <DeviceFailure />
+          <DeviceFailure v-if="activeTab === 'failure'" />
         </template>
         <template #stats>
           <DeviceStats :is-active="activeTab === 'stats'" />
