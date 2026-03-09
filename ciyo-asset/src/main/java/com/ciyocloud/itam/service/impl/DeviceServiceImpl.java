@@ -96,6 +96,25 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, DeviceEntit
         return result;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean recover(List<Long> ids) {
+        List<DeviceEntity> list = new ArrayList<>();
+        for (Long id : ids) {
+            DeviceEntity entity = new DeviceEntity();
+            entity.setId(id);
+            entity.setAssetsStatus(DeviceStatus.PENDING);
+            list.add(entity);
+        }
+        boolean result = updateBatchById(list);
+        if (result) {
+            for (Long id : ids) {
+                // 重新计算当前月份的统计数据
+                assetsMonthlyStatsService.recalculateAssetStats(AssetType.DEVICE, id, LocalDate.now());
+            }
+        }
+        return result;
+    }
 
     @Override
     public Map<String, Object> getSummaryStats() {

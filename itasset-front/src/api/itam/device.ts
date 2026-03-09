@@ -313,6 +313,16 @@ export function scrappedDevice(ids: number[]) {
 }
 
 /**
+ * 恢复报废设备
+ */
+export function recoverDevice(ids: number[]) {
+  return request.post({
+    url: '/itam/device/recover',
+    data: { ids }
+  })
+}
+
+/**
  * 取消分配
  */
 export function deallocateDevice(id: number) {
