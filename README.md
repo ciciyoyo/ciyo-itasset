@@ -102,7 +102,8 @@ pnpm dev
 - [Art Design Pro](https://github.com/Daymychen/art-design-pro)：极具视觉美感的 Vue3 管理后台模板，本项目前端脚手架。
 
 ## 交流群
-<img src="readmeimg/6f22c1634883fe5b389d5ac9c2ce4a40.jpg" width="300" height="400" alt="交流群">
+
+<img src="readmeimg/微信图片_20260309094638_106_20.jpg" width="300" height="400" alt="交流群">
 
 ## 📄 许可证
 
