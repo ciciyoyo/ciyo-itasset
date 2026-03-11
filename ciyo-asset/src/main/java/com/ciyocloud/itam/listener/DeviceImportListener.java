@@ -133,14 +133,14 @@ public class DeviceImportListener extends SseProgressExcelListener<DeviceVO> {
 
         // 如果有分配给用户，创建分配关联
         if (device.getAssignedTo() != null) {
-            allocationsService.createAllocation(
-                    AssetType.DEVICE,
-                    device.getId(),
-                    AllocationOwnerType.USER,
-                    device.getAssignedTo(),
-                    1,
-                    "导入时分配"
-            );
+            AllocationsEntity allocation = new AllocationsEntity();
+            allocation.setItemType(AssetType.DEVICE);
+            allocation.setItemId(device.getId());
+            allocation.setOwnerType(AllocationOwnerType.USER);
+            allocation.setOwnerId(device.getAssignedTo());
+            allocation.setQuantity(1);
+            allocation.setNote("导入时分配");
+            allocationsService.allocate(allocation);
         }
 
         // 如果有价值，同步资产统计数据

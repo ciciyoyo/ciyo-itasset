@@ -157,12 +157,14 @@ public class AllocationsServiceImpl extends BaseServiceImpl<AllocationsMapper, A
                 DeviceEntity asset = deviceService.getById(itemId);
                 if (asset != null) {
                     if (isAllocating) {
+                        asset.setAssetsStatus(DeviceStatus.DEPLOYED);
                         if (AllocationOwnerType.USER.equals(allocation.getOwnerType())) {
                             asset.setAssignedTo(allocation.getOwnerId());
                         } else if (AllocationOwnerType.LOCATION.equals(allocation.getOwnerType())) {
                             asset.setLocationId(allocation.getOwnerId());
                         }
                     } else {
+                        asset.setAssetsStatus(DeviceStatus.PENDING);
                         asset.setAssignedTo(null);
                     }
                     return deviceService.updateById(asset);
