@@ -8,6 +8,7 @@ import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AllocationStatus;
 import com.ciyocloud.itam.enums.AssetType;
+import com.ciyocloud.itam.enums.DeviceStatus;
 import com.ciyocloud.itam.mapper.AllocationsMapper;
 import com.ciyocloud.itam.req.AllocationsPageReq;
 import com.ciyocloud.itam.service.*;
