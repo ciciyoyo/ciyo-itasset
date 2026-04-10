@@ -405,7 +405,11 @@ export const remixIcons = [
   'ri:clipboard-line',
   'ri:dashboard-3-line',
   'ri:home-3-line',
-  'ri:list-check'
+  // 表单生成器专用图标（并非注册，仅确保 safelist 生成）
+  'ri:drag-move-2-line',
+  'ri:drag-move-line',
+  'ri:copy-line',
+  'ri:code-s-slash-line'
 ]
 
 export const allIcons = [...remixIcons]
