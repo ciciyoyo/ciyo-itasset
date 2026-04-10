@@ -8,6 +8,7 @@ import com.ciyocloud.itam.entity.*;
 import com.ciyocloud.itam.enums.AllocationOwnerType;
 import com.ciyocloud.itam.enums.AllocationStatus;
 import com.ciyocloud.itam.enums.AssetType;
+import com.ciyocloud.itam.enums.DeviceStatus;
 import com.ciyocloud.itam.mapper.AllocationsMapper;
 import com.ciyocloud.itam.req.AllocationsPageReq;
 import com.ciyocloud.itam.service.*;
@@ -157,12 +158,14 @@ public class AllocationsServiceImpl extends BaseServiceImpl<AllocationsMapper, A
                 DeviceEntity asset = deviceService.getById(itemId);
                 if (asset != null) {
                     if (isAllocating) {
+                        asset.setAssetsStatus(DeviceStatus.DEPLOYED);
                         if (AllocationOwnerType.USER.equals(allocation.getOwnerType())) {
                             asset.setAssignedTo(allocation.getOwnerId());
                         } else if (AllocationOwnerType.LOCATION.equals(allocation.getOwnerType())) {
                             asset.setLocationId(allocation.getOwnerId());
                         }
                     } else {
+                        asset.setAssetsStatus(DeviceStatus.PENDING);
                         asset.setAssignedTo(null);
                     }
                     return deviceService.updateById(asset);
