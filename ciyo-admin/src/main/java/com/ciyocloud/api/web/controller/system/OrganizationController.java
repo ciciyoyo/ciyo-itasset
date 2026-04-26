@@ -69,7 +69,7 @@ public class OrganizationController {
         depts = deptService.buildDeptTree(depts);
         // 转换下key名称
         List<Map<String, Object>> converted = TreeUtils.convertTreeList(depts, (key) -> {
-            if (key.equals(SysDeptEntity.Fields.deptName)) {
+            if (SysDeptEntity.Fields.deptName.equals(key)) {
                 return "name";
             }
             return key;

@@ -60,7 +60,7 @@
         </template>
 
         <template #status="{ row }">
-          <el-tag v-if="row.status === '0'" type="success">
+          <el-tag v-if="row.status == '0'" type="success">
             {{ getStatusLabel(row.status) }}
           </el-tag>
           <el-tag v-else type="danger">
@@ -276,8 +276,8 @@
   }
 
   // Get status label
-  const getStatusLabel = (status: string) => {
-    const dict = statusOptions.value.find((item) => item.dictValue === status)
+  const getStatusLabel = (status: string | number) => {
+    const dict = statusOptions.value.find((item) => item.dictValue === String(status))
     return dict?.dictLabel || status
   }
 
@@ -328,6 +328,9 @@
       // HTTP interceptor returns response.data.data directly
       const postData = await getPost(row.id)
       Object.assign(form, postData)
+      if (form.status !== undefined) {
+        form.status = String(form.status)
+      }
       leaderPostBool.value = postData.leaderPost === 1
       open.value = true
       title.value = t('system.position.edit')

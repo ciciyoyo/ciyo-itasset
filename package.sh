@@ -16,6 +16,17 @@ pnpm install
 pnpm build
 cd ..
 
+# 1.5 Copy Frontend resources to Backend
+echo "----------------------------------------------------------------"
+echo "Step 1.5: Copying Frontend resources to Backend (ciyo-admin)"
+echo "----------------------------------------------------------------"
+# Ensure static directory exists
+mkdir -p ciyo-admin/src/main/resources/static
+# Clear existing static resources
+rm -rf ciyo-admin/src/main/resources/static/*
+# Copy new resources
+cp -r itasset-front/dist/* ciyo-admin/src/main/resources/static/
+
 # 2. Build Backend
 echo "----------------------------------------------------------------"
 echo "Step 2: Building Backend (ciyo-admin)"
@@ -35,6 +46,14 @@ fi
 # The maven-resources-plugin configured in ciyo-admin/pom.xml will automatically
 # copy the ../itasset-front/dist folder to target/classes/static
 mvn clean package -DskipTests
+
+# 2.1 Restore sensitive configuration file
+if [ -f "$TEMP_BACKUP" ]; then
+  echo "Restoring $SENSITIVE_FILE..."
+  mv "$TEMP_BACKUP" "$SENSITIVE_FILE"
+  # Clear the trap as we've restored it manually
+  trap - EXIT
+fi
 
 
 echo "----------------------------------------------------------------"

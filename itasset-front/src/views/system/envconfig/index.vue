@@ -1,10 +1,10 @@
 <template>
   <el-card>
-    <el-tabs class="=tabs" v-model="activeName" @tab-change="handleTabClick">
+    <el-tabs class="tabs" v-model="activeName" @tab-change="handleTabClick">
       <el-tab-pane :label="$t('system.systemConfig.title')" name="systemInfoConfig">
         <system-info-config v-if="activeName === 'systemInfoConfig'" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('system.mailConfig.title')" name="emailEnvConfig">
+      <!-- <el-tab-pane :label="$t('system.mailConfig.title')" name="emailEnvConfig">
         <el-form ref="emailEnvConfig" :model="form" label-width="148px">
           <el-form-item
             label="host"
@@ -40,8 +40,8 @@
             </el-button>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
-      <el-tab-pane :label="$t('system.smsConfig.title')" name="smsEnvConfig">
+      </el-tab-pane> -->
+      <!-- <el-tab-pane :label="$t('system.smsConfig.title')" name="smsEnvConfig">
         <el-form ref="smsEnvConfig" :model="form" label-width="140px">
           <el-form-item
             :label="$t('system.smsConfig.channel')"
@@ -51,7 +51,6 @@
             <el-select class="select-width" v-model="form.type" :placeholder="$t('system.smsConfig.selectChannel')">
               <el-option :label="$t('system.smsConfig.aliyun')" value="ALIYUN" />
               <el-option :label="$t('system.smsConfig.tencentCloud')" value="TENCENT_CLOUD" />
-              <el-option :label="$t('system.smsConfig.zywx')" value="VEESING" />
             </el-select>
           </el-form-item>
           <el-form-item
@@ -135,12 +134,12 @@
             </el-button>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
+      </el-tab-pane> -->
 
       <el-tab-pane :label="$t('system.fileConfig.title')" name="fileEnvConfig">
         <oss-config v-if="activeName === 'fileEnvConfig'" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('system.fileStorage.wechatOfficialAccount')" name="wxMpEnvConfig">
+      <!-- <el-tab-pane :label="$t('system.fileStorage.wechatOfficialAccount')" name="wxMpEnvConfig">
         <el-form ref="wxMpEnvConfig" :model="form" label-width="120px">
           <el-form-item
             label="appId"
@@ -176,8 +175,8 @@
             </el-button>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
-      <el-tab-pane :label="$t('system.faceVerification.wechatMiniProgram')" name="wxMaEnvConfig">
+      </el-tab-pane> -->
+      <!-- <el-tab-pane :label="$t('system.faceVerification.wechatMiniProgram')" name="wxMaEnvConfig">
         <el-form ref="wxMaEnvConfig" :model="form" label-width="120px">
           <el-form-item
             label="Appid"
@@ -211,7 +210,7 @@
             </el-button>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
   </el-card>
 </template>
@@ -230,10 +229,10 @@
   const { activeName, form, handleClick, handleSubmit } = useConfig()
 
   // Form refs
-  const emailEnvConfig = ref<FormInstance>()
-  const smsEnvConfig = ref<FormInstance>()
-  const wxMpEnvConfig = ref<FormInstance>()
-  const wxMaEnvConfig = ref<FormInstance>()
+  // const emailEnvConfig = ref<FormInstance>()
+  // const smsEnvConfig = ref<FormInstance>()
+  // const wxMpEnvConfig = ref<FormInstance>()
+  // const wxMaEnvConfig = ref<FormInstance>()
 
   const handleTabClick = () => {
     if (!['systemInfoConfig', 'fileEnvConfig', 'thirdpartyLoginConfig', 'faceEnvConfig'].includes(activeName.value)) {

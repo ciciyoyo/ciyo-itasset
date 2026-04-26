@@ -2,6 +2,7 @@ package com.ciyocloud.common.sse.service;
 
 import com.ciyocloud.common.constant.RedisKeyConstants;
 import com.ciyocloud.common.redis.listener.RedisMessage;
+import com.ciyocloud.common.sse.config.SseProperties;
 import com.ciyocloud.common.sse.context.SseContext;
 import com.ciyocloud.common.sse.event.SseEvent;
 import com.ciyocloud.common.sse.manager.SseConnectionManager;
@@ -31,8 +32,10 @@ public class SseEventService {
 
     @Autowired
     private SseConnectionManager connectionManager;
-    @Autowired
+    @Autowired(required = false)
     private RedisUtils redisUtils;
+    @Autowired
+    private SseProperties sseProperties;
 
     // ==================== 基于上下文的简化方法 ====================
 
@@ -118,8 +121,10 @@ public class SseEventService {
 
         if (connectionManager.hasLocalConnection(userId, platform)) {
             sendLocalEvent(userId, platform, event);
-        } else {
+        } else if (sseProperties.isClusterEnabled()) {
             sendRemoteEvent(userId, platform, event);
+        } else {
+            log.debug("非集群模式且无本地连接，忽略推送: userId={}, platform={}", userId, platform);
         }
     }
 
@@ -141,11 +146,14 @@ public class SseEventService {
 
     private void sendRemoteEvent(String userId, String platform, SseEvent event) {
         try {
+            if (redisUtils == null) {
+                log.warn("RedisUtils 未注入，无法发送远程 SSE 事件");
+                return;
+            }
             RedisMessage redisMessage = new RedisMessage();
             redisMessage.setHandlerName("sseEventHandler");
             redisMessage.setContent(JsonUtils.objToJson(event));
-            SpringContextUtils.getBean(RedisUtils.class).getRedisTemplate()
-                .convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, redisMessage);
+            redisUtils.getRedisTemplate().convertAndSend(RedisKeyConstants.REDIS_TOPIC_NAME, redisMessage);
             log.debug("远程 SSE 推送成功: userId={}, platform={}, progressKey={}",
                 userId, platform, event.getProgressKey());
         } catch (Exception e) {
@@ -159,13 +167,14 @@ public class SseEventService {
     public Map<String, Object> getConnectionStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("localConnections", connectionManager.getLocalConnectionCount());
+        stats.put("clusterEnabled", sseProperties.isClusterEnabled());
         return stats;
     }
 
     public void closeConnection(String userId, String platform) {
         if (connectionManager.hasLocalConnection(userId, platform)) {
             connectionManager.closeConnection(userId, platform);
-        } else {
+        } else if (sseProperties.isClusterEnabled() && redisUtils != null) {
             Map<String, String> message = new HashMap<>();
             message.put(RedisKeyConstants.HANDLER_NAME, "sseEventHandler");
             message.put("type", "closeConnection");

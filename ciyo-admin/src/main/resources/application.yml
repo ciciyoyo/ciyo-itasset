@@ -122,4 +122,22 @@ xss:
   url-patterns: /system/*,/monitor/*,/tool/*,/form/*,/user/form/*
 
 
+# 密码加密配置
+password:
+  rsa:
+    private-key: |
+      MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArFSp7f9RcrewO1Mw
+      Pyrpc1a9UhOdnGAZiu42hZJeu++QZ+Bb9KzwF9dOFEwAv+aIhGrwbr7XERdMFMR2
+      D8MEoQIDAQABAkBtUSOegtjC4b0cVPAFEg6XCM39082mVdu+ItBZOPl5Uzo9BHRD
+      xnr5oTkcCRDB+mZELkioeUFa/uqivTaqzDkBAiEA441k+Votl6zXaez6kV9uVXQC
+      fBKPgOEAZFTP603p9LECIQDB3/O4UbtWLQN1Tf6Tj19zGI7AS0BaEmgw6cx4bnDK
+      8QIgavOjOPvkn/ySBuxmXPuArVNoc455unaGq6GdVBh71RECIHqSdmn/8mrHRrpx
+      NxRfvr7rtcTJTsQjgw/5oLY7TMBhAiEA2zk34VyWtKPRUdfFWAHjQoyQ2DJtqvs4
+      xrYzu/CSTbU=
+    public-key: |
+      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKxUqe3/UXK3sDtTMD8q6XNWvVITnZxg
+      GYruNoWSXrvvkGfgW/Ss8BfXThRMAL/miIRq8G6+1xEXTBTEdg/DBKECAwEAAQ==
+
+
+
 

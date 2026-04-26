@@ -32,6 +32,6 @@ public interface CommonConstants {
     /**
      * 系统版本
      */
-    String SYSTEM_VERSION = "0.1";
+    String SYSTEM_VERSION = "0.3";
 
 }

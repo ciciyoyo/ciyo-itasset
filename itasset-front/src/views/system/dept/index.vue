@@ -43,9 +43,6 @@
 
         <template #operation="{ row }">
           <div class="flex gap-2">
-            <el-button link type="primary" @click="handlePost(row)" v-hasPermi="['system:deptpost:list']">
-              {{ $t('system.deptManagement.position') }}
-            </el-button>
             <el-button link type="primary" @click="handleUpdate(row)" v-hasPermi="['system:dept:edit']">
               {{ $t('common.update') }}
             </el-button>
@@ -123,22 +120,7 @@
       </template>
     </el-dialog>
 
-    <!-- 部门岗位管理弹窗 -->
-    <el-dialog
-      v-model="deptPostDialogOpen"
-      :title="$t('system.deptPost.deptPostSetting')"
-      width="90%"
-      append-to-body
-      :close-on-click-modal="false"
-      destroy-on-close
-    >
-      <DeptPost v-if="deptPostDialogOpen" :dept-id="selectedDeptId" />
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="deptPostDialogOpen = false">{{ $t('common.cancel') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
+
   </div>
 </template>
 
@@ -154,7 +136,6 @@
   import { useI18n } from 'vue-i18n'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
   import DeptSearch from './modules/dept-search.vue'
-  import DeptPost from './modules/dept-post.vue'
 
   defineOptions({ name: 'DeptManagement' })
 
@@ -170,9 +151,6 @@
   const open = ref(false)
   const statusOptions = ref<any[]>([])
 
-  // 部门岗位弹窗相关
-  const deptPostDialogOpen = ref(false)
-  const selectedDeptId = ref<number | null>(null)
 
   // 懒加载相关数据
   const isLazyLoading = ref(false)
@@ -442,10 +420,6 @@
     }
   }
 
-  const handlePost = (row: any) => {
-    selectedDeptId.value = row.id
-    deptPostDialogOpen.value = true
-  }
 
   const handleUpdate = (row: any) => {
     reset()

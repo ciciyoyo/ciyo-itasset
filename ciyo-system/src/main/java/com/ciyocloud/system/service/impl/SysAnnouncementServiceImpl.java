@@ -108,7 +108,7 @@ public class SysAnnouncementServiceImpl extends ServiceImpl<SysAnnouncementMappe
         SysAnnounceEntity announcement = new SysAnnounceEntity();
         announcement.setTitle(title);
         announcement.setMsgContent(msgContent);
-        announcement.setSender("Tduck");
+        announcement.setSender("system");
         announcement.setPriority(SysAnnounceEntity.PriorityEnum.PRIORITY_L);
         announcement.setMsgType(SysAnnounceEntity.MsgTypeEnum.ALL);
         announcement.setSendStatus(SysAnnounceEntity.SendStatusEnum.HAS_SEND);

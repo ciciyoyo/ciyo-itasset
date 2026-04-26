@@ -162,8 +162,8 @@
       </el-upload>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitFileForm">{{ t('common.confirm') }}</el-button>
           <el-button @click="upload.open = false">{{ t('common.cancel') }}</el-button>
+          <el-button type="primary" @click="submitFileForm">{{ t('common.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -179,7 +179,7 @@
   import { useI18n } from 'vue-i18n'
   import { changeUserStatus, delUser, exportUser, importTemplate, pageUser, resetUserPwd } from '@/api/system/user'
   import { getToken } from '@/utils/auth'
-  import { DeptPostEntity, treeselect } from '@/api/system/dept'
+  import { treeselect } from '@/api/system/dept'
   import { download, parseTime } from '@/utils/business'
   import { MessageUtil } from '@/utils/messageUtil'
   import UserSearch from './modules/user-search.vue'
@@ -258,8 +258,8 @@
     open: false,
     isUploading: false,
     updateSupport: 0,
-    headers: { Authorization: 'Bearer ' + getToken() },
-    url: import.meta.env.VITE_BASE_URL + '/system/user/importData'
+    headers: { Authorization: getToken() },
+    url: import.meta.env.VITE_API_URL + '/system/user/importData'
   })
   const uploadRef = ref<UploadInstance>()
 

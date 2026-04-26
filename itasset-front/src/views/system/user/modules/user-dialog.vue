@@ -130,8 +130,9 @@
   import { getUser, addUser, updateUser } from '@/api/system/user'
   import { ElMessage } from 'element-plus'
   import { getConfigValue } from '@/api/system/config'
-  import { ref } from 'vue'
-  import { DeptPostEntity } from '@/api/system/dept'
+  import { ref, reactive, computed, watch, nextTick } from 'vue'
+  import { optionselect } from '@/api/system/post'
+
   import { SysRoleEntity } from '@/api/system/role'
   import { useI18n } from 'vue-i18n'
 
@@ -166,7 +167,7 @@
   // 下拉选项
   const statusOptions = ref<DictDataEntity[]>([])
   const sexOptions = ref<DictDataEntity[]>([])
-  const postOptions = ref<DeptPostEntity[]>([])
+  const postOptions = ref<any[]>([])
   const roleOptions = ref<SysRoleEntity[]>([])
   const roleList = ref<SysRoleEntity[]>([])
   const initPassword = ref('')
@@ -226,8 +227,7 @@
 
   // 部门改变时获取岗位列表
   const handleDeptChange = async () => {
-    // 可以在这里添加获取岗位列表的逻辑
-    formData.postIds = []
+    // 岗位已改为直接关联用户，不再随部门变动重置
   }
 
   // 初始化表单数据
@@ -255,8 +255,8 @@
         })
         roleOptions.value = response.roles || []
 
-        // 加载岗位列表（简化版）
-        postOptions.value = []
+        // 加载岗位列表
+        postOptions.value = response.posts || []
         if (response?.postIds) {
           formData.postIds = response?.postIds || []
         }
@@ -283,7 +283,7 @@
           postIds: [],
           roleIds: []
         })
-        postOptions.value = []
+        postOptions.value = response.posts || []
       } catch (error) {
         console.error('加载角色列表失败:', error)
       }

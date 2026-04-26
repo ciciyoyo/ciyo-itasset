@@ -221,7 +221,7 @@
       type: 'warning'
     })
       .then(async () => {
-        await delCategories(row.id)
+        await delCategories(row.id, 'consumables')
         MessageUtil.success(t('common.deleteSuccess'))
         loadCategories()
       })

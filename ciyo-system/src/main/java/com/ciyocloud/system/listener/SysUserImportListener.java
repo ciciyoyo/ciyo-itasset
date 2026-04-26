@@ -1,10 +1,12 @@
 package com.ciyocloud.system.listener;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.ciyocloud.common.exception.BusinessException;
 import com.ciyocloud.common.util.SecurityUtils;
 import com.ciyocloud.common.util.SpringContextUtils;
 import com.ciyocloud.excel.core.ExcelListener;
@@ -16,6 +18,7 @@ import com.ciyocloud.system.service.SysUserService;
 import com.ciyocloud.system.util.PasswordUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.ciyocloud.system.constant.SysConfigConstants.DEFAULT_PASSWORD;
@@ -60,6 +63,42 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserEntity> 
                         .append(e.getMessage());
                 return;
             }
+        }
+        // 验证登录名称
+        if (StrUtil.isBlank(userVo.getUserName())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、导入失败，登录名称不能为空");
+            return;
+        }
+        // 验证用户名称
+        if (StrUtil.isBlank(userVo.getNickName())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、账号 ").append(userVo.getUserName()).append(" 导入失败，用户名称不能为空");
+            return;
+        }
+        // 验证状态格式
+        if (StrUtil.isNotBlank(userVo.getStatus()) && !Arrays.asList("0", "1").contains(userVo.getStatus())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、账号 ").append(userVo.getUserName()).append(" 导入失败，帐号状态格式不正确");
+            return;
+        }
+        // 验证性别格式
+        if (StrUtil.isNotBlank(userVo.getSex()) && !Arrays.asList("0", "1", "2").contains(userVo.getSex())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、账号 ").append(userVo.getUserName()).append(" 导入失败，性别格式不正确");
+            return;
+        }
+        // 验证邮箱格式
+        if (StrUtil.isNotBlank(userVo.getEmail()) && !Validator.isEmail(userVo.getEmail())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、账号 ").append(userVo.getUserName()).append(" 导入失败，邮箱格式不正确");
+            return;
+        }
+        // 验证手机号格式
+        if (StrUtil.isNotBlank(userVo.getPhonenumber()) && !Validator.isMobile(userVo.getPhonenumber())) {
+            failureNum++;
+            failureMsg.append("<br/>").append(failureNum).append("、账号 ").append(userVo.getUserName()).append(" 导入失败，手机号码格式不正确");
+            return;
         }
         SysUserEntity user = this.userService.getUserByUserName(userVo.getUserName());
         try {
@@ -131,7 +170,7 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserEntity> 
             public String getAnalysis() {
                 if (failureNum > 0) {
                     failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
-                    throw new RuntimeException(failureMsg.toString());
+                    throw new BusinessException(failureMsg.toString());
                 } else {
                     successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
                 }

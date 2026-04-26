@@ -155,7 +155,7 @@ public class SysUserEntity extends SysBaseEntity {
      * 岗位组
      */
     @TableField(exist = false)
-    @ExcelProperty(value = "部门岗位Id", converter = ExcelLongListConvert.class)
+    @ExcelProperty(value = "岗位Id", converter = ExcelLongListConvert.class)
     @ExcelPropertyType(type = ExcelPropertyType.TypeEnum.IMPORT)
     private List<Long> postIds;
     /**

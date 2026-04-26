@@ -85,7 +85,7 @@
             </if>
             order by create_time desc
         </if>
-        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgerSql()">
+        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgreSql()">
             select table_name, table_comment, create_time, update_time
             from (
             SELECT c.relname AS table_name,
@@ -120,10 +120,10 @@
             AND D.NAME NOT LIKE 'xxl_job_%' AND D.NAME NOT LIKE 'gen_%'
             AND D.NAME NOT IN (select table_name from gen_table)
             <if test="genTable.tableName != null and genTable.tableName != ''">
-                AND lower(D.NAME) like lower(concat(N'%', N'${genTable.tableName}', N'%'))
+                AND lower(D.NAME) like lower(concat(N'%', #{genTable.tableName}, N'%'))
             </if>
             <if test="genTable.tableComment != null and genTable.tableComment != ''">
-                AND lower(CAST(F.VALUE AS nvarchar)) like lower(concat(N'%', N'${genTable.tableComment}', N'%'))
+                AND lower(CAST(F.VALUE AS nvarchar)) like lower(concat(N'%', #{genTable.tableComment}, N'%'))
             </if>
             order by crdate desc
         </if>
@@ -146,13 +146,12 @@
             and dt.table_name = uo.object_name
             and uo.object_type = 'TABLE'
             AND dt.table_name NOT LIKE 'XXL_JOB_%' AND dt.table_name NOT LIKE 'GEN_%'
-            AND dt.table_name NOT IN (select table_name from gen_table)
             and lower(dt.table_name) in
             <foreach collection="tableNames" item="name" open="(" separator="," close=")">
                 #{name}
             </foreach>
         </if>
-        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgerSql()">
+        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgreSql()">
             select table_name, table_comment, create_time, update_time
             from (
             SELECT c.relname AS table_name,
@@ -205,7 +204,7 @@
             AND dt.table_name NOT IN (select table_name from gen_table)
             and lower(dt.table_name) = #{tableName}
         </if>
-        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgerSql()">
+        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgreSql()">
             select table_name, table_comment, create_time, update_time
             from (
             SELECT c.relname AS table_name,
@@ -315,7 +314,7 @@
         order by c.sort
     </select>
 
-    <select id="selectGenTableAll" parameterType="String" resultMap="GenTableResult">
+    <select id="selectGenTableAll" resultMap="GenTableResult">
         SELECT t.id,
                t.table_name,
                t.table_comment,
@@ -328,6 +327,8 @@
                t.business_name,
                t.function_name,
                t.function_author,
+               t.gen_type,
+               t.gen_path,
                t.options,
                t.remark,
                c.id as column_id,

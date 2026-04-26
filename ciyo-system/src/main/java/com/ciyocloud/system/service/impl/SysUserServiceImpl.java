@@ -505,5 +505,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUserEn
         userRoleMapper.insert(ur);
     }
 
+    @Override
+    public List<Long> getPostIdListByUserId(Long userId) {
+        List<SysUserPostEntity> list = userPostMapper.selectList(Wrappers.<SysUserPostEntity>lambdaQuery()
+                .eq(SysUserPostEntity::getUserId, userId));
+        return StreamUtils.toList(list, SysUserPostEntity::getPostId);
+    }
+
 
 }

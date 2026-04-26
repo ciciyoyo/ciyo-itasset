@@ -202,4 +202,12 @@ public interface SysUserService extends BaseService<SysUserEntity> {
      * 给用户分配某个角色的权限
      */
     void assignRoleToUser(Long userId, Long roleId);
+
+    /**
+     * 根据用户ID查询岗位ID列表
+     *
+     * @param userId 用户ID
+     * @return 岗位ID列表
+     */
+    List<Long> getPostIdListByUserId(Long userId);
 }

@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * 数据权限过滤
  *
- * @author tduck
+ * @author Ciyo
  */
 @Slf4j
 public class PlusDataPermissionHandler {

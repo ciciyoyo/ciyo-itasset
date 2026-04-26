@@ -36,8 +36,7 @@
             p.post_code
         FROM
             sys_post p
-                LEFT JOIN sys_dept_post dp on  dp.post_id= p.id
-                LEFT JOIN sys_user_post up ON up.post_id = dp.id
+                LEFT JOIN sys_user_post up ON up.post_id = p.id
                 LEFT JOIN sys_user u ON u.id = up.user_id
         WHERE u.user_name = #{userName}
     </select>

@@ -71,10 +71,12 @@ export function updateCategories(data: CategoriesEntity) {
 /**
  * 删除分类
  * @param id
+ * @param categoryType 分类类型
  */
-export function delCategories(id: number | number[]) {
+export function delCategories(id: number | number[], categoryType?: string) {
   return request.post({
-    url: `/itam/categories/delete/${id}`
+    url: `/itam/categories/delete/${id}`,
+    params: { categoryType }
   })
 }
 

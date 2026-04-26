@@ -53,7 +53,7 @@ public class DataBaseHelper {
         return DbType.ORACLE == getDataBaseType() || DbType.ORACLE_12C == getDataBaseType();
     }
 
-    public static boolean isPostgerSql() {
+    public static boolean isPostgreSql() {
         return DbType.POSTGRE_SQL == getDataBaseType();
     }
 

@@ -77,6 +77,13 @@ class VersionManager {
       return
     }
 
+    // 验证版本号合法性，防止恶意输入（符合安全审计建议：不应直接执行未验证的用户输入）
+    const versionRegex = /^[vV]?\d+(\.\d+)*(-[\w.]+)?$/
+    if (storedVersion && !versionRegex.test(storedVersion)) {
+      console.error('[Upgrade] 检测到非法的版本号格式，停止升级流程')
+      return
+    }
+
     // 延迟执行升级流程，确保应用已完全加载
     setTimeout(() => {
       this.executeUpgrade(storedVersion!, legacyStorage)

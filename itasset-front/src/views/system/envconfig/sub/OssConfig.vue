@@ -93,10 +93,10 @@
             message: $t('system.fileConfig.enterAccessDomain'),
             trigger: 'blur'
           }
-          // { pattern: /^(https?:\/\/[^\/]+)$/, message: '请输入域名 如 https://oss.tduckcloud.com', trigger: 'blur' }
+          // { pattern: /^(https?:\/\/[^\/]+)$/, message: '请输入域名 如 https://oss.ciyocloud.cn', trigger: 'blur' }
         ]"
       >
-        <el-input v-model="form.domain" placeholder="请输入域名 如 https://oss.tduckcloud.com" />
+        <el-input v-model="form.domain" placeholder="请输入域名 如 https://oss.ciyocloud.cn" />
       </el-form-item>
       <el-form-item v-if="form.ossType === 'S3'" label="regionName" prop="regionName">
         <el-input v-model="form.regionName" placeholder="请输入regionName" />

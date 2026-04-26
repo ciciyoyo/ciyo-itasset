@@ -61,7 +61,7 @@
             WHERE temp.row_flg = 1
             ORDER BY temp.id
         </if>
-        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgerSql()">
+        <if test="@com.ciyocloud.common.helper.DataBaseHelper@isPostgreSql()">
             SELECT column_name, is_required, is_pk, sort, column_comment, is_increment, column_type
             FROM (
             SELECT c.relname AS table_name,

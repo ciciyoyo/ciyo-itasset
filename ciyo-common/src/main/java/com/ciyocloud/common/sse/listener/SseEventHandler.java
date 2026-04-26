@@ -9,6 +9,7 @@ import com.ciyocloud.common.sse.manager.SseConnectionManager;
 import com.ciyocloud.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component("sseEventHandler")
+@ConditionalOnProperty(name = "ciyo.sse.cluster-enabled", havingValue = "true")
 public class SseEventHandler implements RedisMessageLister {
 
     @Autowired

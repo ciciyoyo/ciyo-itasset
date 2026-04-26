@@ -7,6 +7,7 @@ import cn.hutool.crypto.asymmetric.RSA;
 import com.ciyocloud.common.exception.BusinessException;
 import com.ciyocloud.common.util.SpringContextUtils;
 import com.ciyocloud.system.service.SysConfigService;
+import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,16 +29,45 @@ public class PasswordUtils {
      * 密码级别和对应的正则文案Map
      */
     private static final Map<String, String> LEVEL_REGEX_TEXT_MAP = new HashMap<>();
-    private final static String privateKey = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArFSp7f9RcrewO1Mw\n" +
-            "Pyrpc1a9UhOdnGAZiu42hZJeu++QZ+Bb9KzwF9dOFEwAv+aIhGrwbr7XERdMFMR2\n" +
-            "D8MEoQIDAQABAkBtUSOegtjC4b0cVPAFEg6XCM39082mVdu+ItBZOPl5Uzo9BHRD\n" +
-            "xnr5oTkcCRDB+mZELkioeUFa/uqivTaqzDkBAiEA441k+Votl6zXaez6kV9uVXQC\n" +
-            "fBKPgOEAZFTP603p9LECIQDB3/O4UbtWLQN1Tf6Tj19zGI7AS0BaEmgw6cx4bnDK\n" +
-            "8QIgavOjOPvkn/ySBuxmXPuArVNoc455unaGq6GdVBh71RECIHqSdmn/8mrHRrpx\n" +
-            "NxRfvr7rtcTJTsQjgw/5oLY7TMBhAiEA2zk34VyWtKPRUdfFWAHjQoyQ2DJtqvs4\n" +
-            "xrYzu/CSTbU=";
-    private final static String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKxUqe3/UXK3sDtTMD8q6XNWvVITnZxg\n" +
-            "GYruNoWSXrvvkGfgW/Ss8BfXThRMAL/miIRq8G6+1xEXTBTEdg/DBKECAwEAAQ==";
+    /**
+     * 缓存 RSA 对象，避免频繁创建和查询配置
+     */
+    private static volatile RSA cachedRsa;
+
+    /**
+     * 获取RSA加密对象
+     */
+    private static RSA getRsa() {
+        if (cachedRsa == null) {
+            synchronized (PasswordUtils.class) {
+                if (cachedRsa == null) {
+                    String privateKey = SpringContextUtils.getBean(SysConfigService.class).getConfigValueByKey("sys.user.password.privateKey");
+                    String publicKey = SpringContextUtils.getBean(SysConfigService.class).getConfigValueByKey("sys.user.password.publicKey");
+
+                    // 尝试从配置文件获取（如果没有从数据库获取到）
+                    if (StrUtil.isEmpty(privateKey)) {
+                        privateKey = SpringContextUtils.getBean(Environment.class).getProperty("password.rsa.private-key");
+                    }
+                    if (StrUtil.isEmpty(publicKey)) {
+                        publicKey = SpringContextUtils.getBean(Environment.class).getProperty("password.rsa.public-key");
+                    }
+
+                    if (StrUtil.isEmpty(privateKey) || StrUtil.isEmpty(publicKey)) {
+                        throw new BusinessException("请在后台管理系统或配置文件中配置参数: sys.user.password.privateKey 和 sys.user.password.publicKey");
+                    }
+                    cachedRsa = SecureUtil.rsa(privateKey, publicKey);
+                }
+            }
+        }
+        return cachedRsa;
+    }
+
+    /**
+     * 清除 RSA 缓存（在后台修改密钥配置后需调用此方法）
+     */
+    public static void clearCache() {
+        cachedRsa = null;
+    }
 
     static {
         // 1.最基础的密码强度要求：任意5到50个字符。
@@ -85,8 +115,7 @@ public class PasswordUtils {
      * 解密前端传输的密码
      */
     public static String decryptPassword(String password) {
-        RSA rsa = SecureUtil.rsa(privateKey, publicKey);
-        return rsa.decryptStr(password, KeyType.PrivateKey);
+        return getRsa().decryptStr(password, KeyType.PrivateKey);
     }
 
 

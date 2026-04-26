@@ -12,7 +12,7 @@ export function downLoadZip(str: string, filename: string) {
     method: 'get',
     url: url,
     responseType: 'blob',
-    headers: { Authorization: 'Bearer ' + getToken() }
+    headers: { Authorization: getToken() }
   }).then((res) => {
     resolveBlob(res, mimeMap.zip)
   })

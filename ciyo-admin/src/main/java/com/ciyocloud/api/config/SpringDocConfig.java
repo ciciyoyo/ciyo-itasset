@@ -23,8 +23,8 @@ public class SpringDocConfig {
 
     @Bean
     public OpenAPI openApi() {
-        return new OpenAPI().info(new Info().title("Tduck API").description("Tduck API 演示").version("v1.0.0"))
-                .externalDocs(new ExternalDocumentation().description("TduckX 服务").url("https://www.CIYOcloud.com/"))
+        return new OpenAPI().info(new Info().title("Ciyo API").description("Ciyo API 演示").version("v1.0.0"))
+                .externalDocs(new ExternalDocumentation().description("CiyoX 服务").url("https://www.CIYOcloud.com/"))
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme().name(SECURITY_SCHEME_NAME).type(SecurityScheme.Type.HTTP)
                         .scheme("Bearer").bearerFormat("JWT")));

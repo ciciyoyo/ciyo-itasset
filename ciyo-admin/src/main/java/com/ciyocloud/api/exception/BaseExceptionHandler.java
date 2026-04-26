@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -237,27 +239,25 @@ public class BaseExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request, 
-    HttpServletResponse response) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith(apiPrefix)) {
-            ResponseUtils.outHttpJson(response, Result.success());
+    public void handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request,
+                                      HttpServletResponse response) throws ServletException, IOException {
+        String uri = request.getRequestURI();
+
+        // 1. API 接口 404 应该返回 JSON 错误
+        if (uri.startsWith(apiPrefix)) {
+            ResponseUtils.outHttpJson(response, Result.failed(ResponseCodeConstants.NOT_FOUND, "接口资源不存在"));
             return;
         }
-        
-        // 检查 index.html 是否存在
-        try {
-            if (request.getServletContext().getResource("/index.html") == null) {
-                log.warn("index.html 不存在，请启动前端项目");
-                ResponseUtils.outHttpJson(response, Result.failed("请启动前端项目"));
-                return;
-            }
-        } catch (Exception e) {
-            log.error("检查 index.html 失败: {}", e.getMessage());
-            ResponseUtils.outHttpJson(response, Result.failed("请启动前端项目"));
+
+        // 2. 检查 index.html 是否存在 (使用 ClassPathResource 兼容 JAR 运行模式)
+        Resource indexResource = new ClassPathResource("static/index.html");
+        if (!indexResource.exists()) {
+            log.warn("未找到 index.html 资源，请确认前端项目已打包到 resources/static 目录: {}", uri);
+            ResponseUtils.outHttpJson(response, Result.failed("前端项目未启动或资源未找到，请启动前端项目"));
             return;
         }
-        
-        // 转发到 index.html，保持 URL 不变，支持 SPA 路由
+
+        // 3. 转发到 index.html，支持 SPA 路由
         request.getRequestDispatcher("/index.html").forward(request, response);
     }
 

@@ -16,7 +16,7 @@ import com.ciyocloud.system.entity.SysUserEntity;
 import com.ciyocloud.system.listener.SysUserImportListener;
 import com.ciyocloud.system.request.SysRolePageReq;
 import com.ciyocloud.system.request.SysUserPageReq;
-import com.ciyocloud.system.service.SysDeptPostService;
+import com.ciyocloud.system.service.SysPostService;
 import com.ciyocloud.system.service.SysRoleService;
 import com.ciyocloud.system.service.SysUserService;
 import com.ciyocloud.system.util.PasswordUtils;
@@ -44,7 +44,7 @@ public class SysUserController {
 
     private final SysRoleService roleService;
 
-    private final SysDeptPostService postService;
+    private final SysPostService postService;
 
     /**
      * 获取用户列表
@@ -99,9 +99,10 @@ public class SysUserController {
         List<SysRoleEntity> roles = roleService.listRoles(req);
         result.put("roles", SysUserEntity.isAdmin(userId) ?
                 roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        result.put("posts", postService.list());
         if (ObjectUtil.isNotNull(userId)) {
             result.put("user", userService.getById(userId));
-            result.put("postIds", postService.getDeptPostListByUserId(userId));
+            result.put("postIds", userService.getPostIdListByUserId(userId));
             result.put("roleIds", roleService.getRoleIdListByUserId(userId));
         }
         return Result.success(result);

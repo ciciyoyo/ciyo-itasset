@@ -1,6 +1,8 @@
 package com.ciyocloud.itam.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.ciyocloud.common.util.QueryWrapperUtils;
 import com.ciyocloud.common.util.Result;
 import com.ciyocloud.common.util.SecurityUtils;
@@ -104,8 +106,10 @@ public class CategoriesController {
      */
     @Log(title = "分类", businessType = BusinessType.DELETE)
     @PostMapping("/delete/{ids}")
-    public Result<Boolean> delete(@PathVariable List<Long> ids, @RequestParam String categorieType) {
-        assetPermissionUtils.hasAssetPermi(categorieType, "delete");
+    public Result<Boolean> delete(@PathVariable List<Long> ids, @RequestParam(required = false) String categoryType) {
+        if (!assetPermissionUtils.hasAssetPermi(categoryType, "delete")) {
+            return Result.failed("没有删除权限");
+        }
         return Result.success(categoriesService.removeByIds(ids));
     }
 

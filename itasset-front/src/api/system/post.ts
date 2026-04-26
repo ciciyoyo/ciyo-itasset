@@ -86,3 +86,10 @@ export function exportPost(query: PostQueryParams) {
     responseType: 'blob'
   })
 }
+
+// 获取岗位选择框列表
+export function optionselect(): Promise<SysPostEntity[]> {
+  return request.get({
+    url: '/system/post/optionselect'
+  })
+}
